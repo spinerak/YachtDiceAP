@@ -49,12 +49,12 @@ class YachtDiceWorld(World):
         itempool = []
                 
         if amDiceF == 1:
-            itempool += ["Dice"] * 4
+            itempool += ["Dice"] * numDiceF
         else:
             itempool += ["Dice Fragment"] * (amDiceF * numDiceF)
 
         if amRollsF == 1:
-            itempool += ["Roll"] * 4
+            itempool += ["Roll"] * numRollsF
         else:
             itempool += ["Roll Fragment"] * (amRollsF * numRollsF)
 
@@ -65,8 +65,8 @@ class YachtDiceWorld(World):
         itempool += ["Category Fours"]
         itempool += ["Category Fives"]
         itempool += ["Category Sixes"]
-        itempool += ["Category Choice"]
-        itempool += ["Category Inverse Choice"]
+        # itempool += ["Category Choice"]
+        # itempool += ["Category Inverse Choice"]
         itempool += ["Category Pair"]
         itempool += ["Category Three of a Kind"]
         itempool += ["Category Four of a Kind"]
@@ -76,15 +76,15 @@ class YachtDiceWorld(World):
         itempool += ["Category Full House"]
         itempool += ["Category Yacht"]
 
-        itempool += ["Encouragement"] * 2
-        itempool += ["Fun Fact"] * 4
+        itempool += ["Encouragement"] * 5
+        itempool += ["Fun Fact"] * 5
         itempool += ["Story Chapter"] * 10
 
         #count the number of locations in the game
         last_pos_location = self.options.goal_score.value 
         number_of_locations = min(20, last_pos_location)
-        number_of_locations += max(0,  min((100-20)//2, (last_pos_location-20)//2) )
-        number_of_locations += max(0,  (last_pos_location - 100) // 10)
+        number_of_locations += max(0,  min((200-20)//2, (last_pos_location-20)//2) )
+        number_of_locations += max(0,  (last_pos_location - 200) // 10)
 
         itempool += ["Nothing"] * (number_of_locations - len(itempool))
 

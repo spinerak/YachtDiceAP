@@ -30,7 +30,7 @@ def canReachScore(state: CollectionState, player, scoretarget: int, options):
         F2 = 0.85
 
 
-    factor = F1 * F2 * F3
+    factor = F1 * min(1, F2 * F3)
 
     max_score = 0
     if state.has("Category Choice", player, 1):
@@ -98,7 +98,7 @@ def canReachScore(state: CollectionState, player, scoretarget: int, options):
     
     
     F1 = (1 + score_mult * (num_categories - 1) / 2)
-    factor = F1 * F2 * F3
+    factor = F1 * min(1, F2 * F3)
     
 
     return max_score * factor >= scoretarget
@@ -108,7 +108,7 @@ def canReachScore(state: CollectionState, player, scoretarget: int, options):
 # Sets rules on entrances and advancements that are always applied
 def set_rules(world: MultiWorld, player: int, options):
     for i in range(1, options.goal_score.value):
-        if i < 20 or (i < 100 and i % 2 == 0) or (i % 10 == 0):
+        if i < 20 or (i < 200 and i % 2 == 0) or (i % 10 == 0):
             set_rule(world.get_location(f"{i} score", player), lambda state, i=i, player=player: canReachScore(state, player, i, options))
     
 

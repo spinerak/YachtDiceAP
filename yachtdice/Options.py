@@ -33,7 +33,7 @@ class numberRollFragmentsPerRoll(Range):
 class goalScore(Range):
     """The score you need to get to beat the game!"""
     display_name = "Goal score"
-    range_start = 200
+    range_start = 300
     range_end = 500
     default = 500
 
@@ -41,9 +41,19 @@ class gameDifficulty(Range):
     """How difficult you want the game. Intended difficulty is 100. Smaller number makes it easier, larger number makes it harder.
     Note: a larger number means that the game MIGHT be more difficult. But it's not a given."""
     display_name = "Game difficulty"
-    range_start = 60
+    range_start = 80
     range_end = 150
     default = 100
+
+class whichStory(Range):
+    """The most important part of Yacht Dice is the narrative. 
+    Which story would you like to read?
+    1: The Quest of the Dice Warrior
+    2: The Tragedy of Fortuna's Gambit"""
+    display_name = "Which story"
+    range_start = 1
+    range_end = 2
+    default = 2
 
 
 yachtdice_options: typing.Dict[str, type(Option)] = {
@@ -52,5 +62,6 @@ yachtdice_options: typing.Dict[str, type(Option)] = {
     "number_of_dice_fragments_per_dice": numberDiceFragmentsPerDice,
     "number_of_roll_fragments_per_roll": numberRollFragmentsPerRoll,
     "goal_score": goalScore,
-    "game_difficulty": gameDifficulty
+    "game_difficulty": gameDifficulty,
+    "which_story": whichStory
 }
