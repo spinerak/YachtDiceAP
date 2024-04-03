@@ -84,12 +84,14 @@ class YachtDiceWorld(World):
         last_pos_location = self.options.goal_score.value 
         number_of_locations = min(20, last_pos_location)
         number_of_locations += max(0,  min((200-20)//2, (last_pos_location-20)//2) )
-        number_of_locations += max(0,  (last_pos_location - 200) // 10)
+        number_of_locations += max(0,  (last_pos_location-1 - 200) // 10)
 
-        itempool += ["Nothing"] * (number_of_locations - len(itempool))
+
+        itempool += ["Good RNG"] * (number_of_locations - len(itempool))
 
 
         itempool = [item for item in map(lambda name: self.create_item(name), itempool)]
+
         
         self.multiworld.push_precollected(self.create_item("Dice"))
         self.multiworld.push_precollected(self.create_item("Roll"))
@@ -99,9 +101,9 @@ class YachtDiceWorld(World):
         for item in itempool:
             self.multiworld.itempool += [item]
             
-        for item in self.item_name_to_id.keys():
-            if item == "Nothing":
-                self.multiworld.local_items[self.player].value.add(item)
+        # for item in self.item_name_to_id.keys():
+        #     if item == "Nothing":
+        #         self.multiworld.local_items[self.player].value.add(item)
             
 
     def set_rules(self):
