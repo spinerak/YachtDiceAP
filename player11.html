@@ -799,8 +799,11 @@
 
         // Listener function for category buttons
         function updateButtonValue(buttonId, score, needForHighScore, needForGoal) {
+            
             var button = document.getElementById(buttonId);
             if (!button.disabled) {
+                console.log("Debug colors", buttonId, score, needForHighScore, needForGoal);
+            
                 button.textContent = Math.floor(score * (1 + curScoreMult));
                 if (score >= needForGoal) {
                     button.style.backgroundColor = "#FFD700";
@@ -1148,7 +1151,7 @@
                 for (let i = 0; i < packet.items.length; i++) {
                     const item = packet.items[i]; // Get the current item
                     const itemName = client.items.name("Yacht Dice", item.item); // Get the name of the item
-                    if (itemName != "Nothing") {
+                    if (itemName != "Good RNG") {
                         items.push(itemName); // Add the item name to the 'items' array
                     }
                 }
