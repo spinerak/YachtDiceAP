@@ -41,7 +41,7 @@ item_table = {
     "Encouragement": ItemData(16871244200, False),
     "Fun Fact": ItemData(16871244201, False),
     "Story Chapter": ItemData(16871244202, False),
-    "Nothing": ItemData(16871244203, False)
+    "Good RNG": ItemData(16871244203, False)
 
 
 }

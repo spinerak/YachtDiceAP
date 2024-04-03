@@ -22,7 +22,7 @@ def ini_locations(goal_score, num_items):
     count = 0
     location_table = {}
     for i in list(range(1, goal_score)):
-        if i < 20 or (i < 100 and i % 2 == 0) or (i % 10 == 0):
+        if i < 20 or (i < 200 and i % 2 == 0) or (i % 10 == 0):
             location_table[f"{i} score"] = AdvData(starting_index+i, 'Board')
             count += 1
     return location_table

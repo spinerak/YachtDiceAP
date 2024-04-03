@@ -10,7 +10,7 @@ simulationCount = 0
 scores = []
 previousState = None
 
-GAMES_TO_PROGRESS = 100
+GAMES_TO_PROGRESS = 10
 ITERATIONS_PER_GANE_TO_PROGRESS = 5
 
 class Category:
@@ -18,34 +18,43 @@ class Category:
         self.name = name
 
     def maxScore(self, weights, nbDice, nbRolls):
+        if nbDice == 0 or nbRolls == 0:
+            return 0
         return max(weights[self.name, nbDice, nbRolls])
 
     def meanScore(self, weights, nbDice, nbRolls):
+        if nbDice == 0 or nbRolls == 0:
+            return 0
         meanScore = 0
         for key in weights[self.name, nbDice, nbRolls]:
             meanScore += key*weights[self.name, nbDice, nbRolls][key]/100000
         return meanScore
 
     def simulateRolls(self, nbDice, nbRolls):
+        if nbDice == 0 or nbRolls == 0:
+            return 0
         return \
             random.choices(list(weights[self.name, nbDice, nbRolls].keys()),
                            weights[self.name, nbDice, nbRolls].values(), k=1)[0]
 
 def canReachScore(state: CollectionState, player, scoretarget: int, options):
     global previousState
-    categories, number_of_rerolls, number_of_dice, score_mult = extractProgression(state, player, options)
-    diceSimulation(categories, number_of_rerolls, number_of_dice, score_mult)
     if False:
         if previousState is None:
+            categories, number_of_rerolls, number_of_dice, score_mult=extractProgression(state, player, options)
+            diceSimulation(categories, number_of_rerolls, number_of_dice, score_mult)
+        elif max(scores)<20 or max(scores)>500:
             categories, number_of_rerolls, number_of_dice, score_mult=extractProgression(state, player, options)
             diceSimulation(categories, number_of_rerolls, number_of_dice, score_mult)
         elif state != previousState:
             categories, number_of_rerolls, number_of_dice, score_mult=extractProgression(state, player, options)
             diceSimulation(categories, number_of_rerolls, number_of_dice, score_mult)
-        previousState = state
+
+    categories, number_of_rerolls, number_of_dice, score_mult=extractProgression(state, player, options)
+    diceSimulation(categories, number_of_rerolls, number_of_dice, score_mult)
+
     if scoretarget == 500:
         print(verifyAccessibility(scoretarget))
-        print(max(scores))
     return verifyAccessibility(scoretarget)
 
 def verifyAccessibility(score):
@@ -53,7 +62,6 @@ def verifyAccessibility(score):
     wins = len(list(filter(lambda s:s>=score, scores)))
     if wins == 0:
         return False
-    return max(scores)>score
     return len(scores)/wins <= GAMES_TO_PROGRESS
 
 def extractProgression(state, player, options):
@@ -105,10 +113,11 @@ def diceSimulation(categories, nbRolls, nbDice, multiplier):
     global weights
     global simulationCount
     global scores
+    random.seed(42)
 
     scores = []
 
-    categories.sort(key=lambda category: category.maxScore(weights, nbDice, nbRolls))
+    categories.sort(key=lambda category: category.meanScore(weights, nbDice, nbRolls))
     for i in range(GAMES_TO_PROGRESS * ITERATIONS_PER_GANE_TO_PROGRESS):
         total = 0
         for j in range(len(categories)):
@@ -116,7 +125,7 @@ def diceSimulation(categories, nbRolls, nbDice, multiplier):
             total += roll
         scores.append(total)
 
-    simulationCount += 250
+    simulationCount += GAMES_TO_PROGRESS * ITERATIONS_PER_GANE_TO_PROGRESS
 
 # Sets rules on entrances and advancements that are always applied
 def set_rules(world: MultiWorld, player: int, options):
@@ -127,8 +136,4 @@ def set_rules(world: MultiWorld, player: int, options):
 
 # Sets rules on completion condition
 def set_completion_rules(world: MultiWorld, player: int, options):
-    print("A")
-    if scores:
-        if max(scores) >500:
-            print("B")
     world.completion_condition[player] = lambda state: canReachScore(state, player, options.goal_score.value, options)
