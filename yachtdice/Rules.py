@@ -10,7 +10,7 @@ cache = {}
 count_cache = 0
 count_not_cache = 0
 
-ITERATIONS_PER_GANE_TO_PROGRESS = 5
+ITERATIONS_PER_GANE_TO_PROGRESS = 25
 
 class Category:
     def __init__(self, name):
