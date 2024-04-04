@@ -6,14 +6,14 @@ class numberOfExtraDice(Range):
     """Total number of extra dice you can add to your collection."""
     display_name = "Number of extra dice"
     range_start = 4
-    range_end = 6
+    range_end = 7
     default = 4
 
 class numberOfExtraRolls(Range):
     """Total number of extra rolls you can add to your collection."""
     display_name = "Number of extra rolls"
     range_start = 4
-    range_end = 6
+    range_end = 7
     default = 4
 
 class numberDiceFragmentsPerDice(Range):
@@ -38,12 +38,13 @@ class goalScore(Range):
     default = 500
 
 class gameDifficulty(Range):
-    """How difficult you want the game. Intended difficulty is 100. Smaller number makes it easier, larger number makes it harder.
+    """If you set the value of this setting to 5, it means that in order for a score to be in logic, a score must be reachable
+    at least 1 out of 5 games on average.
     Note: a larger number means that the game MIGHT be more difficult. But it's not a given."""
     display_name = "Game difficulty"
-    range_start = 80
-    range_end = 150
-    default = 100
+    range_start = 2
+    range_end = 200
+    default = 5
 
 class whichStory(Range):
     """The most important part of Yacht Dice is the narrative. 

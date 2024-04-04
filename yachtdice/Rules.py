@@ -10,7 +10,6 @@ cache = {}
 count_cache = 0
 count_not_cache = 0
 
-GAMES_TO_PROGRESS = 10
 ITERATIONS_PER_GANE_TO_PROGRESS = 5
 
 class Category:
@@ -50,19 +49,19 @@ def canReachScore(state: CollectionState, player, scoretarget: int, options):
         count_cache += 1
     else:
         [a1, a2, a3, a4] = extractProgression(state, player, options)
-        scores = diceSimulation([a1, a2, a3, a4])
+        scores = diceSimulation([a1, a2, a3, a4, options])
         state = [*sorted([a.name for a in a1]), a2, a3, a4]
         cache[tuple(state)] = scores
         count_not_cache += 1
 
-    return verifyAccessibility(scores, scoretarget)
+    return verifyAccessibility(scores, scoretarget, options)
 
-def verifyAccessibility(scores, score):
+def verifyAccessibility(scores, score, options):
     wins = len(list(filter(lambda s:s>=score, scores)))
     if wins == 0:
         return False
         
-    return len(scores)/wins <= GAMES_TO_PROGRESS
+    return len(scores)/wins <= options.game_difficulty.value
 
 def extractProgression(state, player, options):
     number_of_dice = state.count("Dice", player) + state.count("Dice Fragment", player) // options.number_of_dice_fragments_per_dice.value
@@ -110,7 +109,7 @@ def extractProgression(state, player, options):
     return [categories, number_of_rerolls, number_of_dice, score_mult]
     
 def diceSimulation(ST):
-    categories, nbRolls, nbDice, multiplier = ST
+    categories, nbRolls, nbDice, multiplier, options = ST
     global weights
     global simulationCount
     random.seed(42)
@@ -118,14 +117,14 @@ def diceSimulation(ST):
     scores = []
 
     categories.sort(key=lambda category: category.meanScore(weights, nbDice, nbRolls))
-    for i in range(GAMES_TO_PROGRESS * ITERATIONS_PER_GANE_TO_PROGRESS):
+    for i in range(options.game_difficulty.value * ITERATIONS_PER_GANE_TO_PROGRESS):
         total = 0
         for j in range(len(categories)):
             roll = round(categories[j].simulateRolls(nbDice, nbRolls) * (1 + j * multiplier))
             total += roll
         scores.append(total)
 
-    simulationCount += GAMES_TO_PROGRESS * ITERATIONS_PER_GANE_TO_PROGRESS
+    simulationCount += options.game_difficulty.value * ITERATIONS_PER_GANE_TO_PROGRESS
     return scores
 
 # Sets rules on entrances and advancements that are always applied
