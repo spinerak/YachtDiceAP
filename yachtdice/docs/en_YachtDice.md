@@ -1,4 +1,4 @@
-# Yacht Dice
+# Yacht Dice - version 0.2.0
 
 ## I still need to make this
 
