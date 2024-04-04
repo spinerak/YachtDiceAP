@@ -1,8 +1,8 @@
 from BaseClasses import Region, Entrance, Item, Tutorial, ItemClassification
 from .Items import YachtDiceItem, item_table
-from .Locations import YachtDiceLocation, all_locations, ini_locations
+from .Locations import YachtDiceLocation, all_locations, ini_locations, AdvData
 from .Options import yachtdice_options
-from .Rules import set_rules, set_completion_rules
+from .Rules import set_rules, set_completion_rules, diceSimulation, Category, setDifficulty
 from ..AutoWorld import World, WebWorld
 
 client_version = 345
@@ -18,6 +18,8 @@ class YachtDiceWorld(World):
     option_definitions = yachtdice_options
     # topology_present = True
     # web = ChecksFinderWeb()
+
+    
 
     item_name_to_id = {name: data.code for name, data in item_table.items()}
 
@@ -35,15 +37,17 @@ class YachtDiceWorld(World):
             'client_version': client_version,
             'race': self.multiworld.is_race,
         }
-
+    
 
     def create_items(self):
+
 
         numDiceF = self.options.number_of_extra_dice.value
         numRollsF = self.options.number_of_extra_rolls.value
 
         amDiceF = self.options.number_of_dice_fragments_per_dice.value
         amRollsF = self.options.number_of_roll_fragments_per_roll.value
+        
 
         # Generate item pool
         itempool = []
@@ -81,13 +85,13 @@ class YachtDiceWorld(World):
         itempool += ["Story Chapter"] * 10
 
         #count the number of locations in the game
-        last_pos_location = self.options.goal_score.value 
-        number_of_locations = min(20, last_pos_location)
-        number_of_locations += max(0,  min((200-20)//2, (last_pos_location-20)//2) )
-        number_of_locations += max(0,  (last_pos_location-1 - 200) // 10)
+        number_of_locations = 140
 
 
-        itempool += ["Good RNG"] * (number_of_locations - len(itempool))
+        import random
+
+        itempool += ["Good RNG" if random.random() < 0.5 else "Bad RNG" for _ in range(number_of_locations - len(itempool))]
+
 
 
         itempool = [item for item in map(lambda name: self.create_item(name), itempool)]
@@ -107,35 +111,96 @@ class YachtDiceWorld(World):
             
 
     def set_rules(self):
-        set_rules(self.multiworld, self.player, self.options)
-        set_completion_rules(self.multiworld, self.player, self.options)
+        global goal_score
+        set_rules(self.multiworld, self.player, self.options, goal_score)
+        set_completion_rules(self.multiworld, self.player, self.options, goal_score)
+
+    goal_score = -1
 
     def create_regions(self):
-        location_table = ini_locations(self.options.goal_score.value, 100)
+        global goal_score
+        print("START CREATE REGIONS")
+
+        categories = []
+
+        categories.append(Category("Choice"))
+        categories.append(Category("Choice")) #<- this is inverse choice :)
+        categories.append(Category("Sixes"))
+        categories.append(Category("Fives"))
+        categories.append(Category("TinyStraight"))
+        categories.append(Category("Threes"))
+        categories.append(Category("Fours"))
+        categories.append(Category("Pair"))
+        categories.append(Category("ThreeOfAKind"))
+        categories.append(Category("FourOfAKind"))
+        categories.append(Category("Ones"))
+        categories.append(Category("Twos"))
+        categories.append(Category("SmallStraight"))
+        categories.append(Category("LargeStraight"))
+        categories.append(Category("FullHouse"))
+        categories.append(Category("Yacht"))
+
+
+
+        scores_full_state = diceSimulation([categories, 
+                                           1 + self.options.number_of_extra_dice.value, 
+                                           1 + self.options.number_of_extra_rolls.value,
+                                           0.1])
+        
+        scores_full_state = sorted(scores_full_state)
+        goal_score = scores_full_state[self.options.game_difficulty.value-1]
+
+        print(f"GOAL SCORE {goal_score}")
+
+        location_table = ini_locations(goal_score, 140)
+
+        location_table[f'{goal_score} score'] = AdvData(id=16871244500+goal_score, region='Board')
+
+
 
         menu = Region("Menu", self.player, self.multiworld)
         board = Region("Board", self.player, self.multiworld)
 
 
-        board.locations += [YachtDiceLocation(self.player, loc_name, loc_data.id, board)
+        board.locations = [YachtDiceLocation(self.player, loc_name, loc_data.id, board)
                             for loc_name, loc_data in location_table.items() if loc_data.region == board.name]
+
+        
+        
+        board.locations[-1].place_locked_item(self.create_item("Victory"))
+
 
         connection = Entrance(self.player, "New Board", menu)
         menu.exits.append(connection)
         connection.connect(board)
         self.multiworld.regions += [menu, board]
 
+        setDifficulty(self.options.game_difficulty.value)
+
+
+
+
     def fill_slot_data(self):
+        global goal_score
+
         slot_data = self._get_yachtdice_data()
         for option_name in yachtdice_options:
             option = getattr(self.multiworld, option_name)[self.player]
             if slot_data.get(option_name, None) is None and type(option.value) in {str, int}:
                 slot_data[option_name] = int(option.value)
+        slot_data["goal_score"] = goal_score
         return slot_data
 
     def create_item(self, name: str) -> Item:
         item_data = item_table[name]
-        item = YachtDiceItem(name,
-                                ItemClassification.progression if item_data.progression else ItemClassification.filler,
-                                item_data.code, self.player)
+
+        if name == "Bad RNG":
+            item = YachtDiceItem(name,
+                        ItemClassification.trap,
+                        item_data.code, self.player)
+            ItemClassification.trap
+        else:
+            item = YachtDiceItem(name,
+                                    ItemClassification.progression if item_data.progression else ItemClassification.filler,
+                                    item_data.code, self.player)
         return item

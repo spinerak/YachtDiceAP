@@ -17,18 +17,32 @@ class YachtDiceLocation(Location):
 all_locations = {}
 starting_index = 16871244500
 
-def ini_locations(goal_score, num_items):
-    
-    count = 0
+def all_locations_fun(max_score):
     location_table = {}
-    for i in list(range(1, goal_score)):
-        if i < 20 or (i < 200 and i % 2 == 0) or (i % 10 == 0):
-            location_table[f"{i} score"] = AdvData(starting_index+i, 'Board')
-            count += 1
+    for i in range(max_score):
+        location_table[f"{i} score"] = AdvData(starting_index+i, 'Board')
+    return location_table
+
+def ini_locations(goal_score, num_locs):
+    
+    location_table = {}
+
+    curscore = 0
+    for i in range(num_locs):
+        if i < 20:
+            curscore += 1
+        elif i < 110:
+            curscore += 2
+        else:
+            curscore = int(200 + (i-109) / (num_locs-109) * (goal_score - 200)) 
+            
+        location_table[f"{curscore} score"] = AdvData(starting_index+curscore, 'Board')
+
+    print(f"Number of locations {len(location_table)}")
     return location_table
 
 
-all_locations = ini_locations(1000, 1000)
+all_locations = all_locations_fun(1000)
 
 
     

@@ -30,21 +30,27 @@ class numberRollFragmentsPerRoll(Range):
     range_end = 6
     default = 4
 
-class goalScore(Range):
-    """The score you need to get to beat the game!"""
-    display_name = "Goal score"
-    range_start = 300
-    range_end = 500
-    default = 500
 
 class gameDifficulty(Range):
-    """If you set the value of this setting to 5, it means that in order for a score to be in logic, a score must be reachable
-    at least 1 out of 5 games on average.
-    Note: a larger number means that the game MIGHT be more difficult. But it's not a given."""
+    """Difficulty. Higher is harder. Percentage of games that fail."""
     display_name = "Game difficulty"
-    range_start = 2
-    range_end = 200
-    default = 5
+    range_start = 1
+    range_end = 100
+    default = 85
+    
+# class startingLoadOut(Choice):
+#     """
+#     With which item you start the game.
+#     Options are:
+#     -Default: start with one Dice, one Roll, and Categories Choice and Inverse Choice.
+#     -TWO: start with two Dice, two Rolls, and the Category Twos.
+#     """
+#     display_name = "Starting items"
+
+#     option_default = 0
+#     option_two = 1
+
+#     default = 0
 
 class whichStory(Range):
     """The most important part of Yacht Dice is the narrative. 
@@ -62,7 +68,7 @@ yachtdice_options: typing.Dict[str, type(Option)] = {
     "number_of_extra_rolls": numberOfExtraRolls,
     "number_of_dice_fragments_per_dice": numberDiceFragmentsPerDice,
     "number_of_roll_fragments_per_roll": numberRollFragmentsPerRoll,
-    "goal_score": goalScore,
     "game_difficulty": gameDifficulty,
+    # "starting_loadout": startingLoadOut,
     "which_story": whichStory
 }

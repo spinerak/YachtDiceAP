@@ -13,7 +13,10 @@ class YachtDiceItem(Item):
 
 
 starting_index = 16871244000
+
 item_table = {
+    "Victory": ItemData(16871244000-1, True),
+
     "Dice": ItemData(16871244000, True),
     "Dice Fragment": ItemData(16871244001, True),
     "Roll": ItemData(16871244002, True),
@@ -41,10 +44,11 @@ item_table = {
     "Encouragement": ItemData(16871244200, False),
     "Fun Fact": ItemData(16871244201, False),
     "Story Chapter": ItemData(16871244202, False),
-    "Good RNG": ItemData(16871244203, False)
+    "Good RNG": ItemData(16871244203, False),
+    "Bad RNG": ItemData(16871244204, False)
 
 
 }
 
 
-lookup_id_to_name: typing.Dict[int, str] = {data.code: item_name for item_name, data in item_table.items() if data.code}
+#lookup_id_to_name: typing.Dict[int, str] = {data.code: item_name for item_name, data in item_table.items() if data.code}
