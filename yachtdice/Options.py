@@ -56,6 +56,16 @@ class whichStory(Range):
     range_end = 2
     default = 2
 
+class whichStory(Range):
+    """The most important part of Yacht Dice is the narrative. 
+    Which story would you like to read?
+    1: The Quest of the Dice Warrior
+    2: The Tragedy of Fortuna's Gambit"""
+    display_name = "Which story"
+    range_start = 1
+    range_end = 2
+    default = 2
+
 
 yachtdice_options: typing.Dict[str, type(Option)] = {
     "number_of_extra_dice": numberOfExtraDice,
