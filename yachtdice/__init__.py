@@ -41,6 +41,8 @@ class YachtDiceWorld(World):
 
     def create_items(self):
 
+        print(f"For Yacht Dice debug purposes: here's the options {self.options} for player {self.player}\n\n")
+
 
         numDiceF = self.options.number_of_extra_dice.value
         numRollsF = self.options.number_of_extra_rolls.value
@@ -111,15 +113,12 @@ class YachtDiceWorld(World):
             
 
     def set_rules(self):
-        global goal_score
-        set_rules(self.multiworld, self.player, self.options, goal_score)
-        set_completion_rules(self.multiworld, self.player, self.options, goal_score)
+        set_rules(self.multiworld, self.player, self.options, self.goal_score)
+        set_completion_rules(self.multiworld, self.player, self.options, self.goal_score)
 
     goal_score = -1
 
     def create_regions(self):
-        global goal_score
-        print("START CREATE REGIONS")
 
         categories = []
 
@@ -148,13 +147,18 @@ class YachtDiceWorld(World):
                                            0.1])
         
         scores_full_state = sorted(scores_full_state)
-        goal_score = scores_full_state[self.options.game_difficulty.value-1]
+        print(f"Here's the simulation results: {scores_full_state}")
+        dif = self.options.game_difficulty.value
+        self.goal_score = scores_full_state[int(max(0,100-(100-dif)*1.2))]
 
-        print(f"GOAL SCORE {goal_score}")
+        if self.options.game_difficulty.value < 50:
+            self.goal_score = int(self.goal_score * (1 - (50-self.options.game_difficulty.value)/100))
 
-        location_table = ini_locations(goal_score, 140)
+        print(f"Yacht dice debug: goal score for player {self.player} is {self.goal_score} and difficulty {self.options.game_difficulty.value}")
 
-        location_table[f'{goal_score} score'] = AdvData(id=16871244500+goal_score, region='Board')
+        location_table = ini_locations(self.goal_score, 140)
+
+        location_table[f'{self.goal_score} score'] = AdvData(id=16871244500+self.goal_score, region='Board')
 
 
 
@@ -181,14 +185,13 @@ class YachtDiceWorld(World):
 
 
     def fill_slot_data(self):
-        global goal_score
 
         slot_data = self._get_yachtdice_data()
         for option_name in yachtdice_options:
             option = getattr(self.multiworld, option_name)[self.player]
             if slot_data.get(option_name, None) is None and type(option.value) in {str, int}:
                 slot_data[option_name] = int(option.value)
-        slot_data["goal_score"] = goal_score
+        slot_data["goal_score"] = self.goal_score
         return slot_data
 
     def create_item(self, name: str) -> Item:

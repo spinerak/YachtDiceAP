@@ -7,7 +7,7 @@ from .YachtWeights import yacht_weights
 
 
 
-PERCENTAGE_REQUIRED = 10100
+PERCENTAGE_REQUIRED = 10100 #temporary value that gets overwritten
 ITERATIONS_PER_GAME = 100
 
 class Category:
@@ -42,6 +42,8 @@ cache = {}
 # count_cache = 0
 # count_not_cache = 0
 def canReachScore(state: CollectionState, player, scoretarget: int, options):
+    if scoretarget < 10:
+        return True
     # global count_cache
     # global count_not_cache
 

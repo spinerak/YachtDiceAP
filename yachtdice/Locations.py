@@ -38,7 +38,6 @@ def ini_locations(goal_score, num_locs):
             
         location_table[f"{curscore} score"] = AdvData(starting_index+curscore, 'Board')
 
-    print(f"Number of locations {len(location_table)}")
     return location_table
 
 
