@@ -7,8 +7,7 @@ from .YachtWeights import yacht_weights
 
 
 
-PERCENTAGE_REQUIRED = 10100 #temporary value that gets overwritten
-ITERATIONS_PER_GAME = 100
+
 
 class Category:
     def __init__(self, name):
@@ -34,15 +33,14 @@ class Category:
             random.choices(list(yacht_weights[self.name, nbDice, nbRolls].keys()),
                            yacht_weights[self.name, nbDice, nbRolls].values(), k=1)[0]
 
-def setDifficulty(num):
-    global PERCENTAGE_REQUIRED
-    PERCENTAGE_REQUIRED = 100 - num
+
+
 
 cache = {}
 # count_cache = 0
 # count_not_cache = 0
-def canReachScore(state: CollectionState, player, scoretarget: int, options):
-    if scoretarget < 10:
+def canReachScore(state: CollectionState, player, scoretarget: int, options, seed, it_game, perc_req):
+    if scoretarget <= 10:
         return True
     # global count_cache
     # global count_not_cache
@@ -50,6 +48,7 @@ def canReachScore(state: CollectionState, player, scoretarget: int, options):
     [c, r, d, m] = extractProgression(state, player, options)
     thisState = [*sorted([a.name for a in c]), r, d, m]
 
+    
 
     if tuple(thisState) in cache.keys():
         # index = list(cache.keys()).index(tuple(thisState))
@@ -60,7 +59,7 @@ def canReachScore(state: CollectionState, player, scoretarget: int, options):
         # print(f"{count_cache} {count_not_cache}")
     else:
         [a1, a2, a3, a4] = extractProgression(state, player, options)
-        scores = diceSimulation([a1, a2, a3, a4])
+        scores = diceSimulation(seed, [a1, a2, a3, a4], it_game)
         state = [*sorted([a.name for a in a1]), a2, a3, a4]
         cache[tuple(state)] = scores
         # count_not_cache += 1
@@ -68,17 +67,22 @@ def canReachScore(state: CollectionState, player, scoretarget: int, options):
     
     # if scoretarget == 500:
     #     print(verifyAccessibility(scoretarget))
-    return verifyAccessibility(scores, scoretarget)
+    return verifyAccessibility(scores, scoretarget, it_game, perc_req)
 
-def verifyAccessibility(scores, score):
-    global PERCENTAGE_REQUIRED
+def verifyAccessibility(scores, score, it_game, perc_req):
+    
+    P = perc_req
+    if score < 50:
+        P = min(P,2)
+    elif score < 100:
+        P = min(P,6)
 
     wins = len(list(filter(lambda s:s>=score, scores)))
     if wins == 0:
         return False
         
 
-    return wins / ITERATIONS_PER_GAME >= PERCENTAGE_REQUIRED / 100
+    return wins / it_game >= P / 100
 
 def extractProgression(state, player, options):
     number_of_dice = state.count("Dice", player) + state.count("Dice Fragment", player) // options.number_of_dice_fragments_per_dice.value
@@ -123,17 +127,17 @@ def extractProgression(state, player, options):
     if state.has("Category Yacht", player, 1):
         categories.append(Category("Yacht"))
 
-    return [categories, number_of_rerolls, number_of_dice, score_mult]
+    return [categories, number_of_dice, number_of_rerolls, score_mult]
     
-def diceSimulation(ST):
-    categories, nbRolls, nbDice, multiplier = ST
+def diceSimulation(seed, ST, it_game):
+    categories, nbDice, nbRolls, multiplier = ST
     
     random.seed(42)
 
     scores = []
 
     categories.sort(key=lambda category: category.meanScore(nbDice, nbRolls))
-    for i in range(ITERATIONS_PER_GAME):
+    for i in range(it_game):
         total = 0
         for j in range(len(categories)):
             roll = int(categories[j].simulateRolls(nbDice, nbRolls) * (1 + j * multiplier))
@@ -143,7 +147,7 @@ def diceSimulation(ST):
     return scores
 
 # Sets rules on entrances and advancements that are always applied
-def set_rules(world: MultiWorld, player: int, options, goal_score):
+def set_rules(world: MultiWorld, player: int, options, goal_score, seed, it_game, perc_req):
 
     num_locs = 140
 
@@ -162,15 +166,15 @@ def set_rules(world: MultiWorld, player: int, options, goal_score):
                  lambda state, 
                  curscore=curscore, 
                  player=player: 
-                 canReachScore(state, player, curscore, options))
+                 canReachScore(state, player, curscore, options, seed, it_game, perc_req))
     
     set_rule(world.get_location(f"{goal_score} score", player), 
                  lambda state,
                  player=player: 
-                 canReachScore(state, player, goal_score, options))
+                 canReachScore(state, player, goal_score, options, seed, it_game, perc_req))
 
     
 
 # Sets rules on completion condition
-def set_completion_rules(world: MultiWorld, player: int, options, goal_score):
+def set_completion_rules(world: MultiWorld, player: int):
     world.completion_condition[player] = lambda state: state.has("Victory", player)

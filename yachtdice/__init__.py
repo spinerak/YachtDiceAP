@@ -2,7 +2,7 @@ from BaseClasses import Region, Entrance, Item, Tutorial, ItemClassification
 from .Items import YachtDiceItem, item_table
 from .Locations import YachtDiceLocation, all_locations, ini_locations, AdvData
 from .Options import yachtdice_options
-from .Rules import set_rules, set_completion_rules, diceSimulation, Category, setDifficulty
+from .Rules import set_rules, set_completion_rules, diceSimulation, Category
 from ..AutoWorld import World, WebWorld
 
 client_version = 345
@@ -19,6 +19,9 @@ class YachtDiceWorld(World):
     # topology_present = True
     # web = ChecksFinderWeb()
 
+    
+    PERCENTAGE_REQUIRED = 100000
+    NUMBER_OF_ITERATIONS = 100
     
 
     item_name_to_id = {name: data.code for name, data in item_table.items()}
@@ -41,7 +44,7 @@ class YachtDiceWorld(World):
 
     def create_items(self):
 
-        print(f"For Yacht Dice debug purposes: here's the options {self.options} for player {self.player}\n\n")
+        # print(f"For Yacht Dice debug purposes: here's the options {self.options} for player {self.player}\n\n")
 
 
         numDiceF = self.options.number_of_extra_dice.value
@@ -113,12 +116,19 @@ class YachtDiceWorld(World):
             
 
     def set_rules(self):
-        set_rules(self.multiworld, self.player, self.options, self.goal_score)
-        set_completion_rules(self.multiworld, self.player, self.options, self.goal_score)
+        seed = 42
+        if (self.multiworld.seed_name).isdigit():  # Check if seed_name contains only digits
+            seed = int(self.multiworld.seed_name) % 1000
+        set_rules(self.multiworld, self.player, self.options, self.goal_score, seed, self.NUMBER_OF_ITERATIONS, self.PERCENTAGE_REQUIRED)
+        set_completion_rules(self.multiworld, self.player)
 
     goal_score = -1
 
     def create_regions(self):
+
+        seed = 42
+        if (self.multiworld.seed_name).isdigit():  # Check if seed_name contains only digits
+            seed = int(self.multiworld.seed_name) % 1000
 
         categories = []
 
@@ -141,20 +151,39 @@ class YachtDiceWorld(World):
 
 
 
-        scores_full_state = diceSimulation([categories, 
-                                           1 + self.options.number_of_extra_dice.value, 
-                                           1 + self.options.number_of_extra_rolls.value,
-                                           0.1])
+
         
+        
+
+
+        game_difficulty = self.options.game_difficulty.value
+
+        dif = 50
+        if game_difficulty == 1:
+            dif = 54
+        elif game_difficulty == 2:
+            dif = 73
+        elif game_difficulty == 3:
+            dif = 95
+        elif game_difficulty == 4:
+            dif = 99
+            self.NUMBER_OF_ITERATIONS = 1000
+
+        self.PERCENTAGE_REQUIRED = 100 - dif
+
+        scores_full_state = diceSimulation(seed, [categories, 
+                                    1 + self.options.number_of_extra_dice.value, 
+                                    1 + self.options.number_of_extra_rolls.value,
+                                    0.1],  self.NUMBER_OF_ITERATIONS)
         scores_full_state = sorted(scores_full_state)
-        print(f"Here's the simulation results: {scores_full_state}")
-        dif = self.options.game_difficulty.value
-        self.goal_score = scores_full_state[int(max(0,100-(100-dif)*1.2))]
+        ind = max(0, min(len(scores_full_state)-1, int((dif-5) / 100 * len(scores_full_state))))
+        self.goal_score = scores_full_state[ind]
 
-        if self.options.game_difficulty.value < 50:
-            self.goal_score = int(self.goal_score * (1 - (50-self.options.game_difficulty.value)/100))
+        if dif < 60:
+            self.goal_score = min(self.goal_score, 700)
 
-        print(f"Yacht dice debug: goal score for player {self.player} is {self.goal_score} and difficulty {self.options.game_difficulty.value}")
+
+        # print(f"Yacht dice debug: goal score for player {self.player} is {self.goal_score} and difficulty {dif}")
 
         location_table = ini_locations(self.goal_score, 140)
 
@@ -179,7 +208,7 @@ class YachtDiceWorld(World):
         connection.connect(board)
         self.multiworld.regions += [menu, board]
 
-        setDifficulty(self.options.game_difficulty.value)
+        self.ITERATIONS_PER_GAME = 100 - dif
 
 
 

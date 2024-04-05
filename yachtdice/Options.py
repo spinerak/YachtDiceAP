@@ -12,7 +12,7 @@ class numberOfExtraDice(Range):
 class numberOfExtraRolls(Range):
     """Total number of extra rolls you can add to your collection."""
     display_name = "Number of extra rolls"
-    range_start = 4
+    range_start = 1
     range_end = 7
     default = 4
 
@@ -31,12 +31,21 @@ class numberRollFragmentsPerRoll(Range):
     default = 4
 
 
-class gameDifficulty(Range):
-    """Difficulty. Higher is harder. Percentage of games that fail."""
+class gameDifficulty(Choice):
+    """
+    Difficulty. This setting determines what scores you should be able to achieve given your current items.
+    Easy: for beginners. No luck required, just roll the dice and have fun.
+    Medium: intended difficulty. If you play smart, you'll finish the game without any trouble.
+    Hard: you will need to play smart and have a bit of luck as well. Make sure you understand the score multiplier mechanic!
+    Extreme: you will need to play smart, and possibly need a lot of luck.
+    """
     display_name = "Game difficulty"
-    range_start = 1
-    range_end = 100
-    default = 85
+    option_easy = 1
+    option_medium = 2
+    option_hard = 3
+    option_extreme = 4
+    
+    default = 2
     
 # class startingLoadOut(Choice):
 #     """
