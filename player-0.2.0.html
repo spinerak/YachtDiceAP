@@ -1289,8 +1289,11 @@
         }
 
         function updateHighscoreAndGoal() {
-
-            document.getElementById("nextgoal").innerText = nextgoal;
+            if(nextgoal == 100000000){
+                document.getElementById("nextgoal").innerText = "None!";
+            }else{
+                document.getElementById("nextgoal").innerText = nextgoal;
+            }
             document.getElementById("highestsubmitted").innerText = highestsubmitted;
         }
 
