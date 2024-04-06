@@ -29,12 +29,12 @@ def ini_locations(goal_score, num_locs):
 
     curscore = 0
     for i in range(num_locs):
-        if i < 20:
+        if i < 30:
             curscore += 1
-        elif i < 110:
+        elif i < 115:
             curscore += 2
         else:
-            curscore = int(200 + (i-109) / (num_locs-109) * (goal_score - 200)) 
+            curscore = int(200 + (i-114) / (num_locs-114) * (goal_score - 200)) 
             
         location_table[f"{curscore} score"] = AdvData(starting_index+curscore, 'Board')
 

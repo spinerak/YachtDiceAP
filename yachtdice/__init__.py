@@ -2,7 +2,7 @@ from BaseClasses import Region, Entrance, Item, Tutorial, ItemClassification
 from .Items import YachtDiceItem, item_table
 from .Locations import YachtDiceLocation, all_locations, ini_locations, AdvData
 from .Options import yachtdice_options
-from .Rules import set_rules, set_completion_rules, diceSimulation, Category
+from .Rules import set_rules, set_completion_rules, diceSimulationStrings, Category
 from ..AutoWorld import World, WebWorld
 
 client_version = 345
@@ -30,6 +30,8 @@ class YachtDiceWorld(World):
     location_name_to_id = {name: data.id for name, data in all_locations.items()}
 
     data_version = 4
+
+    
 
     def _get_yachtdice_data(self):
         return {
@@ -119,7 +121,7 @@ class YachtDiceWorld(World):
         seed = 42
         if (self.multiworld.seed_name).isdigit():  # Check if seed_name contains only digits
             seed = int(self.multiworld.seed_name) % 1000
-        set_rules(self.multiworld, self.player, self.options, self.goal_score, seed, self.NUMBER_OF_ITERATIONS, self.PERCENTAGE_REQUIRED)
+        set_rules(self.multiworld, self.player, self.options, self.goal_score, self.PERCENTAGE_REQUIRED)
         set_completion_rules(self.multiworld, self.player)
 
     goal_score = -1
@@ -167,23 +169,19 @@ class YachtDiceWorld(World):
             dif = 95
         elif game_difficulty == 4:
             dif = 99
-            self.NUMBER_OF_ITERATIONS = 1000
 
-        self.PERCENTAGE_REQUIRED = 100 - dif
+        self.PERCENTAGE_REQUIRED = dif
 
-        scores_full_state = diceSimulation(seed, [categories, 
-                                    1 + self.options.number_of_extra_dice.value, 
-                                    1 + self.options.number_of_extra_rolls.value,
-                                    0.1],  self.NUMBER_OF_ITERATIONS)
-        scores_full_state = sorted(scores_full_state)
-        ind = max(0, min(len(scores_full_state)-1, int((dif-5) / 100 * len(scores_full_state))))
-        self.goal_score = scores_full_state[ind]
-
-        if dif < 60:
-            self.goal_score = min(self.goal_score, 700)
+        self.goal_score = diceSimulationStrings(categories, 
+                                                  1 + self.options.number_of_extra_dice.value, 
+                                                  1 + self.options.number_of_extra_rolls.value, 
+                                                  0.1, 
+                                                  dif)
+        
 
 
-        # print(f"Yacht dice debug: goal score for player {self.player} is {self.goal_score} and difficulty {dif}")
+
+        print(f"Yacht dice debug: goal score for player {self.player} is {self.goal_score} and difficulty {dif}\noptions {self.options}")
 
         location_table = ini_locations(self.goal_score, 140)
 

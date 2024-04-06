@@ -26,63 +26,7 @@ class Category:
             meanScore += key*yacht_weights[self.name, nbDice, nbRolls][key]/100000
         return meanScore
 
-    def simulateRolls(self, nbDice, nbRolls):
-        if nbDice == 0 or nbRolls == 0:
-            return 0
-        return \
-            random.choices(list(yacht_weights[self.name, nbDice, nbRolls].keys()),
-                           yacht_weights[self.name, nbDice, nbRolls].values(), k=1)[0]
 
-
-
-
-cache = {}
-# count_cache = 0
-# count_not_cache = 0
-def canReachScore(state: CollectionState, player, scoretarget: int, options, seed, it_game, perc_req):
-    if scoretarget <= 10:
-        return True
-    # global count_cache
-    # global count_not_cache
-
-    [c, r, d, m] = extractProgression(state, player, options)
-    thisState = [*sorted([a.name for a in c]), r, d, m]
-
-    
-
-    if tuple(thisState) in cache.keys():
-        # index = list(cache.keys()).index(tuple(thisState))
-        # print("Index:", index, "Total length of cache:", len(cache))
-
-        scores = cache[tuple(thisState)]
-        # count_cache += 1
-        # print(f"{count_cache} {count_not_cache}")
-    else:
-        [a1, a2, a3, a4] = extractProgression(state, player, options)
-        scores = diceSimulation(seed, [a1, a2, a3, a4], it_game)
-        state = [*sorted([a.name for a in a1]), a2, a3, a4]
-        cache[tuple(state)] = scores
-        # count_not_cache += 1
-        # print(f"{count_cache} {count_not_cache}")
-    
-    # if scoretarget == 500:
-    #     print(verifyAccessibility(scoretarget))
-    return verifyAccessibility(scores, scoretarget, it_game, perc_req)
-
-def verifyAccessibility(scores, score, it_game, perc_req):
-    
-    P = perc_req
-    if score < 50:
-        P = min(P,2)
-    elif score < 100:
-        P = min(P,6)
-
-    wins = len(list(filter(lambda s:s>=score, scores)))
-    if wins == 0:
-        return False
-        
-
-    return wins / it_game >= P / 100
 
 def extractProgression(state, player, options):
     number_of_dice = state.count("Dice", player) + state.count("Dice Fragment", player) // options.number_of_dice_fragments_per_dice.value
@@ -129,36 +73,78 @@ def extractProgression(state, player, options):
 
     return [categories, number_of_dice, number_of_rerolls, score_mult]
     
-def diceSimulation(seed, ST, it_game):
-    categories, nbDice, nbRolls, multiplier = ST
+
+cache = {}
+
+def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, perc):
+
+    tup = tuple([tuple(sorted([c.name for c in categories])), nbDice, nbRolls, multiplier, perc])
+
+    if tup in cache.keys():
+        return cache[tup]
     
-    random.seed(42)
-
-    scores = []
-
     categories.sort(key=lambda category: category.meanScore(nbDice, nbRolls))
-    for i in range(it_game):
-        total = 0
-        for j in range(len(categories)):
-            roll = int(categories[j].simulateRolls(nbDice, nbRolls) * (1 + j * multiplier))
-            total += roll
-        scores.append(total)
 
-    return scores
+    def add_distributions(dist1, dist2, mult):
+        combined_dist = {}
+        for val1, prob1 in dist1.items():
+            for val2, prob2 in dist2.items():
+                if int(val1 + val2 * mult) in combined_dist.keys():
+                    combined_dist[int(val1 + val2 * mult)] += prob1 * prob2
+                else:
+                    combined_dist[int(val1 + val2 * mult)] = prob1 * prob2
+        return combined_dist
+    
+    def percentile_distribution(dist, percentile):
+        sorted_values = sorted(dist.keys())
+        cumulative_prob = 0
+        prev_val = None
+        
+        for val in sorted_values:
+            prev_val = val
+            cumulative_prob += dist[val]
+            if cumulative_prob >= percentile:
+                return prev_val  # Return the value before reaching the desired percentile
+        return prev_val if prev_val is not None else sorted_values[0]  # Return the first value if percentile is lower than all probabilities
+
+            
+    def mean_distribution(dist):
+        total_mean = sum(val * prob for val, prob in dist.items())
+        return total_mean
+
+
+    total_dist = {0: 1}
+    for j in range(len(categories)):
+        dist = yacht_weights[categories[j].name, nbDice, nbRolls].copy()
+        for key in dist.keys():
+            dist[key] /= 100000
+        total_dist = add_distributions(total_dist, dist, 1 + j * multiplier )
+
+    #it's fine to put higher difficulty on earlier scores, you sometimes need this to get to certain scores.
+    perc = max(perc, 100 - mean_distribution(total_dist)//2) 
+
+    cache[tup] = percentile_distribution(total_dist, perc/100)
+    return cache[tup]
+
+def diceSimulation(state, player, options, perc):
+    categories, nbDice, nbRolls, multiplier = extractProgression(state, player, options)
+
+    return diceSimulationStrings(categories, nbDice, nbRolls, multiplier, perc)
+
 
 # Sets rules on entrances and advancements that are always applied
-def set_rules(world: MultiWorld, player: int, options, goal_score, seed, it_game, perc_req):
+def set_rules(world: MultiWorld, player: int, options, goal_score, perc_req):
 
     num_locs = 140
 
     curscore = 0
     for i in range(140):
-        if i < 20:
+        if i < 30:
             curscore += 1
-        elif i < 110:
+        elif i < 115:
             curscore += 2
         else:
-            curscore = int(200 + (i-109) / (num_locs-109) * (goal_score - 200)) 
+            curscore = int(200 + (i-114) / (num_locs-114) * (goal_score - 200)) 
 
 
 
@@ -166,12 +152,12 @@ def set_rules(world: MultiWorld, player: int, options, goal_score, seed, it_game
                  lambda state, 
                  curscore=curscore, 
                  player=player: 
-                 canReachScore(state, player, curscore, options, seed, it_game, perc_req))
+                 diceSimulation(state, player, options, perc_req) >= curscore)
     
     set_rule(world.get_location(f"{goal_score} score", player), 
                  lambda state,
                  player=player: 
-                 canReachScore(state, player, goal_score, options, seed, it_game, perc_req))
+                 diceSimulation(state, player, options, perc_req) >= curscore)
 
     
 
