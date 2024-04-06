@@ -300,7 +300,6 @@
         }
 
         function openCategories(cats) {
-            console.log(cats);
             // Loop through the list of categories
             cats.forEach(category => {
                 // Get the corresponding button element by ID
@@ -1163,9 +1162,9 @@
                 for (let i = 0; i < packet.items.length; i++) {
                     const item = packet.items[i]; // Get the current item
                     const itemName = client.items.name("Yacht Dice", item.item); // Get the name of the item
-                    if (itemName != "Good RNG" && itemName != "Bad RNG") {
-                        items.push(itemName); // Add the item name to the 'items' array
-                    }
+                    
+                    items.push(itemName); // Add the item name to the 'items' array
+                    
                 }
                 if (items.length > 0) {
                     addToLog("Received items: " + items);
