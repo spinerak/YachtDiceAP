@@ -55,6 +55,12 @@ class YachtDiceWorld(World):
         amDiceF = self.options.number_of_dice_fragments_per_dice.value
         amRollsF = self.options.number_of_roll_fragments_per_roll.value
         
+        extra_plando_items = 0
+        
+        for plando_setting in self.multiworld.plando_items[self.player]:
+            if plando_setting.get("from_pool", False) is False:
+                extra_plando_items += sum(value for value in plando_setting['items'].values())
+
 
         # Generate item pool
         itempool = []
@@ -86,18 +92,27 @@ class YachtDiceWorld(World):
         itempool += ["Category Large Straight"]
         itempool += ["Category Full House"]
         itempool += ["Category Yacht"]
-
-        itempool += ["Encouragement"] * 5
-        itempool += ["Fun Fact"] * 5
-        itempool += ["Story Chapter"] * 10
-
+        
         #count the number of locations in the game
         number_of_locations = 140
+        already_items = len(itempool) + extra_plando_items
+        
+        import sys
+        if already_items > number_of_locations:
+            sys.exit("In Yacht Dice, there are more items than locations.")
 
+        itempool += ["Story Chapter"] * min(number_of_locations - already_items, 10)
+        already_items = len(itempool) + extra_plando_items
+
+        itempool += ["Encouragement"] * min(number_of_locations - already_items, 5)
+        already_items = len(itempool) + extra_plando_items
+
+        itempool += ["Fun Fact"] * min(number_of_locations - already_items, 5)
+        already_items = len(itempool) + extra_plando_items
 
         import random
 
-        itempool += ["Good RNG" if random.random() < 0.5 else "Bad RNG" for _ in range(number_of_locations - len(itempool))]
+        itempool += ["Good RNG" if random.random() < 0.5 else "Bad RNG" for _ in range(number_of_locations - already_items)]
 
 
 
