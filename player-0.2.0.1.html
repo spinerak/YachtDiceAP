@@ -32,11 +32,22 @@
             padding: 20px;
         }
 
+        /* Table container styles */
         .table-container {
             overflow-y: auto;
-            max-height: calc(100vh - 40px);
-            /* Adjust for padding */
+            max-height: calc(100vh - 40px); /* Adjust for padding */
         }
+
+        /* Style for odd rows */
+        .table-container table tbody tr:nth-child(odd) {
+            background-color: #6a1a1a; /* Change to the color you desire */
+        }
+
+        /* Style for even rows */
+        .table-container table tbody tr:nth-child(even) {
+            background-color: #5a1a1a; /* Change to the slightly different color you desire */
+        }
+
 
         table {
             border-collapse: collapse;
