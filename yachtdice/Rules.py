@@ -35,7 +35,7 @@ def extractProgression(state, player, options):
 
     number_of_mults = state.count("Score Multiplier", player)
     score_mult = 0.02 *  number_of_mults
-
+   
     categories = []
 
     if state.has("Category Choice", player, 1):
@@ -76,9 +76,9 @@ def extractProgression(state, player, options):
 
 cache = {}
 
-def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, perc):
+def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff):
 
-    tup = tuple([tuple(sorted([c.name for c in categories])), nbDice, nbRolls, multiplier, perc])
+    tup = tuple([tuple(sorted([c.name for c in categories])), nbDice, nbRolls, multiplier])
 
     if tup in cache.keys():
         return cache[tup]
@@ -94,6 +94,27 @@ def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, perc):
                 else:
                     combined_dist[int(val1 + val2 * mult)] = prob1 * prob2
         return combined_dist
+    
+    def max_dist(dist1, times):
+        # Perform multiplication 'times' times
+        new_dist = {0: 1}
+        for _ in range(times):
+            c = new_dist.copy()
+            new_dist = {}
+            for val1, prob1 in c.items():
+                for val2, prob2 in dist1.items():
+                    new_val = max(val1, val2)
+                    new_prob = prob1 * prob2
+                    
+                    # Update the probability for the new value
+                    if new_val in new_dist:
+                        new_dist[new_val] += new_prob
+                    else:
+                        new_dist[new_val] = new_prob
+            
+        
+        return new_dist
+
     
     def percentile_distribution(dist, percentile):
         sorted_values = sorted(dist.keys())
@@ -118,46 +139,31 @@ def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, perc):
         dist = yacht_weights[categories[j].name, nbDice, nbRolls].copy()
         for key in dist.keys():
             dist[key] /= 100000
+            
+            
+        dist = max_dist(dist, max(1, len(categories) // (5 - diff)))
         total_dist = add_distributions(total_dist, dist, 1 + j * multiplier )
-
-    #it's fine to put higher difficulty on earlier scores, you sometimes need this to get to certain scores.
-    perc = max(perc, 100 - mean_distribution(total_dist)//2) 
-
-    cache[tup] = percentile_distribution(total_dist, perc/100)
+    
+    cache[tup] = percentile_distribution(total_dist, .50)
+    
     return cache[tup]
 
-def diceSimulation(state, player, options, perc):
+def diceSimulation(state, player, options, diff):
     categories, nbDice, nbRolls, multiplier = extractProgression(state, player, options)
 
-    return diceSimulationStrings(categories, nbDice, nbRolls, multiplier, perc)
+
+    return diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff)
 
 
 # Sets rules on entrances and advancements that are always applied
-def set_rules(world: MultiWorld, player: int, options, goal_score, perc_req):
-
-    num_locs = 140
-
-    curscore = 0
-    for i in range(140):
-        if i < 30:
-            curscore += 1
-        elif i < 115:
-            curscore += 2
-        else:
-            curscore = int(200 + (i-114) / (num_locs-114) * (goal_score - 200)) 
-
-
-
-        set_rule(world.get_location(f"{curscore} score", player), 
-                 lambda state, 
-                 curscore=curscore, 
-                 player=player: 
-                 diceSimulation(state, player, options, perc_req) >= curscore)
-    
-    set_rule(world.get_location(f"{goal_score} score", player), 
-                 lambda state,
-                 player=player: 
-                 diceSimulation(state, player, options, perc_req) >= curscore)
+def set_rules(world: MultiWorld, player: int, options, diff):
+    for i in world.regions:
+        for l in i.locations:
+            set_rule(l, 
+                        lambda state, 
+                        curscore=l.yacht_dice_score, 
+                        player=player: 
+                        diceSimulation(state, player, options, diff) >= curscore)
 
     
 

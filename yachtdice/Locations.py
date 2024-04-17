@@ -3,15 +3,17 @@ import typing
 
 
 class AdvData(typing.NamedTuple):
-    id: typing.Optional[int]
+    id: int
     region: str
+    score: int
 
 
 class YachtDiceLocation(Location):
     game: str = "Yacht Dice"
 
-    def __init__(self, player: int, name: str, address: typing.Optional[int], parent):
+    def __init__(self, player: int, name: str, score: int, address: typing.Optional[int], parent):
         super().__init__(player, name, address, parent)
+        self.yacht_dice_score = score
         self.event = not address
 
 all_locations = {}
@@ -20,24 +22,29 @@ starting_index = 16871244500
 def all_locations_fun(max_score):
     location_table = {}
     for i in range(max_score):
-        location_table[f"{i} score"] = AdvData(starting_index+i, 'Board')
+        location_table[f"{i} score"] = AdvData(starting_index+i, 'Board', i)
     return location_table
 
-def ini_locations(goal_score, num_locs):
+def ini_locations(max_score, num_locs, dif):
     
     location_table = {}
+    
+    scaling = 1.7 #parameter that determines how many low-score location there are.
+    if dif == 1:
+        scaling = 3 #need more low-score locations or lower difficulties
+    elif dif == 2:
+        scaling = 2
 
-    curscore = 0
+    hiscore = 0
     for i in range(num_locs):
-        if i < 30:
-            curscore += 1
-        elif i < 115:
-            curscore += 2
-        else:
-            curscore = int(200 + (i-114) / (num_locs-114) * (goal_score - 200)) 
-            
-        location_table[f"{curscore} score"] = AdvData(starting_index+curscore, 'Board')
-
+        perc = (i/num_locs)
+        curscore = int( 1 + (perc ** scaling) * (max_score-1) )
+        if(curscore <= hiscore):
+            curscore = hiscore + 1
+        hiscore = curscore
+        location_table[f"{curscore} score"] = AdvData(starting_index + curscore, 'Board', curscore)
+        
+    location_table[f'{max_score} score'] = AdvData(starting_index + max_score, 'Board', max_score)
     return location_table
 
 

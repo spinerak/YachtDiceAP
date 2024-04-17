@@ -3,41 +3,84 @@ from Options import Choice, Option, Toggle, Range
 
 
 class numberOfExtraDice(Range):
-    """Total number of extra dice you can add to your collection."""
+    """
+    Total number of *extra* dice you can add to your collection. 
+    You start with one dice already.
+    """
     display_name = "Number of extra dice"
     range_start = 4
-    range_end = 7
+    range_end = 5
     default = 4
 
-class numberOfExtraRolls(Range):
-    """Total number of extra rolls you can add to your collection."""
-    display_name = "Number of extra rolls"
-    range_start = 1
-    range_end = 7
-    default = 4
+# class numberOfExtraRolls(Range):
+#     """Total number of extra rolls you can add to your collection.
+#     Wait this is always 4? Yes, I removed other options, but they might return."""
+#     display_name = "Number of extra rolls"
+#     range_start = 4
+#     range_end = 4
+#     default = 4
 
 class numberDiceFragmentsPerDice(Range):
-    """Number of dice fragments you need for a new dice. Setting it to one will simply add 'Dice' items into the pool."""
+    """
+    Dice can be split into fragments, gathering enough will give you an extra dice. 
+    You start with one dice, and there will always be one full dice in the pool. 
+    The other dice are split into fragments, according to this setting. 
+    Setting this to 1 fragment per dice, just puts 'Dice' objects in the pool.
+    """
     display_name = "Number of dice fragments per dice"
     range_start = 1
-    range_end = 6
+    range_end = 5
     default = 4
+    
+    
 
 class numberRollFragmentsPerRoll(Range):
-    """Number of roll fragments you need for a new roll. Setting it to one will simply add 'Roll' items into the pool."""
+    """
+    Rolls can be split into fragments, gathering enough will give you an extra roll. 
+    You start with one roll, and there will always be one full roll in the pool. 
+    The other three rolls are split into fragments, according to this setting.
+    Setting this to 1 fragment per roll, just puts 'Roll' objects in the pool.
+    """
     display_name = "Number of roll fragments per roll"
     range_start = 1
-    range_end = 6
+    range_end = 5
     default = 4
+    
+
+class numberExtraDiceFragments(Range):
+    """
+    Number of extra dice fragments in the pool. 
+    The number cannot exceed the number of dice fragments per dice,
+    if it does, the generation will lower this setting automatically.
+    The option will never give an extra full dice, but makes it easier to collect all dice.
+    """
+    display_name = "Number of extra dice fragments in the pool"
+    range_start = 1
+    range_end = 4
+    default = 3
+    
+    
+
+class numberExtraRollFragments(Range):
+    """
+    Number of extra roll fragments in the pool. 
+    The number cannot exceed the number of roll fragments per roll
+    if it does, the generation will lower this setting automatically.
+    The option will never give an extra full roll, but makes it easier to collect all roll.
+    """
+    display_name = "Number of extra roll fragments in the pool"
+    range_start = 1
+    range_end = 4
+    default = 3
 
 
 class gameDifficulty(Choice):
     """
-    Difficulty. This setting determines what scores you should be able to achieve given your current items.
-    Easy: for beginners. No luck required, just roll the dice and have fun.
+    Difficulty. This setting determines how difficult the scores are to achieve. 
+    Easy: for beginners. No luck required, just roll the dice and have fun. Lower final goal.
     Medium: intended difficulty. If you play smart, you'll finish the game without any trouble.
-    Hard: you will need to play smart and have a bit of luck as well. Make sure you understand the score multiplier mechanic!
-    Extreme: you will need to play smart, and possibly need a lot of luck.
+    Hard: you may need to play smart, be lucky and understand the score multiplier mechanic. Higher final goal (depending on # extra dice)
+    Extreme: 'Hard', but much higher final goal (depending on # extra dice). NOT RECOMMENDED FOR MULTIWORLDS.
     """
     display_name = "Game difficulty"
     option_easy = 1
@@ -47,37 +90,66 @@ class gameDifficulty(Choice):
     
     default = 2
     
-# class startingLoadOut(Choice):
-#     """
-#     With which item you start the game.
-#     Options are:
-#     -Default: start with one Dice, one Roll, and Categories Choice and Inverse Choice.
-#     -TWO: start with two Dice, two Rolls, and the Category Twos.
-#     """
-#     display_name = "Starting items"
+    
+class goalLocationPercentage(Range):
+    """
+    What percentage of checks you need to get, to 'finish' the game.
+    Low percentage means you can probably 'finish' the game with some of the dice/rolls/categories.
+    High percentage means you probably need most of the usefull items, and on higher difficulties you might need them all.
+    """
+    display_name = "Goal percentage location"
+    range_start = 70
+    range_end = 100
+    default = 90
+    
+    
+class OracleOfSeasonsDefaultSeedType(Choice):
+    """
+    Determines which of the 5 seed types will be the "default seed type", which is given:
+    - when obtaining Seed Satchel
+    - when obtaining Slingshot
+    - by Horon Seed Tree
+    """
+    display_name = "Default Seed Type"
 
-#     option_default = 0
-#     option_two = 1
+    option_ember = 0
+    option_scent = 1
+    option_pegasus = 2
+    option_mystery = 3
+    option_gale = 4
 
-#     default = 0
+    default = 0
+    
+    
+    
+    
 
-class whichStory(Range):
-    """The most important part of Yacht Dice is the narrative. 
+class whichStory(Choice):
+    """
+    The most important part of Yacht Dice is the narrative. 
+    10 story chapters are shuffled into the item pool. 
+    You can read them in the feed on the website.
     Which story would you like to read?
-    1: The Quest of the Dice Warrior
-    2: The Tragedy of Fortuna's Gambit"""
-    display_name = "Which story"
-    range_start = 1
-    range_end = 2
-    default = 2
+    """
+    display_name = "Story"
+    option_the_quest_of_the_dice_warrior = 1
+    option_the_tragedy_of_fortunas_gambit = 2
+    option_the_dicey_animal_dice_game = 3
+    option_whispers_of_fate = 4
+    option_a_yacht_dice_odyssey = 5
+    option_a_rollin_rhyme_adventure = 6
+    option_random = -1
+    default = -1
 
 
 yachtdice_options: typing.Dict[str, type(Option)] = {
     "number_of_extra_dice": numberOfExtraDice,
-    "number_of_extra_rolls": numberOfExtraRolls,
+    # "number_of_extra_rolls": numberOfExtraRolls,
     "number_of_dice_fragments_per_dice": numberDiceFragmentsPerDice,
+    "number_of_extra_dice_fragments": numberExtraDiceFragments,
     "number_of_roll_fragments_per_roll": numberRollFragmentsPerRoll,
+    "number_of_extra_roll_fragments": numberExtraRollFragments,
     "game_difficulty": gameDifficulty,
-    # "starting_loadout": startingLoadOut,
+    "goal_location_percentage": goalLocationPercentage,
     "which_story": whichStory
 }
