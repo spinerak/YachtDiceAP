@@ -243,7 +243,7 @@
         <div class="button-and-text">
             <!-- Music button -->
             <button id="playButton" class="music-button" onclick="playPause()">&#9835;</button>
-            <audio id="audioPlayer" src="yacht_dice.mp3"></audio>
+            <!-- <audio id="audioPlayer" src="yacht_dice.mp3"></audio> -->
             <!-- Two lines of text -->
             <div>
                 <p class="login-description">Rollin' with Yacht Dice,</p>
@@ -311,19 +311,18 @@
 
 
         <div class="settings-container">
-            <label>Number of Dice:</label>
+            <label># Dice:</label>
             <label id="num-dice">?</label>
             <br>
-            <label>Number of Rolls:</label>
+            <label># Rolls:</label>
             <label id="max-Rolls">?</label>
             <br>
-            <label>Score multiplier:</label>
+            <label>Score mult.:</label>
             <label id="score-mult">?</label>
             <br>
             <label>Dice size:</label>
-            <br>
             <button id="decreaseDiceSize">-</button>
-            <input type="number" id="dice-size" value="70" min="10" max="200">
+            <!--<input type="number" id="dice-size" value="70" min="10" max="200">-->
             <button id="increaseDiceSize">+</button>
             <br>
             <button id="changeStyle">Change dice style</button>
@@ -331,7 +330,7 @@
             <input type="checkbox" id="alert_check">
             <label for="alert_check">Pop-up messages</label>
 
-            <div>
+            <div id="musicplayerdiv">
                 <audio id="musicPlayer" preload="none">
                     <!-- No src initially -->
                     Your browser does not support the audio element.
@@ -346,21 +345,18 @@
             </div>
         </div>
 
-        
-
-
-
-
-
-
-
-        <br>
-        <input type="text" id="diceValues" style="text-align: center;">
-        <br>
-        <br>
+        <input type="text" id="diceValues" style="display: none; text-align: center;">
         <textarea id="log" rows="10" cols="50" readonly
             style="width: 100%; height: 200px; resize: vertical; border: 1px solid #ccc; padding: 5px; background-color: #333; color: #fff; border-color: #666;"></textarea>
         <br>
+        <!-- Text field -->
+        <input type="text" id="messageInput" placeholder="">
+
+        <!-- Send button -->
+        <button id="chatBtn">Send chat</button>
+
+
+
     </div>
     <div class="right">
         <div class="table-container">
@@ -460,6 +456,10 @@
 
 
 <script>
+
+
+
+
     var musicPlayer = document.getElementById('musicPlayer');
     var volumeSlider = document.getElementById('volume');
     var playPauseButton = document.getElementById('playPauseButton');
@@ -476,6 +476,24 @@
     ];
 
     musicPlayer.src = tracks[0];
+
+    // Check if the audio file exists
+    var audioSrc = "yacht_dice.mp3";
+    // Replace with the path to your MP3 file
+    var audioCheck = new Audio();
+    audioCheck.src = audioSrc;
+
+    audioCheck.onerror = function() {
+        // If the audio file is not found, hide the button
+        document.getElementById("playButton").style.display = "none";
+        document.getElementById("musicplayerdiv").style.display = "none";
+        console.log("Didn't find the soundtrack mp3. That's fine :)")
+    }
+
+
+
+
+
 
 
     function playPause() {
@@ -537,12 +555,12 @@
         }
     }
 
-    // Add this event listener to reset the repeat button if nextTrack() is clicked
-    musicPlayer.addEventListener('ended', function() {
-        if (!isRepeatOn) {
-            toggleRepeat(); // Reset repeat button state
-        }
-    });
+    // // Add this event listener to reset the repeat button if nextTrack() is clicked
+    // musicPlayer.addEventListener('ended', function() {
+    //     if (!isRepeatOn) {
+    //         toggleRepeat(); // Reset repeat button state
+    //     }
+    // });
 
     // here is the shuffle button if I ever want to add it 🔀
 
@@ -561,10 +579,17 @@
     var messageCount = 0
     function addToLog(message, showalert = false) {
         var logTextarea = document.getElementById("log");
-        logTextarea.value = "[" + messageCount + "]    " + message + "\n" + logTextarea.value;
+        var isScrolledToBottom = logTextarea.scrollHeight - logTextarea.clientHeight <= logTextarea.scrollTop + 1;
+
+        
+        logTextarea.value = logTextarea.value + "\n[" + messageCount + "]    " + message;
         messageCount += 1;
         if (document.getElementById("alert_check").checked || showalert) {
             alert(message);
+        }
+
+        if (isScrolledToBottom) {
+            logTextarea.scrollTop = logTextarea.scrollHeight - logTextarea.clientHeight;
         }
     }
 
@@ -714,6 +739,38 @@
         }
     }
 
+    function sendChat(){
+        var messageInput = document.getElementById("messageInput");
+        var message = messageInput.value;
+
+        client.say(message);
+
+        if(message == 'manual'){
+            document.getElementById("diceValues").style.display = "inline-block";
+            document.getElementById("diceValues").style.textAlign = "center";
+        }
+
+        // Clear the text field after sending
+        messageInput.value = "";
+    }
+
+
+    document.getElementById('chatBtn').addEventListener('click', function(){
+        sendChat();
+    });
+
+
+    // Add event listener for key press
+    document.getElementById("messageInput").addEventListener("keypress", function(event) {
+        // Check if Enter key is pressed (key code 13)
+        if (event.keyCode === 13) {
+            // Call sendMessage() function
+            sendChat();
+        }
+    });
+
+
+
 
 
 
@@ -826,10 +883,13 @@
     // Adding event listener to the print button
     rollbutton.addEventListener('click', handleRollAction);
 
-    // Adding event listener to the spacebar key press
+    // Adding event listener to the spacebar key press and r key
     document.addEventListener('keydown', function (event) {
-        if (event.keyCode === 82 || event.key === 'r') { // Check if spacebar is pressed
-            handleRollAction(); // Call the function to handle roll action
+        // Check if the focused element is not the messageInput text box
+        if (document.activeElement !== document.getElementById("messageInput")) {
+            if (event.keyCode === 82 || event.key === 'r') { // Check if spacebar is pressed
+                handleRollAction(); // Call the function to handle roll action
+            }
         }
     });
 
@@ -955,8 +1015,10 @@
         // Adding event listener to the document for keyboard press
         document.addEventListener('keydown', function (event) {
             // Check if the pressed key corresponds to the value of i
-            if (event.key === String(i + 1)) {
-                handleKeepAction(`dice${i}`, i);
+            if (document.activeElement !== document.getElementById("messageInput")) {
+                if (event.key === String(i + 1)) {
+                    handleKeepAction(`dice${i}`, i);
+                }
             }
         });
 
@@ -985,7 +1047,7 @@
         } else if (diceSize > 200) {
             diceSize = 200;
         }
-        inputDiceSize.value = diceSize;
+        //inputDiceSize.value = diceSize;
         // rollDice(); // Re-roll the dice to apply the new size
     }
 
@@ -1424,7 +1486,7 @@
             game: "Yacht Dice", // Replace with the game name for this player.
             name: localStorage.getItem("name") || "Player1", // Default player name
             password: document.getElementById("password").value,
-            items_handling: 0b111,
+            items_handling: ITEMS_HANDLING_FLAGS.REMOTE_ALL // 0b111,
         };
 
 
@@ -1469,6 +1531,46 @@
             console.log("ReceivedItems packet: ", packet)
             newItems(packet)
         });
+        
+        client.addListener(SERVER_PACKET_TYPE.PRINT_JSON, (packet) => {
+            console.log("JSON ", packet)
+            const data = packet.data
+            let showtext = ""
+            for (let i = 0; i < data.length; i++) {
+                const type = data[i].type
+                let text = data[i].text; // Get the current item
+                if(type){
+                    if(type == 'player_id'){
+                        text = client.players.name(Number(text))
+                    }
+                    if(type == 'item_id'){
+                        text = client.items.name(client.players.game(Number(data[i].player)), Number(text))
+                        if(data[i].flags == 4){
+                            text += "?!?" //trap!
+                        }
+                        if(data[i].flags == 3){
+                            text += "" //???
+                        }
+                        if(data[i].flags == 2){
+                            text += "!" //useful
+                        }
+                        if(data[i].flags == 1){
+                            text += "!!" //progression
+                        }
+                        if(data[i].flags == 0){
+                            text += "..." //normal
+                        }
+                    }
+                    if(type == 'location_id'){
+                        text = client.locations.name(client.players.game(Number(data[i].player)), Number(text))
+                    }
+                }
+                showtext += text
+            }
+            addToLog(showtext)
+        });
+        
+
     }
 
 
@@ -1491,13 +1593,15 @@
             for (let i = 0; i < packet.items.length; i++) {
                 const item = packet.items[i]; // Get the current item
                 const itemName = client.items.name("Yacht Dice", item.item); // Get the name of the item
-                
+                const fromPlayerID = item.player;
+                const fromPlayerName = client.players.name(fromPlayerID);
+                //addToLog("Received " + itemName + " from "+ fromPlayerName);
                 items.push(itemName); // Add the item name to the 'items' array
                 
             }
-            if (items.length > 0) {
-                addToLog("Received items: " + items);
-            }
+            // if (items.length > 0) {
+            //     addToLog("Received items: " + items);
+            // }
             openCategories(items)
 
         } else {
@@ -1522,8 +1626,6 @@
     function updateSettings(packet) {
         amDiceF = packet.slot_data.number_of_dice_fragments_per_dice;
         amRollsF = packet.slot_data.number_of_roll_fragments_per_roll;
-        console.log("number_of_dice_fragments_per_dice: ", amDiceF);
-        console.log("number_of_roll_fragments_per_roll: ", amRollsF);
         finalgoal = packet.slot_data.goal_score;
         lastgoal = packet.slot_data.last_check_score;
 
@@ -1545,9 +1647,9 @@
 
     function updateRequiresValue(packet) {
         if (!packet.missing_locations) {
-            nextgoal = "-"
+            // do nothing
         } else if (packet.missing_locations.length === 0) {
-            nextgoal = 100000000
+            nextgoal = "-"
         } else {
             const firstMissingLocId = packet.missing_locations[0];
             nextgoal = firstMissingLocId - 16871244500
