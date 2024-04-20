@@ -1701,7 +1701,7 @@
             totalDist = addDistributions(totalDist, maxDistResult, 1 + j * multiplier);
         }
 
-        return percentileDistribution(totalDist, 0.4);
+        return Math.floor(percentileDistribution(totalDist, 0.4));
     }
 
     
