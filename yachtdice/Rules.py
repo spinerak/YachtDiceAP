@@ -3,6 +3,7 @@ from BaseClasses import MultiWorld, CollectionState
 from statistics import mean
 import random
 from .YachtWeights import yacht_weights
+import math
 
 
 
@@ -77,11 +78,27 @@ def extractProgression(state, player, options):
 cache = {}
 
 def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff):
+    
 
     tup = tuple([tuple(sorted([c.name for c in categories])), nbDice, nbRolls, multiplier])
+    
+    
+    
+    # tup = (('Choice', 'Choice', 
+    #         'Sixes', 'Fours',
+    #         'Yacht','LargeStraight', 
+    #         'Fives', 'FourOfAKind', 'Ones', 'SmallStraight'), 4, 3, 0.06)
 
     if tup in cache.keys():
         return cache[tup]
+    
+    # print(tup)
+    # categories = []
+    # for t in tup[0]:
+    #     categories.append(Category(t))
+    # nbDice = tup[1]
+    # nbRolls = tup[2]
+    # multiplier = tup[3]
     
     categories.sort(key=lambda category: category.meanScore(nbDice, nbRolls))
 
@@ -141,12 +158,39 @@ def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff):
             dist[key] /= 100000
             
             
-        dist = max_dist(dist, max(1, len(categories) // (5 - diff)))
+        dist = max_dist(dist, max(1, len(categories) // (6 - diff)))
+        # print(categories[j].name)
+        # print(dist)
+        # print()
         total_dist = add_distributions(total_dist, dist, 1 + j * multiplier )
     
-    cache[tup] = percentile_distribution(total_dist, .50)
+    cache[tup] = math.floor(percentile_distribution(total_dist, .40))
+    
+    # print(cache[tup])
+    # print()
     
     return cache[tup]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def diceSimulation(state, player, options, diff):
     categories, nbDice, nbRolls, multiplier = extractProgression(state, player, options)
@@ -156,17 +200,17 @@ def diceSimulation(state, player, options, diff):
 
 
 # Sets rules on entrances and advancements that are always applied
-def set_rules(world: MultiWorld, player: int, options, diff):
-    for i in world.regions:
-        for l in i.locations:
-            set_rule(l, 
-                        lambda state, 
-                        curscore=l.yacht_dice_score, 
-                        player=player: 
-                        diceSimulation(state, player, options, diff) >= curscore)
+def set_yacht_rules(world: MultiWorld, player: int, options, diff):
+        
+    for l in world.get_locations(player):
+        set_rule(l, 
+                    lambda state, 
+                    curscore=l.yacht_dice_score, 
+                    player=player: 
+                    diceSimulation(state, player, options, diff) >= curscore)
 
     
 
 # Sets rules on completion condition
-def set_completion_rules(world: MultiWorld, player: int):
+def set_yacht_completion_rules(world: MultiWorld, player: int):
     world.completion_condition[player] = lambda state: state.has("Victory", player)

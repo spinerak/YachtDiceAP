@@ -2,15 +2,18 @@ import typing
 from Options import Choice, Option, Toggle, Range
 
 
-class numberOfExtraDice(Range):
+class numberOfDiceAndRolls(Choice):
     """
-    Total number of *extra* dice you can add to your collection. 
-    You start with one dice already.
+    Total number of dice and rolls in the pool.
+    You start with one dice and one roll.
+    This option does not change the final goal.
     """
-    display_name = "Number of extra dice"
-    range_start = 4
-    range_end = 5
-    default = 4
+    display_name = "Number of dice and rolls in pool"
+    option_5_dice_and_5_rolls = 5
+    option_6_dice_and_4_rolls = 6
+    option_7_dice_and_3_rolls = 7
+    option_8_dice_and_2_rolls = 8
+    default = 5
 
 # class numberOfExtraRolls(Range):
 #     """Total number of extra rolls you can add to your collection.
@@ -143,7 +146,7 @@ class whichStory(Choice):
 
 
 yachtdice_options: typing.Dict[str, type(Option)] = {
-    "number_of_extra_dice": numberOfExtraDice,
+    "number_of_dice_and_rolls": numberOfDiceAndRolls,
     # "number_of_extra_rolls": numberOfExtraRolls,
     "number_of_dice_fragments_per_dice": numberDiceFragmentsPerDice,
     "number_of_extra_dice_fragments": numberExtraDiceFragments,

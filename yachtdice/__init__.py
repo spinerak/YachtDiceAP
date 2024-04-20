@@ -2,9 +2,11 @@ from BaseClasses import Region, Entrance, Item, Tutorial, ItemClassification
 from .Items import YachtDiceItem, item_table
 from .Locations import YachtDiceLocation, all_locations, ini_locations, AdvData
 from .Options import yachtdice_options
-from .Rules import set_rules, set_completion_rules, diceSimulationStrings, Category
+from .Rules import set_yacht_rules, set_yacht_completion_rules, diceSimulationStrings, Category
 from ..AutoWorld import World, WebWorld
 from Fill import FillError
+
+
 
 client_version = 345
 
@@ -49,8 +51,8 @@ class YachtDiceWorld(World):
         # print(f"For Yacht Dice debug purposes: here's the options {self.options} for player {self.player}\n\n")
 
 
-        numDiceF = self.options.number_of_extra_dice.value
-        numRollsF = 4 # self.options.number_of_extra_rolls.value
+        numDiceF = self.options.number_of_dice_and_rolls.value
+        numRollsF = 10 - numDiceF # self.options.number_of_extra_rolls.value
 
         amDiceF = self.options.number_of_dice_fragments_per_dice.value
         amRollsF = self.options.number_of_roll_fragments_per_roll.value
@@ -69,16 +71,16 @@ class YachtDiceWorld(World):
         itempool = []
                 
         if amDiceF == 1:
-            itempool += ["Dice"] * numDiceF
+            itempool += ["Dice"] * (numDiceF-1) #minus one because one is in start inventory
         else:
-            itempool += ["Dice"]
-            itempool += ["Dice Fragment"] * (amDiceF * (numDiceF-1) + exDiceF)
+            itempool += ["Dice"] #always add a full dice to make generation easier
+            itempool += ["Dice Fragment"] * (amDiceF * (numDiceF-2) + exDiceF)
 
         if amRollsF == 1:
-            itempool += ["Roll"] * numRollsF
+            itempool += ["Roll"] * (numRollsF-1) #minus one because one is in start inventory
         else:
-            itempool += ["Roll"]
-            itempool += ["Roll Fragment"] * (amRollsF * (numRollsF-1) + exRollsF)
+            itempool += ["Roll"] #always add a full roll to make generation easier
+            itempool += ["Roll Fragment"] * (amRollsF * (numRollsF-2) + exRollsF)
             
 
         itempool += ["Score Multiplier"] * 5
@@ -153,8 +155,8 @@ class YachtDiceWorld(World):
         seed = 42
         if (self.multiworld.seed_name).isdigit():  # Check if seed_name contains only digits
             seed = int(self.multiworld.seed_name) % 1000
-        set_rules(self.multiworld, self.player, self.options, self.options.game_difficulty.value)
-        set_completion_rules(self.multiworld, self.player)
+        set_yacht_rules(self.multiworld, self.player, self.options, self.options.game_difficulty.value)
+        set_yacht_completion_rules(self.multiworld, self.player)
 
     goal_score = -1
 
@@ -170,27 +172,14 @@ class YachtDiceWorld(World):
 
         max_score = 500
         
-        numDice = 1 + self.options.number_of_extra_dice.value
         if game_difficulty == 1:
-            if numDice == 5:
-                max_score = 400
-            if numDice == 6:
-                max_score = 450
+            max_score = 400
         elif game_difficulty == 2:
-            if numDice == 5:
-                max_score = 500
-            if numDice == 6:
-                max_score = 500
+            max_score = 500
         elif game_difficulty == 3:
-            if numDice == 5:
-                max_score = 650
-            if numDice == 6:
-                max_score = 700
+            max_score = 630
         elif game_difficulty == 4:
-            if numDice == 5:
-                max_score = 683
-            if numDice == 6:
-                max_score = 756
+            max_score = 683
 
         
         location_table = ini_locations(max_score, self.number_of_locations, game_difficulty)
@@ -229,8 +218,10 @@ class YachtDiceWorld(World):
 
 
     def pre_fill(self):
-        self.multiworld.local_early_items[self.player]["Dice"] = 1
-        self.multiworld.local_early_items[self.player]["Roll"] = 1
+        self.multiworld.early_items[self.player]["Dice"] = 1
+        self.multiworld.early_items[self.player]["Roll"] = 1
+        
+        
         
  
             
