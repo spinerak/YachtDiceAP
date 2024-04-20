@@ -82,8 +82,8 @@ class gameDifficulty(Choice):
     Difficulty. This setting determines how difficult the scores are to achieve. 
     Easy: for beginners. No luck required, just roll the dice and have fun. Lower final goal.
     Medium: intended difficulty. If you play smart, you'll finish the game without any trouble.
-    Hard: you may need to play smart, be lucky and understand the score multiplier mechanic. Higher final goal (depending on # extra dice)
-    Extreme: 'Hard', but much higher final goal (depending on # extra dice). NOT RECOMMENDED FOR MULTIWORLDS.
+    Hard: you may need to play smart, be lucky and understand the score multiplier mechanic. Higher final goal.
+    Extreme: more strict logic, higher final goal. NOT RECOMMENDED FOR MULTIWORLDS.
     """
     display_name = "Game difficulty"
     option_easy = 1

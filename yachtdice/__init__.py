@@ -5,7 +5,7 @@ from .Options import yachtdice_options
 from .Rules import set_yacht_rules, set_yacht_completion_rules, diceSimulationStrings, Category
 from ..AutoWorld import World, WebWorld
 from Fill import FillError
-
+import math
 
 
 client_version = 345
@@ -22,7 +22,7 @@ class YachtDiceWorld(World):
     # topology_present = True
     # web = ChecksFinderWeb()
 
-    number_of_locations = 100
+    number_of_locations = -146
     
     
 
@@ -47,7 +47,6 @@ class YachtDiceWorld(World):
     
 
     def create_items(self):
-
         # print(f"For Yacht Dice debug purposes: here's the options {self.options} for player {self.player}\n\n")
 
 
@@ -59,6 +58,7 @@ class YachtDiceWorld(World):
         
         exDiceF = max(0, min(amDiceF - 1, self.options.number_of_extra_dice_fragments.value) )
         exRollsF = max(0, min(amRollsF - 1, self.options.number_of_extra_roll_fragments.value) )
+        
         
         extra_plando_items = 0
         
@@ -107,7 +107,8 @@ class YachtDiceWorld(World):
         
         import sys
         if already_items > self.number_of_locations:
-            sys.exit("In Yacht Dice, there are more items than locations.")
+            sys.exit(f"In Yacht Dice, there are more items than locations. Items: {already_items}, locations: {self.number_of_locations}")
+            
 
         if(self.number_of_locations - already_items >= 10):
             itempool += ["Story Chapter"] * 10
@@ -159,8 +160,26 @@ class YachtDiceWorld(World):
         set_yacht_completion_rules(self.multiworld, self.player)
 
     goal_score = -1
+    
+    def generate_early(self):
+        numDiceF = self.options.number_of_dice_and_rolls.value
+        numRollsF = 10 - numDiceF # self.options.number_of_extra_rolls.value
+
+        amDiceF = self.options.number_of_dice_fragments_per_dice.value
+        amRollsF = self.options.number_of_roll_fragments_per_roll.value
+        
+        exDiceF = max(0, min(amDiceF - 1, self.options.number_of_extra_dice_fragments.value) )
+        exRollsF = max(0, min(amRollsF - 1, self.options.number_of_extra_roll_fragments.value) )
+        
+        self.number_of_locations = 1 + (numDiceF - 2) * amDiceF + exDiceF \
+                                    + 1 + (numRollsF - 2) * amRollsF + exRollsF \
+                                    + 5 \
+                                    + 16 \
+                                    + 5 #number of filler items needed for generations
+        self.number_of_locations = min(100, math.floor(self.number_of_locations * 1.7))
 
     def create_regions(self):
+        
    
 
         game_difficulty = self.options.game_difficulty.value
