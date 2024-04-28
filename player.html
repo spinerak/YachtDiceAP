@@ -908,7 +908,7 @@
 
     <script>
 
-
+        var canRoll = true;
 
 
         var musicPlayer = document.getElementById('musicPlayer');
@@ -1450,7 +1450,7 @@
             nextTurn();
             curScoreMult = 0
             updateParButtons();
-
+            canRoll = true;
         });
 
 
@@ -1535,15 +1535,16 @@
             }
         }
 
-
-
         // Function to handle roll action
         function handleRollAction() {
-            if (currentRolls < Math.floor(numRollsF / amRollsF)) {
-                rollDiceAnimation(); // Call the rollDiceAnimation function instead of directly changing faces
-                currentRolls++;
-                updateRollButton();
-                totalNumberRolls++;
+            if ((currentRolls < Math.floor(numRollsF / amRollsF))) {
+                if (canRoll) {
+                    canRoll = false;
+                    rollDiceAnimation(); // Call the rollDiceAnimation function instead of directly changing faces
+                    currentRolls++;
+                    updateRollButton();
+                    totalNumberRolls++;
+                }
             } else {
                 console.log("Maximum number of Rolls reached for this turn.");
             }
@@ -1842,13 +1843,14 @@
 
                             // Update the text field to display rolled values
                             document.getElementById('diceValues').value = diceValues
-                            updateButtonValues()
+                            updateButtonValues();
+                            canRoll = true;
                         }
 
                     }, animationDuration); // Stop after the specified duration
                 }, (i) * animationDelay);
 
-            }
+            };
         }
 
         // Add event listeners to each category button
