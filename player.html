@@ -20,7 +20,8 @@
         .container {
             display: none;
             height: 100vh;
-            overflow-y: auto; /* Enable vertical scrolling if content exceeds container height */
+            overflow-y: auto;
+            /* Enable vertical scrolling if content exceeds container height */
         }
 
         .left {
@@ -423,7 +424,7 @@
             /* Darker text color on hover */
         }
 
-                /* Container style for the image previews */
+        /* Container style for the image previews */
         .image-container {
             display: flex;
             align-items: center;
@@ -439,13 +440,16 @@
         /* Custom dropdown style */
         .custom-dropdown {
             position: relative;
-            display: inline-block;
+            display: flex;
             cursor: pointer;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #fff;
-            width: 120px; /* Adjust width as needed */
-            line-height: 1; /* Ensure single line height */
+            /* border: 1px solid #ccc; */
+            /* border-radius: 5px; */
+            /* background-color: #fff; */
+            width: 210px;
+            /* Adjust width as needed */
+            /* line-height: 1; */
+            /* Ensure single line height */
+            margin-left: 20px; /* Center horizontally */
         }
 
         /* Dropdown options style */
@@ -455,9 +459,12 @@
             top: 100%;
             left: 0;
             z-index: 1;
-            width: 100%; /* Adjust width to match dropdown button */
-            max-height: 200px; /* Add max-height for scroll if needed */
-            overflow-y: auto; /* Enable vertical scrolling if options exceed height */
+            width: 100%;
+            /* Adjust width to match dropdown button */
+            max-height: 200px;
+            /* Add max-height for scroll if needed */
+            overflow-y: auto;
+            /* Enable vertical scrolling if options exceed height */
             border: 1px solid #ccc;
             background-color: #fff;
             padding: 5px;
@@ -473,36 +480,58 @@
 
         /* Hover effect for skin options */
         .skin-option:hover {
-            background-color: #f0f0f0; /* Change background color on hover */
+            background-color: #f0f0f0;
+            /* Change background color on hover */
         }
 
         /* Dropdown label style */
         .dropdown-label {
             font-weight: bold;
             color: black;
-            margin-right: 5px; /* Add right margin for spacing */
-            line-height: 1; /* Ensure single line height */
+            margin-right: 5px;
+            /* Add right margin for spacing */
+            line-height: 1;
+            /* Ensure single line height */
         }
 
         #boatImage {
             position: fixed;
-            bottom: 0px; /* Adjust the starting position from the bottom */
-            left: 100%; /* Initially positioned outside the viewport on the right */
-            max-width: 100%; /* Set maximum width to 100% of the viewport width */
-            max-height: 100%; /* Allow height to adjust proportionally */
-            transition: left 10s linear; /* Transition for smooth horizontal movement */
-            animation: wobble 4s ease infinite alternate; /* Wobble animation */
+            bottom: 0px;
+            /* Adjust the starting position from the bottom */
+            left: 105%;
+            /* Initially positioned outside the viewport on the right */
+            max-width: 100%;
+            /* Set maximum width to 100% of the viewport width */
+            max-height: 100%;
+            /* Allow height to adjust proportionally */
+            transition: left 10s linear;
+            /* Transition for smooth horizontal movement */
+            animation: wobble 4s ease infinite alternate;
+            /* Wobble animation */
         }
 
         /* CSS keyframe animation for wobbling effect */
         @keyframes wobble {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(-5deg); }
-            50% { transform: rotate(5deg); }
-            75% { transform: rotate(-3deg); }
-            100% { transform: rotate(0deg); }
-        }
+            0% {
+                transform: rotate(0deg);
+            }
 
+            25% {
+                transform: rotate(-5deg);
+            }
+
+            50% {
+                transform: rotate(5deg);
+            }
+
+            75% {
+                transform: rotate(-3deg);
+            }
+
+            100% {
+                transform: rotate(0deg);
+            }
+        }
     </style>
 </head>
 
@@ -546,9 +575,8 @@
             <div class="tutoroll_tip">
                 <h3>Latest features</h3>
                 <ul class="tutoroll_list">
-                    <li>Added ??????</li>
+                    <li>New options!</li>
                     <li>New skin!</li>
-                    <li>Offline play!</li>
                 </ul>
             </div>
 
@@ -713,7 +741,8 @@
                     </div>
 
                     <div id="soundeffectdiv">
-                        <div id="customControls" style="border: 2px solid gray; padding: 5px; width: 150px; margin: 5px auto; ">
+                        <div id="customControls"
+                            style="border: 2px solid gray; padding: 5px; width: 150px; margin: 5px auto; ">
                             <input type="checkbox" id="enableSoundEffects" checked>
                             <label for="enableSoundEffects">Enable sound effects</label> <br><br>
                             <label>Sound effect:</label><br>
@@ -899,13 +928,18 @@
             localStorage.setItem('settings_enableSoundEffects', checkbox_sx.checked);
         });
 
-        
+
 
 
 
         function startTimer() {
             timerInterval = setInterval(updateTimer, 1000);
         }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
 
         function updateTimer() {
             seconds++;
@@ -956,6 +990,7 @@
             const storedIntegerString = localStorage.getItem('settings_soundeffectvolume');
             const storedInteger = parseFloat(storedIntegerString); // Parse the string back to an integer
             volumeSoundEffectSlider.value = storedInteger
+            boatSound.volume = storedInteger
         }
 
 
@@ -1081,13 +1116,13 @@
         const diceFaces =
             [
                 [
-                    "Skins/DVe/0.png",
-                    "Skins/DVe/1.png",
-                    "Skins/DVe/2.gif",
-                    "Skins/DVe/3.gif",
-                    "Skins/DVe/4.gif",
-                    "Skins/DVe/5.gif",
-                    "Skins/DVe/6.gif"
+                    "Skins/Graph/0.png",
+                    "Skins/Graph/1.png",
+                    "Skins/Graph/2.gif",
+                    "Skins/Graph/3.gif",
+                    "Skins/Graph/4.gif",
+                    "Skins/Graph/5.gif",
+                    "Skins/Graph/6.gif"
                 ],
                 [
                     "Skins/Crystal/0.png",
@@ -1117,67 +1152,76 @@
                     "Skins/Blue/6.png",
                 ],
                 [
-                    "Skins/DVe/0.png",
-                    "Skins/DVe/1.png",
-                    "Skins/DVe/2.png",
-                    "Skins/DVe/3.png",
-                    "Skins/DVe/4.png",
-                    "Skins/DVe/5.png",
-                    "Skins/DVe/6.png"
+                    "Skins/Graph/0.png",
+                    "Skins/Graph/1.png",
+                    "Skins/Graph/2.png",
+                    "Skins/Graph/3.png",
+                    "Skins/Graph/4.png",
+                    "Skins/Graph/5.png",
+                    "Skins/Graph/6.png"
                 ],
                 [
-                    "Skins/Fruity/0.png",
-                    "Skins/Fruity/1.png",
-                    "Skins/Fruity/2.png",
-                    "Skins/Fruity/3.png",
-                    "Skins/Fruity/4.png",
-                    "Skins/Fruity/5.png",
-                    "Skins/Fruity/6.png"
+                    "Skins/Fruity/0.webp",
+                    "Skins/Fruity/1.webp",
+                    "Skins/Fruity/2.webp",
+                    "Skins/Fruity/3.webp",
+                    "Skins/Fruity/4.webp",
+                    "Skins/Fruity/5.webp",
+                    "Skins/Fruity/6.webp"
                 ],
                 [
-                    "Skins/Unknown/0.png",
-                    "Skins/Unknown/1.png",
-                    "Skins/Unknown/2.png",
-                    "Skins/Unknown/3.png",
-                    "Skins/Unknown/4.png",
-                    "Skins/Unknown/5.png",
-                    "Skins/Unknown/6.png"
+                    "Skins/Unknown/0.webp",
+                    "Skins/Unknown/1.webp",
+                    "Skins/Unknown/2.webp",
+                    "Skins/Unknown/3.webp",
+                    "Skins/Unknown/4.webp",
+                    "Skins/Unknown/5.webp",
+                    "Skins/Unknown/6.webp"
                 ],
                 [
-                    "Skins/Kanji/0.png",
-                    "Skins/Kanji/1.png",
-                    "Skins/Kanji/2.png",
-                    "Skins/Kanji/3.png",
-                    "Skins/Kanji/4.png",
-                    "Skins/Kanji/5.png",
-                    "Skins/Kanji/6.png"
-                ],
-                // [
-                //     "Skins/QR/0.png",
-                //     "Skins/QR/1.png",
-                //     "Skins/QR/2.png",
-                //     "Skins/QR/3.png",
-                //     "Skins/QR/4.png",
-                //     "Skins/QR/5.png",
-                //     "Skins/QR/6.png"
-                // ],
-                [
-                    "Skins/Ladybug/0.png",
-                    "Skins/Ladybug/1.png",
-                    "Skins/Ladybug/2.png",
-                    "Skins/Ladybug/3.png",
-                    "Skins/Ladybug/4.png",
-                    "Skins/Ladybug/5.png",
-                    "Skins/Ladybug/6.png"
+                    "Skins/Kanji/0.webp",
+                    "Skins/Kanji/1.webp",
+                    "Skins/Kanji/2.webp",
+                    "Skins/Kanji/3.webp",
+                    "Skins/Kanji/4.webp",
+                    "Skins/Kanji/5.webp",
+                    "Skins/Kanji/6.webp"
                 ],
                 [
-                    "Skins/Cubes/0.png",
-                    "Skins/Cubes/1.png",
-                    "Skins/Cubes/2.png",
-                    "Skins/Cubes/3.png",
-                    "Skins/Cubes/4.png",
-                    "Skins/Cubes/5.png",
-                    "Skins/Cubes/6.png"
+                    "Skins/QR/0.webp",
+                    "Skins/QR/1.webp",
+                    "Skins/QR/2.webp",
+                    "Skins/QR/3.webp",
+                    "Skins/QR/4.webp",
+                    "Skins/QR/5.webp",
+                    "Skins/QR/6.webp"
+                ],
+                [
+                    "Skins/Ladybug/0.webp",
+                    "Skins/Ladybug/1.webp",
+                    "Skins/Ladybug/2.webp",
+                    "Skins/Ladybug/3.webp",
+                    "Skins/Ladybug/4.webp",
+                    "Skins/Ladybug/5.webp",
+                    "Skins/Ladybug/6.webp"
+                ],
+                [
+                    "Skins/Cubes/0.webp",
+                    "Skins/Cubes/1.webp",
+                    "Skins/Cubes/2.webp",
+                    "Skins/Cubes/3.webp",
+                    "Skins/Cubes/4.webp",
+                    "Skins/Cubes/5.webp",
+                    "Skins/Cubes/6.webp"
+                ],
+                [
+                    "Skins/Horror/0.webp",
+                    "Skins/Horror/1.webp",
+                    "Skins/Horror/2.webp",
+                    "Skins/Horror/3.webp",
+                    "Skins/Horror/4.webp",
+                    "Skins/Horror/5.webp",
+                    "Skins/Horror/6.webp"
                 ]
             ];
 
@@ -1186,7 +1230,7 @@
         const dropdownOptions = document.getElementById("dropdownOptions");
 
         // Event listener to toggle dropdown options visibility
-        customDropdown.addEventListener("click", function() {
+        customDropdown.addEventListener("click", function () {
             // Toggle the display of dropdown options
             if (dropdownOptions.style.display === "block") {
                 dropdownOptions.style.display = "none"; // Hide dropdown options
@@ -1196,7 +1240,7 @@
         });
 
         // Close dropdown options when clicking outside the dropdown
-        document.addEventListener("click", function(event) {
+        document.addEventListener("click", function (event) {
             if (!customDropdown.contains(event.target)) {
                 dropdownOptions.style.display = "none"; // Hide dropdown options
             }
@@ -1228,7 +1272,7 @@
 
 
             // Loop through the faces array to add specific images (2, 4, and 6)
-            for (let i = 2; i <= 6; i += 2) { // Iterate over indices 1, 3, and 5 (corresponding to 2, 4, and 6)
+            for (let i = 1; i <= 6; i += 1) { // Iterate over indices 1, 3, and 5 (corresponding to 2, 4, and 6)
                 const imageUrl = faces[i]; // Get the image URL at the current index
 
                 const img = document.createElement("img");
@@ -1253,7 +1297,7 @@
 
 
         // Loop through the faces array to add specific images (2, 4, and 6)
-        for (let i = 2; i <= 6; i += 2) { // Iterate over indices 1, 3, and 5 (corresponding to 2, 4, and 6)
+        for (let i = 1; i <= 6; i += 1) { // Iterate over indices 1, 3, and 5 (corresponding to 2, 4, and 6)
             const imageUrl = diceFaces[i][i]; // Get the image URL at the current index
 
             const img = document.createElement("img");
@@ -1314,9 +1358,9 @@
             makeInvisible(i);
         }
 
-        function openCategory(category, score = 0){
-            if(offline){
-                addToLog("Obtained "+category+" for "+score+" score.")
+        function openCategory(category, score = 0) {
+            if (offline) {
+                addToLog("Obtained " + category + " for " + score + " score.")
             }
 
 
@@ -1341,6 +1385,11 @@
                     case "Score Multiplier":
                         increaseScoreMult();
                         break;
+                    case "Extra Point":
+                        gotExtraPoint();
+                        submitScore();
+                        updateButtonValues();
+                        break;
                     case "Encouragement":
                         Enc();
                         break;
@@ -1353,7 +1402,7 @@
                 }
                 if (category.substring(0, 7) === "Victory") {
                     sendWin();
-                    if(offline){
+                    if (offline) {
                         addToLog("You beat the game, congrats!")
                     }
                 }
@@ -1376,6 +1425,7 @@
         var amRollsF = 6;
         var currentRolls = 0; // Current number of Rolls
         var difficulty = 1; // Difficulty (1 easy, 4 extreme)
+        var scoremultipliertype = -100;
 
         var diceContainers = []; // Array to store references to dice containers
         var diceSize = 100; // Initial dice size
@@ -1389,6 +1439,8 @@
 
         var stepScoreMult = 0
         var curScoreMult = 0
+
+        var extraPoints = 0
 
         var missingLocations = []
 
@@ -1422,8 +1474,15 @@
                 numRollsLabel.textContent = Math.floor(numRollsF / amRollsF);
             }
 
-
-            stepScoreMultLabel.textContent = (1 + curScoreMult).toFixed(2) + " (+" + stepScoreMult.toFixed(2) + ")";
+            if(scoremultipliertype == 0){
+                stepScoreMultLabel.textContent = (1 + curScoreMult).toFixed(2) + " (+" + stepScoreMult.toFixed(2) + ")";
+            }
+            if(scoremultipliertype == 1){
+                stepScoreMultLabel.textContent = (1 + curScoreMult).toFixed(2);
+            }
+            if(scoremultipliertype == 2){
+                stepScoreMultLabel.textContent = (1 + curScoreMult).toFixed(2) + " (+" + stepScoreMult.toFixed(2) + ")";
+            }
 
         }
 
@@ -1478,7 +1537,7 @@
                 document.getElementById("diceValues").style.display = "inline-block";
                 document.getElementById("diceValues").style.textAlign = "center";
             }
-            if(message == 'winrightnow'){
+            if (message == 'winrightnow') {
                 sendWin() //this is debug but I'll probably forget to remove it........
             }
 
@@ -1514,9 +1573,14 @@
                 updateButtonValue("category" + i, 0, 100, 1000);
                 document.getElementById("category" + i).disabled = false;
             }
-            document.getElementById("total").textContent = 0; // this was calculate total but it should be 0
+            calculateTotalAndUpdate();
             nextTurn();
-            curScoreMult = 0
+            if(scoremultipliertype == 0){
+                curScoreMult = 0
+            }
+            if(scoremultipliertype == 2){
+                curScoreMult = 0
+            }
             updateParButtons();
             canRoll = true;
         });
@@ -1534,7 +1598,7 @@
         }
 
 
-        
+
 
         // Iterate through the double list and preload all images
         diceFaces.forEach((innerList) => {
@@ -1578,17 +1642,17 @@
 
             let v = dice.getAttribute('style-value')
 
-            if(v == diceFaces.length){
+            if (v == diceFaces.length) {
                 v = Math.floor(Math.random() * diceFaces.length)
                 dice.setAttribute('style-value', v)
             }
 
-            if(diceStyle == diceFaces.length){
-                if(changeStyle){
+            if (diceStyle == diceFaces.length) {
+                if (changeStyle) {
                     v = Math.floor(Math.random() * diceFaces.length)
                     dice.setAttribute('style-value', v)
                 }
-            }else{
+            } else {
                 v = diceStyle
                 dice.setAttribute('style-value', v)
             }
@@ -1651,7 +1715,12 @@
 
         // Function to increase number of rolls
         function increaseScoreMult() {
-            changeScoreMult(+0.02);
+            changeScoreMult();
+        }
+
+        // Function to increase number of rolls
+        function gotExtraPoint() {
+            extraPoints += 1;
         }
 
         // Function to decrease dice size
@@ -1711,7 +1780,13 @@
         function nextTurn() {
 
             currentRolls = 0;
-            curScoreMult += stepScoreMult
+            if(scoremultipliertype == 0){
+                curScoreMult += stepScoreMult
+            }
+            if(scoremultipliertype == 2){
+                curScoreMult += stepScoreMult
+            }
+            
             updateRollButton();
 
 
@@ -1795,8 +1870,18 @@
 
 
 
-        function changeScoreMult(change) {
-            stepScoreMult += change;
+        function changeScoreMult() {
+            if(scoremultipliertype == 0){
+                stepScoreMult += 0.02;
+            }
+            if(scoremultipliertype == 1){
+                curScoreMult += 0.1;
+                stepScoreMult += 0.1;
+            }
+            if(scoremultipliertype == 2){
+                stepScoreMult += 0.01;
+            }
+            
         }
 
         // Function to change the size of the dice
@@ -1876,7 +1961,7 @@
                             dice.classList.add('jump'); // Add the 'jump' class to trigger the animation
                             dice.style.animationDuration = (animationDuration + 100) + 'ms';
                         }
-                        if(isCheckedsx){
+                        if (isCheckedsx) {
                             document.getElementById(`rollSound${i}`).play();
                         }
                     }
@@ -1928,7 +2013,7 @@
             });
         }
 
-        function calculateTotal() {
+        function calculateTotalAndUpdate() {
             var total = 0;
             var categoryButtons = document.querySelectorAll('button[id^="category"]');
             categoryButtons.forEach(function (button) {
@@ -1936,6 +2021,8 @@
                     total += parseInt(button.textContent);
                 }
             });
+            total += extraPoints;
+            document.getElementById("total").textContent = total
             return total;
         }
 
@@ -1948,8 +2035,8 @@
 
 
             // Update total sum in the table
-            var total = calculateTotal()
-            document.getElementById("total").textContent = total
+            var total = calculateTotalAndUpdate()
+
             // if (total >= nextgoal) {
             //     var submitBtn = document.getElementById("submitBtn");
             //     submitBtn.style.backgroundColor = "#4CAF50";
@@ -1994,7 +2081,7 @@
             // Calculate scores based on the dice array
             var scores = calculateScores(diceArray);
 
-            var total = calculateTotal();
+            var total = calculateTotalAndUpdate();
 
             var ng = nextgoal
             if (nextgoal == '-') {
@@ -2507,15 +2594,16 @@
             const nbRolls = Math.floor(numRollsF / amRollsF);
             const multiplier = stepScoreMult;
             const diff = difficulty;
+            const smt = scoremultipliertype;
             // console.log(categories)
             // console.log(nbDice)
             // console.log(nbRolls)
             // console.log(multiplier)
             // console.log(diff)
-            return diceSimulationStringsForJS(categories, nbDice, nbRolls, multiplier, diff)
+            return diceSimulationStringsForJS(categories, nbDice, nbRolls, multiplier, diff, smt)
         }
 
-        function diceSimulationStringsForJS(categories, nbDice, nbRolls, multiplier, diff) {
+        function diceSimulationStringsForJS(categories, nbDice, nbRolls, multiplier, diff, smt) {
             categories.sort((a, b) => a.meanScore(nbDice, nbRolls) - b.meanScore(nbDice, nbRolls));
 
             function addDistributions(dist1, dist2, mult) {
@@ -2577,7 +2665,19 @@
 
                 const factor = Math.max(1, Math.floor(categories.length / (6 - diff)));
                 const maxDistResult = maxDist(dist, factor);
-                totalDist = addDistributions(totalDist, maxDistResult, 1 + j * multiplier);
+
+                let cur_mult = -100
+                if(smt == 0){ //fixed
+                    cur_mult = j * multiplier
+                }
+                if(smt == 1){ //fixed
+                    cur_mult = multiplier
+                }
+                if(smt == 2){ //fixed
+                    cur_mult = j * multiplier
+                }
+
+                totalDist = addDistributions(totalDist, maxDistResult, 1 + cur_mult);
             }
 
             return Math.floor(percentileDistribution(totalDist, 0.4));
@@ -2770,6 +2870,12 @@
                 finalgoal = packet.slot_data.goal_score;
                 lastgoal = packet.slot_data.last_check_score;
                 difficulty = packet.slot_data.game_difficulty;
+                scoremultipliertype = -100
+                if (packet.slot_data.score_multiplier_type) {
+                    scoremultipliertype = packet.slot_data.score_multiplier_type;
+                } else {
+                    scoremultipliertype = 0 //0.3 version, step, 2% per item.
+                }
                 maxscoreinlogic = getMaxScoreInLogic()
 
                 document.getElementById("finalgoal").innerText = finalgoal;
@@ -2780,11 +2886,13 @@
                     whichstory = Math.floor(Math.random() * story.length) + 1
                 }
                 if (!packet.slot_data.ap_world_version) {
-                    addToLog("Warning, apworld version is not provided in the packet, so it's generated with an old version, not 0.3. Website version: 0.3.\nSee Yacht Dice pins on discord for older releases and use the html that matches the apworld version.", true);
-                } else if (packet.slot_data.ap_world_version !== "0.3") {
-                    addToLog("Warning, apworld version does not match with website version.\nApworld: " + packet.slot_data.ap_world_version + ", website: 0.3.\nSee Yacht Dice pins on discord for older releases and use the html that matches the apworld version.", true);
+                    addToLog("Warning, apworld version is not provided in the packet, so it's generated with an old version, not 0.3. Website version: 0.4.\nSee Yacht Dice pins on discord for older releases and use the html that matches the apworld version.", true);
+                } else if (packet.slot_data.ap_world_version == "0.4") {
+                    // correct apworld.
+                } else if (packet.slot_data.ap_world_version == "0.3") {
+                    addToLog("Apworld 0.4 released on discord, consider using that one next time. But no worries, your version (0.3) will stay supported here!");
                 } else {
-                    //addToLog("Apworld version matches with website version (0.4).", true);
+                    addToLog("Warning, apworld version does not match with website version.\nApworld: " + packet.slot_data.ap_world_version + ", website: 0.4.\nSee Yacht Dice pins on discord for older releases and use the html that matches the apworld version.", true);
                 }
             }
             if (offline) {
@@ -2793,6 +2901,7 @@
                 finalgoal = 403;
                 lastgoal = 500;
                 difficulty = 2;
+                scoremultipliertype = 0;
                 maxscoreinlogic = getMaxScoreInLogic()
 
                 document.getElementById("finalgoal").innerText = finalgoal;
@@ -2807,7 +2916,7 @@
 
         function updateRequiresValue(packet) {
 
-            if(!offline){
+            if (!offline) {
                 if (!packet.missing_locations) {
                     // do nothing
                 } else if (packet.missing_locations.length === 0) {
@@ -2828,7 +2937,7 @@
                 }
             }
 
-            if(offline){
+            if (offline) {
                 nextgoal = Math.min(...Object.keys(missingLocations).map(Number))
             }
 
@@ -2841,14 +2950,14 @@
 
 
         function submitScore() {
-
+            calculateTotalAndUpdate();
             var inputValue = parseInt(document.getElementById("total").innerText);
             highestsubmitted = Math.max(highestsubmitted, inputValue);
 
             if (nextgoal != '-' && !isNaN(inputValue)) {
                 var updated_first = false
 
-                if(!offline){
+                if (!offline) {
                     for (let i = nextgoal; i <= inputValue; i++) {
                         if (missingLocations.includes(i + 16871244500)) {
                             sendCheck(i + 16871244500);
@@ -2858,10 +2967,12 @@
 
                     if (missingLocations.length > 0) {
                         nextgoal = missingLocations[0] - 16871244500;
+                    }else{
+                        nextgoal = "-"
                     }
                 }
 
-                if(offline){
+                if (offline) {
                     sendCheck(inputValue)
                     nextgoal = Math.min(...Object.keys(missingLocations).map(Number))
                 }
@@ -2882,7 +2993,7 @@
         }
 
         function sendCheck(locid) {
-            if(!offline){
+            if (!offline) {
                 // Assuming client is already defined elsewhere
                 // Replace `client.locations.check` with the actual function you have for sending checks
                 client.locations.check(locid);
@@ -2906,24 +3017,25 @@
             client.updateStatus(30);
             addToLog("WIN! Congratulations!!")
             console.log("WIN! Congratulations!!")
+            stopTimer()
 
             var boatImage = document.getElementById('boatImage');
             boatImage.style.left = '0px'; // Move the boat to 50% from the right
 
             // Move the boat image from right to left after a delay
-            setTimeout(function() {
+            setTimeout(function () {
                 boatImage.style.left = '-100%'; // Move the boat to 50% from the right
             }, 13000); // Wait for 2 seconds (after water image appears and vibration starts)
 
-            setTimeout(function() {
+            setTimeout(function () {
                 boatImage.style.display = 'none'; // Move the boat to 50% from the right
             }, 23000); // Wait for 2 seconds (after water image appears and vibration starts)
 
-            setTimeout(function() {
+            setTimeout(function () {
                 boatSound.play(); // Play the audio
             }, 2000); // Wait for 2 seconds (after water image appears and vibration starts)
 
-            
+
         }
 
         var encs = ["You've got this!", "Keep going, you're closer than you think.", "Every small step counts.", "Believe in yourself like never before.", "You're making progress, even if it's not always visible.", "Challenges make you stronger.", "Embrace the journey, every twist and turn.", "You're capable of amazing things.", "Trust your instincts, they've brought you this far.", "Your resilience is your superpower.", "Take a deep breath, you can handle this.", "Your effort will pay off.", "Focus on progress, not perfection.", "Keep your head up, brighter days are ahead.", "Your determination is inspiring.", "You're unstoppable when you set your mind to it.", "Keep pushing forward, even when it's tough.", "You're braver than you believe.", "Celebrate every achievement, no matter how small.", "You've overcome challenges before, you can do it again.", "Your potential knows no bounds.", "Stay positive, even in the face of adversity.", "You're capable of greatness.", "Trust in your abilities.", "Keep dreaming big dreams.", "You're on the right track, don't doubt yourself.", "Your perseverance is admirable.", "Stay focused, you're getting there.", "Your hard work will pay off in the end.", "Keep your eyes on the prize.", "You have the power to create your own success.", "Believe in the power of possibility.", "Your determination will lead you to success.", "Don't give up, you're closer than you think.", "Keep your chin up, better days are coming.", "You're stronger than you know.", "Your courage will carry you through.", "Trust the process, it's leading you somewhere great.", "Keep believing in yourself, even when others don't.", "You're capable of turning setbacks into comebacks.", "Keep shining your light, the world needs it.", "Your persistence will pay off.", "Stay committed to your goals.", "You're destined for greatness.", "Keep moving forward, one step at a time.", "Your determination will overcome any obstacle.", "Stay true to yourself and your dreams.", "You're making a difference with every effort.", "Keep your spirits high, good things are on the horizon.", "Your strength lies in your resilience.", "Believe in the power of your dreams.", "You're capable of achieving anything you set your mind to.", "Keep pushing through, you're almost there.", "Your courage inspires those around you.", "Stay patient, great things take time.", "You're stronger than you think you are.", "Keep believing in yourself, even when it's hard.", "Your determination will lead to success.", "Keep chasing your dreams, they're within reach.", "You're on the path to greatness.", "Your persistence will pay off in the end.", "Keep your focus on the positive.", "You have the strength to overcome any challenge.", "Stay resilient, you're capable of weathering any storm.", "Your journey is unique and beautiful.", "Keep going, your efforts are worthwhile.", "Believe in your abilities, they'll take you far.", "Stay motivated, you're doing great.", "You're making progress every day.", "Keep your head held high, you're doing amazing.", "Your determination is inspiring others.", "Keep believing in yourself, even when it's hard.", "You're capable of achieving anything you set your mind to.", "Stay focused on your goals, they're within reach.", "You're stronger than you think you are.", "Keep pushing forward, you're almost there.", "Your hard work will pay off in the end.", "Keep your eyes on the prize, it's worth it.", "Believe in yourself, you're capable of greatness.", "Stay resilient, you've got this.", "Your journey is unfolding perfectly.", "Keep moving forward, one step at a time.", "You're braver than you believe, stronger than you seem.", "Keep your faith in yourself, it's your greatest asset.", "Your perseverance will lead to success.", "Keep your spirits high, good things are coming.", "You're making progress, even if it's slow.", "Stay positive, even when things get tough.", "You're on the right path, trust the process.", "Keep believing in yourself, even when others doubt you.", "Your dreams are within reach, keep reaching.", "Stay committed to your goals, you'll get there.", "You're capable of overcoming any obstacle.", "Keep pushing through, you're stronger than you know.", "Your determination will see you through.", "Keep your head up, brighter days are ahead.", "You're an inspiration to those around you.", "Stay true to yourself and your dreams.", "Keep your focus on what matters most.", "You've come so far, don't give up now."];
@@ -2944,6 +3056,10 @@
             if (storycounter < story[whichstory - 1].length) {
                 addToLog("Story " + story[whichstory - 1][storycounter]);
                 storycounter += 1
+                if (storycounter == 10) {
+                    whichstory = Math.floor(Math.random() * story.length) + 1;
+                    storycounter = 0;
+                }
             }
         }
 
@@ -3097,8 +3213,8 @@
 
 
         let pregenned =
-[                
-`1 score: Roll Fragment
+            [
+                `1 score: Roll Fragment
 2 score: Dice
 3 score: Dice Fragment
 4 score: Roll
@@ -3197,7 +3313,7 @@
 479 score: Category Fours
 489 score: Good RNG
 500 score: Good RNG`,
-`1 score: Encouragement
+                `1 score: Encouragement
 2 score: Dice
 3 score: Roll
 4 score: Dice Fragment
@@ -3296,7 +3412,7 @@
 479 score: Fun Fact
 489 score: Good RNG
 500 score: Bad RNG`,
-`1 score: Dice Fragment
+                `1 score: Dice Fragment
 2 score: Roll
 3 score: Bad RNG
 4 score: Dice
@@ -3395,7 +3511,7 @@
 479 score: Roll Fragment
 489 score: Good RNG
 500 score: Encouragement`,
-`1 score: Dice Fragment
+                `1 score: Dice Fragment
 2 score: Category Ones
 3 score: Roll
 4 score: Category Pair
@@ -3494,7 +3610,7 @@
 479 score: Good RNG
 489 score: Roll Fragment
 500 score: Category Four of a Kind`,
-`1 score: Good RNG
+                `1 score: Good RNG
 2 score: Roll
 3 score: Dice
 4 score: Roll Fragment
@@ -3593,7 +3709,7 @@
 479 score: Dice Fragment
 489 score: Story Chapter
 500 score: Story Chapter`,
-`1 score: Category Small Straight
+                `1 score: Category Small Straight
 2 score: Roll
 3 score: Score Multiplier
 4 score: Good RNG
@@ -3692,7 +3808,7 @@
 479 score: Roll Fragment
 489 score: Category Fives
 500 score: Bad RNG`,
-`1 score: Roll Fragment
+                `1 score: Roll Fragment
 2 score: Category Ones
 3 score: Dice
 4 score: Bad RNG
@@ -3791,7 +3907,7 @@
 479 score: Dice Fragment
 489 score: Roll Fragment
 500 score: Good RNG`,
-`1 score: Roll Fragment
+                `1 score: Roll Fragment
 2 score: Roll Fragment
 3 score: Roll
 4 score: Roll Fragment
@@ -3890,7 +4006,7 @@
 479 score: Story Chapter
 489 score: Fun Fact
 500 score: Score Multiplier`,
-`1 score: Category Sixes
+                `1 score: Category Sixes
 2 score: Dice
 3 score: Roll Fragment
 4 score: Dice Fragment
@@ -3989,7 +4105,7 @@
 479 score: Story Chapter
 489 score: Bad RNG
 500 score: Bad RNG`,
-`1 score: Dice
+                `1 score: Dice
 2 score: Roll
 3 score: Story Chapter
 4 score: Roll Fragment
@@ -4088,7 +4204,7 @@
 479 score: Good RNG
 489 score: Bad RNG
 500 score: Dice Fragment`
-    ]
+            ]
 
 
 
