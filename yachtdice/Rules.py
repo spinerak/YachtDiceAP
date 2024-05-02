@@ -35,7 +35,12 @@ def extractProgression(state, player, options):
     number_of_rerolls = state.count("Roll", player) + state.count("Roll Fragment", player) // options.number_of_roll_fragments_per_roll.value
 
     number_of_mults = state.count("Score Multiplier", player)
-    score_mult = 0.02 *  number_of_mults
+    
+    score_mult = -10000
+    if options.score_multiplier_type.value == 1: #fixed
+        score_mult = 0.1 * number_of_mults
+    if options.score_multiplier_type.value == 2: #step
+        score_mult = 0.01 * number_of_mults
    
     categories = []
 
@@ -77,7 +82,7 @@ def extractProgression(state, player, options):
 
 cache = {}
 
-def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff):
+def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff, scoremulttype):
     
 
     tup = tuple([tuple(sorted([c.name for c in categories])), nbDice, nbRolls, multiplier])
@@ -157,12 +162,14 @@ def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff):
         for key in dist.keys():
             dist[key] /= 100000
             
-            
         dist = max_dist(dist, max(1, len(categories) // (6 - diff)))
-        # print(categories[j].name)
-        # print(dist)
-        # print()
-        total_dist = add_distributions(total_dist, dist, 1 + j * multiplier )
+        
+        cur_mult = -100
+        if scoremulttype == 1: #fixed
+            cur_mult = multiplier
+        if scoremulttype == 2: #step
+            cur_mult = j * multiplier
+        total_dist = add_distributions(total_dist, dist, 1 + cur_mult )
     
     cache[tup] = math.floor(percentile_distribution(total_dist, .40))
     
@@ -174,29 +181,11 @@ def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def diceSimulation(state, player, options, diff):
     categories, nbDice, nbRolls, multiplier = extractProgression(state, player, options)
 
 
-    return diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff)
+    return diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff, options.score_multiplier_type.value)
 
 
 # Sets rules on entrances and advancements that are always applied

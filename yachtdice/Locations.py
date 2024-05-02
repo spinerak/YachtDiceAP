@@ -26,7 +26,7 @@ def all_locations_fun(max_score):
     return location_table
 
 def ini_locations(max_score, num_locs, dif):
-    print(f"GENERATING LOCATIONS {num_locs}")
+    #print(f"GENERATING LOCATIONS {num_locs}")
     
     location_table = {}
     

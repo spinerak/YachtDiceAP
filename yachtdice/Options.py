@@ -104,26 +104,55 @@ class goalLocationPercentage(Range):
     range_start = 70
     range_end = 100
     default = 90
+      
     
     
-class OracleOfSeasonsDefaultSeedType(Choice):
+class scoreMultiplierType(Choice):
     """
-    Determines which of the 5 seed types will be the "default seed type", which is given:
-    - when obtaining Seed Satchel
-    - when obtaining Slingshot
-    - by Horon Seed Tree
+    There are 10 Score Multiplier items available.
+    This options decides how the Score Multipliers work.
+    Both options are of similar difficulty.
+    
+    fixed_multiplier: every multiplier item gives you +10%. 
+    Every score gets multiplied with the multiplier.
+    So with all score multipliers, all scores get +100%.
+    
+    step_multiplier: every multiplier item gives you +1%. 
+    Your multiplier increases with this percentage after every turn. 
+    So in the first turn you have no multiplier, but in turn 16, you can have a +150% multiplier. 
+    So, save your high-scoring categories for last. This option allow for more strategic games. 
     """
-    display_name = "Default Seed Type"
-
-    option_ember = 0
-    option_scent = 1
-    option_pegasus = 2
-    option_mystery = 3
-    option_gale = 4
-
-    default = 0
+    display_name = "Score multiplier type"
+    option_fixed_multiplier = 1
+    option_step_multiplier = 2
+    default = 1 
     
     
+    
+    
+class addExtraPoints(Choice):
+    """
+    Yacht Dice typically has space for more items.
+    Would you like extra points shuffled in the item pool?
+    They make the game a little bit easier.
+    """
+    display_name = "Extra points in the pool"
+    option_all_of_it = 1
+    option_sure = 2
+    option_never = 3
+    default = 2
+    
+class addStoryChapters(Choice):
+    """
+    Yacht Dice typically has space for more items.
+    Would you like story chapters shuffled in the item pool?
+    Note: if you have extra points on "all_of_it" there won't be story chapters.
+    """
+    display_name = "Extra story chapters in the pool"
+    option_all_of_it = 1
+    option_sure = 2
+    option_never = 3
+    default = 2
     
     
 
@@ -143,6 +172,8 @@ class whichStory(Choice):
     option_a_rollin_rhyme_adventure = 6
     option_random = -1
     default = -1
+    
+
 
 
 yachtdice_options: typing.Dict[str, type(Option)] = {
@@ -154,5 +185,8 @@ yachtdice_options: typing.Dict[str, type(Option)] = {
     "number_of_extra_roll_fragments": numberExtraRollFragments,
     "game_difficulty": gameDifficulty,
     "goal_location_percentage": goalLocationPercentage,
+    "score_multiplier_type": scoreMultiplierType,
+    "add_extra_points": addExtraPoints,
+    "add_story_chapters": addStoryChapters,
     "which_story": whichStory
 }

@@ -31,7 +31,7 @@ class YachtDiceWorld(World):
 
     location_name_to_id = {name: data.id for name, data in all_locations.items()}
 
-    ap_world_version = "0.3"
+    ap_world_version = "0.4"
 
     
 
@@ -83,7 +83,7 @@ class YachtDiceWorld(World):
             itempool += ["Roll Fragment"] * (amRollsF * (numRollsF-2) + exRollsF)
             
 
-        itempool += ["Score Multiplier"] * 5
+        itempool += ["Score Multiplier"] * 10
         itempool += ["Category Ones"]
         itempool += ["Category Twos"]
         itempool += ["Category Threes"]
@@ -102,22 +102,43 @@ class YachtDiceWorld(World):
         itempool += ["Category Yacht"]
         
         #count the number of locations in the game
-        
         already_items = len(itempool) + extra_plando_items
         
         import sys
         if already_items > self.number_of_locations:
             sys.exit(f"In Yacht Dice, there are more items than locations. Items: {already_items}, locations: {self.number_of_locations}")
+        
+        
+        
+        already_items = len(itempool) + extra_plando_items
+        if self.options.add_extra_points.value == 1:
+            itempool += ["Extra Point"] * min(self.number_of_locations - already_items, 100)
             
+        already_items = len(itempool) + extra_plando_items
+        if self.options.add_story_chapters.value == 1:
+            itempool += ["Story Chapter"] * min(self.number_of_locations - already_items, 100)
+            
+            
+        already_items = len(itempool) + extra_plando_items
+        if self.options.add_extra_points.value == 2:
+            itempool += ["Extra Point"] * min(self.number_of_locations - already_items, 10)
+            
+        already_items = len(itempool) + extra_plando_items
+        if self.options.add_story_chapters.value == 2:
+            if(self.number_of_locations - already_items >= 10):
+                itempool += ["Story Chapter"] * 10
+                
+        already_items = len(itempool) + extra_plando_items
+        if self.options.add_extra_points.value == 2:
+            itempool += ["Extra Point"] * min(self.number_of_locations - already_items, 10)
+         
+  
 
-        if(self.number_of_locations - already_items >= 10):
-            itempool += ["Story Chapter"] * 10
-
+        already_items = len(itempool) + extra_plando_items
         itempool += ["Encouragement"] * min(self.number_of_locations - already_items, 5)
-        already_items = len(itempool) + extra_plando_items
 
-        itempool += ["Fun Fact"] * min(self.number_of_locations - already_items, 5)
         already_items = len(itempool) + extra_plando_items
+        itempool += ["Fun Fact"] * min(self.number_of_locations - already_items, 5)
         
 
         import random
@@ -132,9 +153,14 @@ class YachtDiceWorld(World):
             p = 0.5
         elif self.options.game_difficulty.value == 4:
             p = 0.1
+            
+        already_items = len(itempool) + extra_plando_items
         itempool += ["Good RNG" if random.random() > p else "Bad RNG" for _ in range(self.number_of_locations - already_items)]
 
-
+        
+        already_items = len(itempool) + extra_plando_items
+        if len(itempool) != self.number_of_locations:
+            sys.exit("Number in itempool is not number of locations.")
 
         itempool = [item for item in map(lambda name: self.create_item(name), itempool)]
 
@@ -173,9 +199,8 @@ class YachtDiceWorld(World):
         
         self.number_of_locations = 1 + (numDiceF - 2) * amDiceF + exDiceF \
                                     + 1 + (numRollsF - 2) * amRollsF + exRollsF \
-                                    + 5 \
-                                    + 16 \
-                                    + 5 #number of filler items needed for generations
+                                    + 10 \
+                                    + 16 
         self.number_of_locations = min(100, math.floor(self.number_of_locations * 1.7))
 
     def create_regions(self):
@@ -233,7 +258,7 @@ class YachtDiceWorld(World):
         connection.connect(board)
         self.multiworld.regions += [menu, board]
         
-        print(self.options)
+        #print(self.options)
 
 
     def pre_fill(self):
@@ -260,6 +285,5 @@ class YachtDiceWorld(World):
     def create_item(self, name: str) -> Item:
         item_data = item_table[name]
         
-        item_classification = ItemClassification.trap if name == "Bad RNG" else (ItemClassification.progression if item_data.progression else ItemClassification.filler)
-        item = YachtDiceItem(name, item_classification, item_data.code, self.player)
+        item = YachtDiceItem(name, item_data.classification, item_data.code, self.player)
         return item
