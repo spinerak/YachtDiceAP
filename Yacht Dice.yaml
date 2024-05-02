@@ -32,7 +32,7 @@ description: Default Yacht Dice Template
 
 game: Yacht Dice
 requires:
-  version: 0.4.5 # Version of Archipelago required for this yaml to work as expected.
+  version: 0.4.6 # Version of Archipelago required for this yaml to work as expected.
 
 Yacht Dice:
   progression_balancing:
@@ -178,6 +178,38 @@ Yacht Dice:
     random: 0
     random-low: 0
     random-high: 0
+
+  score_multiplier_type:
+    # There are 10 Score Multiplier items available.
+    # This options decides how the Score Multipliers work.
+    # Both options are of similar difficulty.
+    # 
+    # fixed_multiplier: every multiplier item gives you +10%. 
+    # Every score gets multiplied with the multiplier.
+    # So with all score multipliers, all scores get +100%.
+    # 
+    # step_multiplier: every multiplier item gives you +1%. 
+    # Your multiplier increases with this percentage after every turn. 
+    # So in the first turn you have no multiplier, but in turn 16, you can have a +150% multiplier. 
+    # So, save your high-scoring categories for last. This option allow for more strategic games.
+    fixed_multiplier: 50
+    step_multiplier: 0
+
+  add_extra_points:
+    # Yacht Dice typically has space for more items.
+    # Would you like extra points shuffled in the item pool?
+    # They make the game a little bit easier.
+    all_of_it: 0
+    sure: 50
+    never: 0
+
+  add_story_chapters:
+    # Yacht Dice typically has space for more items.
+    # Would you like story chapters shuffled in the item pool?
+    # Note: if you have extra points on "all_of_it" there won't be story chapters.
+    all_of_it: 0
+    sure: 50
+    never: 0
 
   which_story:
     # The most important part of Yacht Dice is the narrative. 
