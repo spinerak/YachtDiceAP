@@ -11,16 +11,29 @@ import math
 client_version = 345
 
 
+class YachtDiceWeb(WebWorld):
+    tutorials = [Tutorial(
+        "Multiworld Setup Guide",
+        "A guide to setting up Yacht Dice. This guide covers "
+        "single-player, multiworld, and website.",
+        "English",
+        "setup_en.md",
+        "setup/en",
+        ["Spineraks"]
+    )]
+
 
 class YachtDiceWorld(World):
     """
-    ChecksFinder is a game where you avoid mines and find checks inside the board
-    with the mines! You win when you get all your items and beat the board!
+    Yacht Dice is a game where you roll dice to reach high scores, which unlocks items.
+    You can find more dice, more rolls, higher multipliers and unlock categories.
+    You 'beat' the game if you reach the target score.
     """
     game: str = "Yacht Dice"
     option_definitions = yachtdice_options
-    # topology_present = True
-    # web = ChecksFinderWeb()
+    options_dataclass = yachtdice_options
+    
+    web = YachtDiceWeb()
 
     number_of_locations = -146
     
@@ -242,6 +255,7 @@ class YachtDiceWorld(World):
         
         victory_id = int(goal_percentage_location / 100 * len(board.locations))-1
         
+        #Add the victory item to the correct location. The website declares that the game is complete when the victory item is obtained.
         board.locations[victory_id].place_locked_item(self.create_item("Victory"))
         
         
