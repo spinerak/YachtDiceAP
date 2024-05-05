@@ -1,5 +1,6 @@
 I'm quite happy with the current version and am slowly thinking about PRing so that Yacht Dice can become a supported game.
 In this message, I'm planning to keep track of what I will do before the PR, what I will keep doing before, during and after the PR, and what I will not be doing before PR. 
+
 *Let me know if you agree with the list or miss anything. Especially regarding the apworld, so gameplay specific comments like new ideas or items. If you suggested something previously and it is not on the list: whoops, please suggest again*
 
 **Will do before PR:**
