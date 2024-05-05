@@ -193,6 +193,13 @@
             height: 100vh;
         }
 
+        .offlineoptions-container {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
         .login-form {
             background-color: #1f1f1f;
             border-radius: 5px;
@@ -648,6 +655,64 @@
 
     </div>
 
+    <div id="dropdownContainer" class = "offlineoptions-container">
+        <div>
+            <h2 class="login-heading">Options for your offline game</h2>
+            <div id = "optionsselector">
+                <label for="offlineoptions_numberOfDice">Number of Dice:</label>
+                <select id="offlineoptions_numberOfDice">
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                </select>
+                <br><br>
+
+                <label for="difficulty">Difficulty:</label>
+                <select id="offlineoptions_difficulty">
+                    <option value="Easy">Easy</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="Hard">Hard</option>
+                    <option value="Extreme">Extreme</option>
+                </select>
+                <br><br>
+
+                <label for="offlineoptions_scoreMultiplierType">Score Multiplier Type:</label>
+                <select id="offlineoptions_scoreMultiplierType">
+                    <option value="Fixed">Fixed</option>
+                    <option value="Step">Step</option>
+                </select>
+                <br><br>
+
+                <label for="offlineoptions_goalLocation">Location of goal:</label>
+                <select id="offlineoptions_goalLocation">
+                    <option value="1">90%</option>
+                    <option value="2">100%</option>
+                </select>
+                <br><br>
+            </div>
+            <button id="playofflineafteroptions"">Let's roll!</button>
+            <br>
+            <br>
+            <br>
+            <div class="small-text">
+                Logic and gameplay are the same as generating via Archipelago.
+                <br>
+                The generation method is different however:
+                <br>
+                1) this uses forwards fill instead of backwards fill,
+                <br>
+                2) there are no filler items and fewer items early on.
+                <br>
+                This might make the offline version feel different.
+            </div>
+        </div>
+    </div>
+
+
+
+
+
 
 
     <script>
@@ -871,6 +936,9 @@
                 Max score in logic: <span id="maxlogic">?</span>
                 <br>
                 <div id="timer" style="display: none;">00:00:00</div>
+                <br>
+                <br>
+                <button id="saveBtn">Save (see chat)</button>
             </div>
         </div>
     </div>
@@ -1940,7 +2008,7 @@
 
 
 
-                    }, 30); // Change face every 30 milliseconds
+                    }, 50); // Change face every 30 milliseconds
 
                     let dice = document.getElementById(`dice${i}`);
                     let keep = dice.getAttribute('keep') === 'true'; // Convert to boolean;
@@ -2711,6 +2779,7 @@
         const client = new Client();
         function login() {
             if (!offline) {
+                saveBtn.style.display = 'none'
 
                 // Create a new Archipelago client
 
@@ -3141,6 +3210,7 @@
 
 
 
+
         // Show the login screen when the "Login" button is clicked
         document.getElementById("loginbutton").addEventListener("click", function () {
             localStorage.setItem("hostname", document.getElementById("hostname").value);
@@ -3156,44 +3226,443 @@
 
         let offline = false;
 
-        // Show the login screen when the "Login" button is clicked
         document.getElementById("offlinebutton").addEventListener("click", function () {
+            if(getUrlParameter('offlineseed') == ''){ //save game, skip options
+                document.getElementById("login-container").style.display = "none";
+                document.getElementById("dropdownContainer").style.display = "flex";
+            }else{
+                document.getElementById("login-container").style.display = "none";
+                document.getElementById("optionsselector").style.display = "none";
+                document.getElementById("dropdownContainer").style.display = "flex";
+
+            }
+        });
+
+        // Show the login screen when the "Login" button is clicked
+        document.getElementById("playofflineafteroptions").addEventListener("click", function () {
             offline = true;
-            document.getElementById("login-container").style.display = "none";
+            document.getElementById("dropdownContainer").style.display = "none";
             document.getElementById("mainContent").style.display = "flex";
+            
+            login();
 
 
-            let input = pregenned[Math.floor(Math.random() * pregenned.length)]
+            document.getElementById("saveBtn").addEventListener("click", function () {
+                // Construct the modified URL with additional query parameters
+                const currentURL = window.location.href; // Get current URL
+                const modifiedURL = new URL(currentURL); // Create URL object from current URL
 
-            // Split the input into lines
-            const lines = input.split('\n');
+                // Add query parameters 'offlineseed' and 'offlineprogress' to the URL object
+                modifiedURL.searchParams.set('offlineseed', seed);
+                modifiedURL.searchParams.set('offlineprogress', nextgoal-1);
 
-            // Initialize an empty object to store the result
-            const result = {};
+                // Get the updated URL string with added query parameters
+                const updatedURL = modifiedURL.toString();
 
-            // Loop through each line
-            lines.forEach(line => {
-                // Split each line by ' score: '
-                const parts = line.split(' score: ');
-                if (parts.length === 2) {
-                    const key = parts[0]; // The text after ' score: ' becomes the key
-                    const value = parts[1]; // The text before ' score: ' becomes the value
-                    result[key] = value; // Add key-value pair to the result object
-                }
+                // Print the updated URL
+                addToLog("To continue next time, go to this link:\n"+updatedURL)
             });
+
+            
+            let numDiceF = -1
+            let di = -1;
+            let smt = -1;
+            let pg = -1;
+            if(getUrlParameter('offlineseed') != ''){
+                let offlineseedStr=getUrlParameter('offlineseed')
+                numDiceF = parseInt(offlineseedStr.charAt(0), 10);
+                di = parseInt(offlineseedStr.charAt(1), 10);
+                smt = parseInt(offlineseedStr.charAt(2), 10);
+                pg = parseInt(offlineseedStr.charAt(3), 10);
+            }else{
+                numDiceF = parseInt(document.getElementById('offlineoptions_numberOfDice').value);
+                // Get selected values from dropdown menus
+                const difficultyDropdown = document.getElementById('offlineoptions_difficulty');
+                const scoreMultiplierTypeDropdown = document.getElementById('offlineoptions_scoreMultiplierType');
+
+
+                // Determine di (difficulty index) based on selected difficulty
+                const selectedDifficulty = difficultyDropdown.value;
+                switch (selectedDifficulty) {
+                    case 'Easy':
+                        di = 1;
+                        break;
+                    case 'Medium':
+                        di = 2;
+                        break;
+                    case 'Hard':
+                        di = 3;
+                        break;
+                    case 'Extreme':
+                        di = 4;
+                        break;
+                    default:
+                        di = -1; // Handle other cases (optional)
+                }
+                // Determine smt (score multiplier type index) based on selected score multiplier type
+                const selectedScoreMultiplierType = scoreMultiplierTypeDropdown.value;
+                switch (selectedScoreMultiplierType) {
+                    case 'Fixed':
+                        smt = 1;
+                        break;
+                    case 'Step':
+                        smt = 2;
+                        break;
+                    default:
+                        smt = -1; // Handle other cases (optional)
+                }
+                pg = parseFloat(document.getElementById('offlineoptions_goalLocation').value);
+            }
+            
+
+
+
+            const numRollsF = 10 - numDiceF
+
+            
+            const exDiceF = 3
+            const exRollsF = 3
+
+
+            difficulty = di;
+            scoremultipliertype = smt
+
+
+
+            let cats = [new Category("Choice"), new Category("Choice")]
+            let ndf = amDiceF
+            let nrf = amRollsF
+            let mu = 0
+            
+            
+
+
+            if (di === 1) {
+                lastgoal = 400;
+            } else if (di === 2) {
+                lastgoal = 500;
+            } else if (di === 3) {
+                lastgoal = 630;
+            } else if (di === 4) {
+                lastgoal = 683;
+            } else {
+                // Handle other cases (optional)
+                lastgoal = 0; // Default value if di is not within expected range
+            }
+
+            
+
+            
+
+            
+
+            
+
+
+            console.log("Options",numDiceF, numRollsF, di, smt, pg)
+
+
+            function sfc32(seed) {
+                let a = seed / 1.1
+                let b = seed / 1.2
+                let c = seed / 1.3
+                let d = seed / 1.4
+                return function() {
+                    a |= 0; b |= 0; c |= 0; d |= 0;
+                    let t = (a + b | 0) + d | 0;
+                    d = d + 1 | 0;
+                    a = b ^ b >>> 9;
+                    b = c + (c << 3) | 0;
+                    c = (c << 21 | c >>> 11);
+                    c = c + t | 0;
+                    return (t >>> 0) / 4294967296;
+                }
+            }
+
+            const r = () => Math.random();
+            const now = Date.now();
+
+            
+            let seed = -1;
+
+            let inps = getUrlParameter('offlineseed')
+            if(inps != ""){
+                seed = parseInt(inps)
+            }else{
+                seed = parseInt(numDiceF + "" + di+""+smt+""+pg+(10000 + Math.floor(Math.random()*90000)))
+            }
+
+
+
+
+
+            console.log("Seed ", seed)
+            addToLog("Playing seed "+seed)
+            const prng = sfc32(seed);
+
+
+            if(pg==1){
+                pg = 0.8;
+            }else if(pg==2){
+                pg = 1;
+            }
+
+            
+            // Initialize an empty array for the item pool
+            let itempool = [];
+
+            // Calculate and add items based on conditions
+            if (amDiceF === 1) {
+                itempool = itempool.concat(Array(numDiceF - 1).fill("Dice"));
+            } else {
+                itempool.push("Dice"); // Always add a full dice
+                itempool = itempool.concat(Array(amDiceF * (numDiceF - 2) + exDiceF).fill("Dice Fragment"));
+            }
+
+            if (amRollsF === 1) {
+                itempool = itempool.concat(Array(numRollsF - 1).fill("Roll"));
+            } else {
+                itempool.push("Roll"); // Always add a full roll
+                itempool = itempool.concat(Array(amRollsF * (numRollsF - 2) + exRollsF).fill("Roll Fragment"));
+            }
+
+            // Add fixed items
+            itempool = itempool.concat(Array(10).fill("Score Multiplier"));
+            itempool.push("Category Ones");
+            itempool.push("Category Twos");
+            itempool.push("Category Threes");
+            itempool.push("Category Fours");
+            itempool.push("Category Fives");
+            itempool.push("Category Sixes");
+            itempool.push("Category Pair");
+            itempool.push("Category Three of a Kind");
+            itempool.push("Category Four of a Kind");
+            itempool.push("Category Tiny Straight");
+            itempool.push("Category Small Straight");
+            itempool.push("Category Large Straight");
+            itempool.push("Category Full House");
+            itempool.push("Category Yacht");
+
+
+
+
+            
+
+
+            // Function to shuffle an array using a seeded random number generator
+            function shuffleArrayWithSeed(array) {
+                let currentIndex = array.length;
+
+
+                // Fisher-Yates shuffle algorithm
+                while (currentIndex !== 0) {
+                    const randomIndex = Math.floor(prng() * currentIndex);
+                    currentIndex--;
+
+                    // Swap current element with randomly selected element
+                    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+                }
+
+                return array;
+            }
+
+            itempool = shuffleArrayWithSeed(itempool)
+
+            // Ensure "Roll" and "Dice" are within the first three positions (randomly)
+            const rollIndex = itempool.indexOf("Roll");
+            const diceIndex = itempool.indexOf("Dice");
+
+            if (rollIndex !== -1 && diceIndex !== -1) {
+                // Generate a random index within the first three positions (0, 1, or 2)
+                const randomPosition = Math.floor(prng() * 3);
+
+                // Swap "Roll" to the random position within the first three positions
+                [itempool[randomPosition], itempool[rollIndex]] = [itempool[rollIndex], itempool[randomPosition]];
+
+                // Generate another random index within the remaining first three positions
+                let remainingPositions = [0, 1, 2].filter(index => index !== randomPosition); // Exclude the first swapped position
+                const randomPosition2 = remainingPositions[Math.floor(prng() * 2)];
+
+                // Swap "Dice" to the second random position within the first three positions
+                [itempool[randomPosition2], itempool[diceIndex]] = [itempool[diceIndex], itempool[randomPosition2]];
+            }
+
+
+            
+
+
+
+
+
+
+            
+
+
+            // Initialize an empty object named 'result'
+            let result = {};
+
+            // Populate the object with keys from 1 to 500, all initialized with ""
+            for (let i = 1; i <= lastgoal; i++) {
+                result[i] = "";
+            }
+
+            result[Math.floor(pg*lastgoal)] = "Victory"
+            finalgoal = Math.floor(pg*lastgoal)
+
+            document.getElementById("finalgoal").innerText = finalgoal;
+            document.getElementById("lastcheck").innerText = lastgoal;
+
+
+            // Process itempool until it becomes empty
+            while (itempool.length > 0) {
+                // Obtain and remove the first element from itempool
+                const firstElement = itempool.shift();
+
+                let maxinLogic = diceSimulationStringsForJS(cats, Math.floor(ndf / amDiceF), Math.floor(nrf / amRollsF), mu, di, smt)
+
+
+                const validKeys = Object.keys(result).filter(key => Number(key) <= maxinLogic && result[key] === "");
+
+                if (validKeys.length === 0) {
+                    console.error("Error: No valid key found matching the criteria.");
+                    addToLog("Error: No valid key found matching the criteria.")
+                    return; // Exit function if no valid key is found
+                }
+
+                // Select a random key from the filtered valid keys
+                const randomKey = validKeys[Math.floor((1-prng()*prng()) * validKeys.length)];
+                
+                result[randomKey] = firstElement;
+
+                
+                switch (firstElement) {
+                    case "Dice":
+                        ndf += amDiceF;
+                        break;
+                    case "Roll":
+                        nrf += amRollsF;
+                        break;
+                    case "Dice Fragment":
+                        ndf += 1;
+                        break;
+                    case "Roll Fragment":
+                        nrf += 1;
+                        break;
+                    case "Score Multiplier":
+                        if(smt == 0){
+                            mu += 0.02;
+                        }
+                        if(smt == 1){
+                            mu += 0.1;
+                        }
+                        if(smt == 2){
+                            mu += 0.01;
+                        }
+                        break;
+                    case "Extra Point":
+                        //nothing changes for logic
+                        break;
+                    case "Encouragement":
+                        //nothing changes for logic
+                        break;
+                    case "Fun Fact":
+                        //nothing changes for logic
+                        break;
+                    case "Story Chapter":
+                        //nothing changes for logic
+                        break;
+                    case "Category Ones":
+                        cats.push(new Category("Ones"));
+                        break;
+                    case "Category Twos":
+                        cats.push(new Category("Twos"));
+                        break;
+                    case "Category Threes":
+                        cats.push(new Category("Threes"));
+                        break;
+                    case "Category Fours":
+                        cats.push(new Category("Fours"));
+                        break;
+                    case "Category Fives":
+                        cats.push(new Category("Fives"));
+                        break;
+                    case "Category Sixes":
+                        cats.push(new Category("Sixes"));
+                        break;
+                    case "Category Pair":
+                        cats.push(new Category("Pair"));
+                        break;
+                    case "Category Three of a Kind":
+                        cats.push(new Category("ThreeOfAKind"));
+                        break;
+                    case "Category Four of a Kind":
+                        cats.push(new Category("FourOfAKind"));
+                        break;
+                    case "Category Tiny Straight":
+                        cats.push(new Category("TinyStraight"));
+                        break;
+                    case "Category Small Straight":
+                        cats.push(new Category("SmallStraight"));
+                        break;
+                    case "Category Large Straight":
+                        cats.push(new Category("LargeStraight"));
+                        break;
+                    case "Category Full House":
+                        cats.push(new Category("FullHouse"));
+                        break;
+                    case "Category Yacht":
+                        cats.push(new Category("Yacht"));
+                        break;
+                }
+            
+
+
+            }
+
+
+
+
+
+            // Filter out entries with empty string values from 'result'
+            result = Object.entries(result).reduce((filteredObj, [key, value]) => {
+                if (value !== "") {
+                    filteredObj[key] = value;
+                }
+                return filteredObj;
+            }, {});
+
+            
+
+
+
+
+
+
+
+
 
             // Output the result object
             missingLocations = result
+            console.log(missingLocations)
 
 
 
 
-            login();
             addToLog("Welcome to offline play. Note, this game will not be saved.")
 
             openCategories(["Dice", "Roll", "Category Choice", "Category Inverse Choice"])
+
+            let offlinepr = getUrlParameter('offlineprogress')
+            if(offlinepr != ""){
+                sendCheck(parseInt(offlinepr))
+            }
+
             maxscoreinlogic = getMaxScoreInLogic();
+            updateRequiresValue(null)
             updateHighscoreAndGoal();
+            updateParButtons();
+
+            
 
 
         });
@@ -3210,1001 +3679,6 @@
             window.scrollTo(0, 0);
         };
 
-
-
-        let pregenned =
-            [
-                `1 score: Roll Fragment
-2 score: Dice
-3 score: Dice Fragment
-4 score: Roll
-5 score: Dice Fragment
-6 score: Category Tiny Straight
-7 score: Category Pair
-8 score: Story Chapter
-9 score: Roll Fragment
-10 score: Roll Fragment
-11 score: Roll Fragment
-12 score: Bad RNG
-13 score: Dice Fragment
-14 score: Bad RNG
-15 score: Category Yacht
-16 score: Dice Fragment
-17 score: Dice Fragment
-18 score: Category Large Straight
-19 score: Bad RNG
-20 score: Dice Fragment
-21 score: Roll Fragment
-23 score: Bad RNG
-26 score: Score Multiplier
-28 score: Score Multiplier
-30 score: Roll Fragment
-33 score: Bad RNG
-36 score: Roll Fragment
-38 score: Category Twos
-41 score: Category Threes
-44 score: Fun Fact
-47 score: Dice Fragment
-50 score: Dice Fragment
-54 score: Score Multiplier
-57 score: Score Multiplier
-61 score: Bad RNG
-64 score: Roll Fragment
-68 score: Roll Fragment
-72 score: Bad RNG
-76 score: Roll Fragment
-80 score: Encouragement
-84 score: Dice Fragment
-88 score: Category Ones
-92 score: Story Chapter
-97 score: Bad RNG
-101 score: Score Multiplier
-106 score: Dice Fragment
-110 score: Roll Fragment
-115 score: Roll Fragment
-120 score: Dice Fragment
-125 score: Bad RNG
-130 score: Category Four of a Kind
-136 score: Good RNG
-141 score: Story Chapter
-146 score: Bad RNG
-152 score: Dice Fragment
-158 score: Fun Fact
-163 score: Good RNG
-169 score: Dice Fragment
-175 score: Story Chapter
-181 score: Good RNG
-188 score: Story Chapter
-194 score: Bad RNG
-200 score: Roll Fragment
-207 score: Story Chapter
-213 score: Category Three of a Kind
-220 score: Story Chapter
-227 score: Category Full House
-234 score: Bad RNG
-241 score: Roll Fragment
-248 score: Bad RNG
-255 score: Bad RNG
-262 score: Bad RNG
-270 score: Category Small Straight
-277 score: Fun Fact
-285 score: Category Fives
-293 score: Good RNG
-301 score: Fun Fact
-309 score: Good RNG
-317 score: Bad RNG
-325 score: Story Chapter
-333 score: Bad RNG
-341 score: Bad RNG
-350 score: Fun Fact
-358 score: Story Chapter
-367 score: Bad RNG
-376 score: Encouragement
-385 score: Encouragement
-394 score: Dice Fragment
-403 score: Victory
-412 score: Story Chapter
-421 score: Category Sixes
-431 score: Dice Fragment
-440 score: Roll Fragment
-450 score: Encouragement
-460 score: Encouragement
-469 score: Bad RNG
-479 score: Category Fours
-489 score: Good RNG
-500 score: Good RNG`,
-                `1 score: Encouragement
-2 score: Dice
-3 score: Roll
-4 score: Dice Fragment
-5 score: Category Ones
-6 score: Dice Fragment
-7 score: Bad RNG
-8 score: Bad RNG
-9 score: Roll Fragment
-10 score: Good RNG
-11 score: Roll Fragment
-12 score: Category Pair
-13 score: Dice Fragment
-14 score: Roll Fragment
-15 score: Bad RNG
-16 score: Story Chapter
-17 score: Roll Fragment
-18 score: Category Fives
-19 score: Category Yacht
-20 score: Dice Fragment
-21 score: Roll Fragment
-23 score: Roll Fragment
-26 score: Category Four of a Kind
-28 score: Roll Fragment
-30 score: Fun Fact
-33 score: Dice Fragment
-36 score: Category Full House
-38 score: Bad RNG
-41 score: Good RNG
-44 score: Category Tiny Straight
-47 score: Story Chapter
-50 score: Fun Fact
-54 score: Category Fours
-57 score: Bad RNG
-61 score: Category Sixes
-64 score: Dice Fragment
-68 score: Roll Fragment
-72 score: Dice Fragment
-76 score: Good RNG
-80 score: Dice Fragment
-84 score: Fun Fact
-88 score: Bad RNG
-92 score: Encouragement
-97 score: Score Multiplier
-101 score: Bad RNG
-106 score: Bad RNG
-110 score: Category Small Straight
-115 score: Good RNG
-120 score: Category Three of a Kind
-125 score: Category Large Straight
-130 score: Roll Fragment
-136 score: Roll Fragment
-141 score: Dice Fragment
-146 score: Score Multiplier
-152 score: Story Chapter
-158 score: Dice Fragment
-163 score: Story Chapter
-169 score: Encouragement
-175 score: Story Chapter
-181 score: Bad RNG
-188 score: Roll Fragment
-194 score: Bad RNG
-200 score: Roll Fragment
-207 score: Story Chapter
-213 score: Bad RNG
-220 score: Story Chapter
-227 score: Good RNG
-234 score: Score Multiplier
-241 score: Category Twos
-248 score: Bad RNG
-255 score: Bad RNG
-262 score: Good RNG
-270 score: Score Multiplier
-277 score: Roll Fragment
-285 score: Dice Fragment
-293 score: Dice Fragment
-301 score: Dice Fragment
-309 score: Good RNG
-317 score: Dice Fragment
-325 score: Roll Fragment
-333 score: Category Threes
-341 score: Story Chapter
-350 score: Encouragement
-358 score: Good RNG
-367 score: Score Multiplier
-376 score: Dice Fragment
-385 score: Good RNG
-394 score: Story Chapter
-403 score: Victory
-412 score: Bad RNG
-421 score: Story Chapter
-431 score: Fun Fact
-440 score: Good RNG
-450 score: Roll Fragment
-460 score: Encouragement
-469 score: Bad RNG
-479 score: Fun Fact
-489 score: Good RNG
-500 score: Bad RNG`,
-                `1 score: Dice Fragment
-2 score: Roll
-3 score: Bad RNG
-4 score: Dice
-5 score: Story Chapter
-6 score: Dice Fragment
-7 score: Category Four of a Kind
-8 score: Good RNG
-9 score: Category Large Straight
-10 score: Good RNG
-11 score: Dice Fragment
-12 score: Story Chapter
-13 score: Dice Fragment
-14 score: Category Fives
-15 score: Bad RNG
-16 score: Category Tiny Straight
-17 score: Roll Fragment
-18 score: Good RNG
-19 score: Story Chapter
-20 score: Category Sixes
-21 score: Roll Fragment
-23 score: Dice Fragment
-26 score: Score Multiplier
-28 score: Roll Fragment
-30 score: Category Threes
-33 score: Category Three of a Kind
-36 score: Roll Fragment
-38 score: Dice Fragment
-41 score: Bad RNG
-44 score: Roll Fragment
-47 score: Roll Fragment
-50 score: Roll Fragment
-54 score: Roll Fragment
-57 score: Roll Fragment
-61 score: Score Multiplier
-64 score: Fun Fact
-68 score: Good RNG
-72 score: Story Chapter
-76 score: Roll Fragment
-80 score: Bad RNG
-84 score: Category Ones
-88 score: Roll Fragment
-92 score: Good RNG
-97 score: Roll Fragment
-101 score: Encouragement
-106 score: Dice Fragment
-110 score: Dice Fragment
-115 score: Good RNG
-120 score: Bad RNG
-125 score: Story Chapter
-130 score: Bad RNG
-136 score: Dice Fragment
-141 score: Bad RNG
-146 score: Roll Fragment
-152 score: Story Chapter
-158 score: Score Multiplier
-163 score: Bad RNG
-169 score: Dice Fragment
-175 score: Category Small Straight
-181 score: Category Pair
-188 score: Encouragement
-194 score: Fun Fact
-200 score: Bad RNG
-207 score: Fun Fact
-213 score: Dice Fragment
-220 score: Bad RNG
-227 score: Encouragement
-234 score: Bad RNG
-241 score: Category Fours
-248 score: Story Chapter
-255 score: Story Chapter
-262 score: Category Twos
-270 score: Dice Fragment
-277 score: Bad RNG
-285 score: Bad RNG
-293 score: Bad RNG
-301 score: Dice Fragment
-309 score: Category Full House
-317 score: Bad RNG
-325 score: Dice Fragment
-333 score: Roll Fragment
-341 score: Good RNG
-350 score: Fun Fact
-358 score: Story Chapter
-367 score: Dice Fragment
-376 score: Bad RNG
-385 score: Story Chapter
-394 score: Good RNG
-403 score: Victory
-412 score: Fun Fact
-421 score: Score Multiplier
-431 score: Category Yacht
-440 score: Score Multiplier
-450 score: Encouragement
-460 score: Bad RNG
-469 score: Good RNG
-479 score: Roll Fragment
-489 score: Good RNG
-500 score: Encouragement`,
-                `1 score: Dice Fragment
-2 score: Category Ones
-3 score: Roll
-4 score: Category Pair
-5 score: Category Tiny Straight
-6 score: Dice
-7 score: Category Twos
-8 score: Category Threes
-9 score: Bad RNG
-10 score: Bad RNG
-11 score: Dice Fragment
-12 score: Fun Fact
-13 score: Good RNG
-14 score: Category Yacht
-15 score: Roll Fragment
-16 score: Roll Fragment
-17 score: Good RNG
-18 score: Encouragement
-19 score: Good RNG
-20 score: Good RNG
-21 score: Story Chapter
-23 score: Score Multiplier
-26 score: Dice Fragment
-28 score: Category Fours
-30 score: Roll Fragment
-33 score: Roll Fragment
-36 score: Roll Fragment
-38 score: Dice Fragment
-41 score: Dice Fragment
-44 score: Fun Fact
-47 score: Dice Fragment
-50 score: Story Chapter
-54 score: Roll Fragment
-57 score: Score Multiplier
-61 score: Score Multiplier
-64 score: Roll Fragment
-68 score: Dice Fragment
-72 score: Roll Fragment
-76 score: Category Fives
-80 score: Roll Fragment
-84 score: Dice Fragment
-88 score: Story Chapter
-92 score: Dice Fragment
-97 score: Story Chapter
-101 score: Bad RNG
-106 score: Bad RNG
-110 score: Dice Fragment
-115 score: Bad RNG
-120 score: Category Three of a Kind
-125 score: Roll Fragment
-130 score: Bad RNG
-136 score: Bad RNG
-141 score: Bad RNG
-146 score: Roll Fragment
-152 score: Bad RNG
-158 score: Story Chapter
-163 score: Score Multiplier
-169 score: Encouragement
-175 score: Category Large Straight
-181 score: Encouragement
-188 score: Good RNG
-194 score: Dice Fragment
-200 score: Story Chapter
-207 score: Dice Fragment
-213 score: Story Chapter
-220 score: Story Chapter
-227 score: Good RNG
-234 score: Score Multiplier
-241 score: Bad RNG
-248 score: Category Sixes
-255 score: Bad RNG
-262 score: Encouragement
-270 score: Story Chapter
-277 score: Bad RNG
-285 score: Category Small Straight
-293 score: Bad RNG
-301 score: Bad RNG
-309 score: Fun Fact
-317 score: Encouragement
-325 score: Dice Fragment
-333 score: Bad RNG
-341 score: Story Chapter
-350 score: Bad RNG
-358 score: Category Full House
-367 score: Fun Fact
-376 score: Fun Fact
-385 score: Dice Fragment
-394 score: Roll Fragment
-403 score: Victory
-412 score: Roll Fragment
-421 score: Good RNG
-431 score: Bad RNG
-440 score: Bad RNG
-450 score: Dice Fragment
-460 score: Roll Fragment
-469 score: Good RNG
-479 score: Good RNG
-489 score: Roll Fragment
-500 score: Category Four of a Kind`,
-                `1 score: Good RNG
-2 score: Roll
-3 score: Dice
-4 score: Roll Fragment
-5 score: Dice Fragment
-6 score: Category Pair
-7 score: Roll Fragment
-8 score: Category Yacht
-9 score: Score Multiplier
-10 score: Bad RNG
-11 score: Dice Fragment
-12 score: Score Multiplier
-13 score: Category Ones
-14 score: Story Chapter
-15 score: Category Sixes
-16 score: Encouragement
-17 score: Score Multiplier
-18 score: Category Four of a Kind
-19 score: Bad RNG
-20 score: Roll Fragment
-21 score: Category Tiny Straight
-23 score: Roll Fragment
-26 score: Fun Fact
-28 score: Fun Fact
-30 score: Story Chapter
-33 score: Bad RNG
-36 score: Encouragement
-38 score: Story Chapter
-41 score: Category Fours
-44 score: Fun Fact
-47 score: Dice Fragment
-50 score: Dice Fragment
-54 score: Roll Fragment
-57 score: Roll Fragment
-61 score: Roll Fragment
-64 score: Bad RNG
-68 score: Dice Fragment
-72 score: Good RNG
-76 score: Fun Fact
-80 score: Category Large Straight
-84 score: Dice Fragment
-88 score: Category Twos
-92 score: Bad RNG
-97 score: Category Three of a Kind
-101 score: Good RNG
-106 score: Fun Fact
-110 score: Bad RNG
-115 score: Score Multiplier
-120 score: Story Chapter
-125 score: Bad RNG
-130 score: Roll Fragment
-136 score: Good RNG
-141 score: Dice Fragment
-146 score: Story Chapter
-152 score: Roll Fragment
-158 score: Dice Fragment
-163 score: Good RNG
-169 score: Category Small Straight
-175 score: Bad RNG
-181 score: Bad RNG
-188 score: Category Threes
-194 score: Story Chapter
-200 score: Bad RNG
-207 score: Score Multiplier
-213 score: Story Chapter
-220 score: Good RNG
-227 score: Bad RNG
-234 score: Category Fives
-241 score: Dice Fragment
-248 score: Good RNG
-255 score: Good RNG
-262 score: Encouragement
-270 score: Encouragement
-277 score: Roll Fragment
-285 score: Good RNG
-293 score: Bad RNG
-301 score: Bad RNG
-309 score: Roll Fragment
-317 score: Bad RNG
-325 score: Roll Fragment
-333 score: Dice Fragment
-341 score: Encouragement
-350 score: Dice Fragment
-358 score: Bad RNG
-367 score: Bad RNG
-376 score: Dice Fragment
-385 score: Dice Fragment
-394 score: Roll Fragment
-403 score: Victory
-412 score: Story Chapter
-421 score: Good RNG
-431 score: Good RNG
-440 score: Roll Fragment
-450 score: Dice Fragment
-460 score: Category Full House
-469 score: Roll Fragment
-479 score: Dice Fragment
-489 score: Story Chapter
-500 score: Story Chapter`,
-                `1 score: Category Small Straight
-2 score: Roll
-3 score: Score Multiplier
-4 score: Good RNG
-5 score: Dice
-6 score: Roll Fragment
-7 score: Bad RNG
-8 score: Category Four of a Kind
-9 score: Category Large Straight
-10 score: Bad RNG
-11 score: Dice Fragment
-12 score: Category Threes
-13 score: Category Ones
-14 score: Bad RNG
-15 score: Dice Fragment
-16 score: Bad RNG
-17 score: Dice Fragment
-18 score: Roll Fragment
-19 score: Dice Fragment
-20 score: Roll Fragment
-21 score: Category Sixes
-23 score: Bad RNG
-26 score: Category Twos
-28 score: Story Chapter
-30 score: Category Full House
-33 score: Dice Fragment
-36 score: Bad RNG
-38 score: Story Chapter
-41 score: Dice Fragment
-44 score: Category Tiny Straight
-47 score: Bad RNG
-50 score: Roll Fragment
-54 score: Fun Fact
-57 score: Category Fours
-61 score: Dice Fragment
-64 score: Roll Fragment
-68 score: Good RNG
-72 score: Good RNG
-76 score: Encouragement
-80 score: Bad RNG
-84 score: Dice Fragment
-88 score: Bad RNG
-92 score: Bad RNG
-97 score: Score Multiplier
-101 score: Fun Fact
-106 score: Bad RNG
-110 score: Bad RNG
-115 score: Good RNG
-120 score: Score Multiplier
-125 score: Score Multiplier
-130 score: Dice Fragment
-136 score: Category Yacht
-141 score: Dice Fragment
-146 score: Encouragement
-152 score: Roll Fragment
-158 score: Bad RNG
-163 score: Story Chapter
-169 score: Dice Fragment
-175 score: Bad RNG
-181 score: Encouragement
-188 score: Roll Fragment
-194 score: Bad RNG
-200 score: Category Pair
-207 score: Roll Fragment
-213 score: Fun Fact
-220 score: Bad RNG
-227 score: Fun Fact
-234 score: Story Chapter
-241 score: Story Chapter
-248 score: Bad RNG
-255 score: Roll Fragment
-262 score: Dice Fragment
-270 score: Dice Fragment
-277 score: Roll Fragment
-285 score: Bad RNG
-293 score: Story Chapter
-301 score: Score Multiplier
-309 score: Roll Fragment
-317 score: Encouragement
-325 score: Story Chapter
-333 score: Dice Fragment
-341 score: Good RNG
-350 score: Category Three of a Kind
-358 score: Story Chapter
-367 score: Bad RNG
-376 score: Roll Fragment
-385 score: Bad RNG
-394 score: Dice Fragment
-403 score: Victory
-412 score: Story Chapter
-421 score: Roll Fragment
-431 score: Good RNG
-440 score: Encouragement
-450 score: Roll Fragment
-460 score: Story Chapter
-469 score: Fun Fact
-479 score: Roll Fragment
-489 score: Category Fives
-500 score: Bad RNG`,
-                `1 score: Roll Fragment
-2 score: Category Ones
-3 score: Dice
-4 score: Bad RNG
-5 score: Good RNG
-6 score: Roll
-7 score: Score Multiplier
-8 score: Roll Fragment
-9 score: Category Threes
-10 score: Encouragement
-11 score: Dice Fragment
-12 score: Category Fours
-13 score: Roll Fragment
-14 score: Score Multiplier
-15 score: Category Tiny Straight
-16 score: Story Chapter
-17 score: Good RNG
-18 score: Roll Fragment
-19 score: Category Four of a Kind
-20 score: Bad RNG
-21 score: Category Yacht
-23 score: Story Chapter
-26 score: Dice Fragment
-28 score: Category Small Straight
-30 score: Dice Fragment
-33 score: Category Three of a Kind
-36 score: Dice Fragment
-38 score: Roll Fragment
-41 score: Bad RNG
-44 score: Bad RNG
-47 score: Fun Fact
-50 score: Roll Fragment
-54 score: Good RNG
-57 score: Score Multiplier
-61 score: Dice Fragment
-64 score: Roll Fragment
-68 score: Category Large Straight
-72 score: Roll Fragment
-76 score: Bad RNG
-80 score: Story Chapter
-84 score: Encouragement
-88 score: Category Pair
-92 score: Story Chapter
-97 score: Dice Fragment
-101 score: Story Chapter
-106 score: Story Chapter
-110 score: Dice Fragment
-115 score: Good RNG
-120 score: Fun Fact
-125 score: Dice Fragment
-130 score: Dice Fragment
-136 score: Story Chapter
-141 score: Roll Fragment
-146 score: Good RNG
-152 score: Roll Fragment
-158 score: Good RNG
-163 score: Good RNG
-169 score: Roll Fragment
-175 score: Good RNG
-181 score: Encouragement
-188 score: Dice Fragment
-194 score: Category Full House
-200 score: Story Chapter
-207 score: Dice Fragment
-213 score: Roll Fragment
-220 score: Bad RNG
-227 score: Dice Fragment
-234 score: Good RNG
-241 score: Encouragement
-248 score: Fun Fact
-255 score: Story Chapter
-262 score: Story Chapter
-270 score: Dice Fragment
-277 score: Good RNG
-285 score: Bad RNG
-293 score: Category Twos
-301 score: Good RNG
-309 score: Bad RNG
-317 score: Score Multiplier
-325 score: Bad RNG
-333 score: Roll Fragment
-341 score: Good RNG
-350 score: Good RNG
-358 score: Encouragement
-367 score: Bad RNG
-376 score: Fun Fact
-385 score: Category Fives
-394 score: Bad RNG
-403 score: Victory
-412 score: Bad RNG
-421 score: Dice Fragment
-431 score: Fun Fact
-440 score: Roll Fragment
-450 score: Category Sixes
-460 score: Good RNG
-469 score: Score Multiplier
-479 score: Dice Fragment
-489 score: Roll Fragment
-500 score: Good RNG`,
-                `1 score: Roll Fragment
-2 score: Roll Fragment
-3 score: Roll
-4 score: Roll Fragment
-5 score: Dice
-6 score: Dice Fragment
-7 score: Dice Fragment
-8 score: Category Large Straight
-9 score: Roll Fragment
-10 score: Dice Fragment
-11 score: Roll Fragment
-12 score: Score Multiplier
-13 score: Bad RNG
-14 score: Story Chapter
-15 score: Category Yacht
-16 score: Dice Fragment
-17 score: Good RNG
-18 score: Category Sixes
-19 score: Dice Fragment
-20 score: Dice Fragment
-21 score: Dice Fragment
-23 score: Dice Fragment
-26 score: Score Multiplier
-28 score: Story Chapter
-30 score: Category Full House
-33 score: Story Chapter
-36 score: Roll Fragment
-38 score: Good RNG
-41 score: Dice Fragment
-44 score: Encouragement
-47 score: Score Multiplier
-50 score: Roll Fragment
-54 score: Roll Fragment
-57 score: Category Tiny Straight
-61 score: Category Four of a Kind
-64 score: Story Chapter
-68 score: Roll Fragment
-72 score: Bad RNG
-76 score: Category Twos
-80 score: Category Three of a Kind
-84 score: Story Chapter
-88 score: Category Pair
-92 score: Fun Fact
-97 score: Story Chapter
-101 score: Bad RNG
-106 score: Encouragement
-110 score: Roll Fragment
-115 score: Fun Fact
-120 score: Dice Fragment
-125 score: Encouragement
-130 score: Good RNG
-136 score: Bad RNG
-141 score: Dice Fragment
-146 score: Dice Fragment
-152 score: Bad RNG
-158 score: Good RNG
-163 score: Bad RNG
-169 score: Bad RNG
-175 score: Bad RNG
-181 score: Good RNG
-188 score: Fun Fact
-194 score: Story Chapter
-200 score: Bad RNG
-207 score: Bad RNG
-213 score: Roll Fragment
-220 score: Bad RNG
-227 score: Roll Fragment
-234 score: Story Chapter
-241 score: Category Ones
-248 score: Fun Fact
-255 score: Bad RNG
-262 score: Roll Fragment
-270 score: Good RNG
-277 score: Encouragement
-285 score: Story Chapter
-293 score: Bad RNG
-301 score: Bad RNG
-309 score: Category Small Straight
-317 score: Roll Fragment
-325 score: Category Fives
-333 score: Good RNG
-341 score: Dice Fragment
-350 score: Dice Fragment
-358 score: Bad RNG
-367 score: Score Multiplier
-376 score: Roll Fragment
-385 score: Bad RNG
-394 score: Good RNG
-403 score: Victory
-412 score: Category Fours
-421 score: Category Threes
-431 score: Bad RNG
-440 score: Dice Fragment
-450 score: Good RNG
-460 score: Encouragement
-469 score: Bad RNG
-479 score: Story Chapter
-489 score: Fun Fact
-500 score: Score Multiplier`,
-                `1 score: Category Sixes
-2 score: Dice
-3 score: Roll Fragment
-4 score: Dice Fragment
-5 score: Score Multiplier
-6 score: Roll
-7 score: Encouragement
-8 score: Score Multiplier
-9 score: Category Four of a Kind
-10 score: Bad RNG
-11 score: Dice Fragment
-12 score: Roll Fragment
-13 score: Category Yacht
-14 score: Dice Fragment
-15 score: Score Multiplier
-16 score: Story Chapter
-17 score: Dice Fragment
-18 score: Bad RNG
-19 score: Category Fives
-20 score: Bad RNG
-21 score: Roll Fragment
-23 score: Fun Fact
-26 score: Score Multiplier
-28 score: Dice Fragment
-30 score: Roll Fragment
-33 score: Category Tiny Straight
-36 score: Dice Fragment
-38 score: Roll Fragment
-41 score: Dice Fragment
-44 score: Bad RNG
-47 score: Fun Fact
-50 score: Story Chapter
-54 score: Dice Fragment
-57 score: Bad RNG
-61 score: Dice Fragment
-64 score: Dice Fragment
-68 score: Dice Fragment
-72 score: Story Chapter
-76 score: Roll Fragment
-80 score: Roll Fragment
-84 score: Roll Fragment
-88 score: Category Ones
-92 score: Dice Fragment
-97 score: Bad RNG
-101 score: Category Full House
-106 score: Roll Fragment
-110 score: Good RNG
-115 score: Bad RNG
-120 score: Good RNG
-125 score: Bad RNG
-130 score: Roll Fragment
-136 score: Encouragement
-141 score: Fun Fact
-146 score: Bad RNG
-152 score: Bad RNG
-158 score: Category Three of a Kind
-163 score: Bad RNG
-169 score: Bad RNG
-175 score: Bad RNG
-181 score: Good RNG
-188 score: Encouragement
-194 score: Fun Fact
-200 score: Bad RNG
-207 score: Story Chapter
-213 score: Dice Fragment
-220 score: Fun Fact
-227 score: Category Twos
-234 score: Good RNG
-241 score: Score Multiplier
-248 score: Category Small Straight
-255 score: Roll Fragment
-262 score: Category Threes
-270 score: Story Chapter
-277 score: Story Chapter
-285 score: Dice Fragment
-293 score: Bad RNG
-301 score: Category Large Straight
-309 score: Story Chapter
-317 score: Category Fours
-325 score: Roll Fragment
-333 score: Good RNG
-341 score: Dice Fragment
-350 score: Story Chapter
-358 score: Category Pair
-367 score: Roll Fragment
-376 score: Good RNG
-385 score: Encouragement
-394 score: Bad RNG
-403 score: Victory
-412 score: Roll Fragment
-421 score: Story Chapter
-431 score: Bad RNG
-440 score: Good RNG
-450 score: Encouragement
-460 score: Roll Fragment
-469 score: Good RNG
-479 score: Story Chapter
-489 score: Bad RNG
-500 score: Bad RNG`,
-                `1 score: Dice
-2 score: Roll
-3 score: Story Chapter
-4 score: Roll Fragment
-5 score: Good RNG
-6 score: Roll Fragment
-7 score: Category Twos
-8 score: Bad RNG
-9 score: Score Multiplier
-10 score: Dice Fragment
-11 score: Category Large Straight
-12 score: Story Chapter
-13 score: Category Yacht
-14 score: Dice Fragment
-15 score: Dice Fragment
-16 score: Score Multiplier
-17 score: Category Four of a Kind
-18 score: Dice Fragment
-19 score: Roll Fragment
-20 score: Roll Fragment
-21 score: Dice Fragment
-23 score: Dice Fragment
-26 score: Category Fives
-28 score: Roll Fragment
-30 score: Roll Fragment
-33 score: Good RNG
-36 score: Category Full House
-38 score: Encouragement
-41 score: Good RNG
-44 score: Roll Fragment
-47 score: Roll Fragment
-50 score: Dice Fragment
-54 score: Dice Fragment
-57 score: Category Small Straight
-61 score: Roll Fragment
-64 score: Dice Fragment
-68 score: Bad RNG
-72 score: Encouragement
-76 score: Story Chapter
-80 score: Bad RNG
-84 score: Category Tiny Straight
-88 score: Dice Fragment
-92 score: Roll Fragment
-97 score: Category Sixes
-101 score: Dice Fragment
-106 score: Story Chapter
-110 score: Score Multiplier
-115 score: Fun Fact
-120 score: Bad RNG
-125 score: Story Chapter
-130 score: Roll Fragment
-136 score: Score Multiplier
-141 score: Bad RNG
-146 score: Good RNG
-152 score: Dice Fragment
-158 score: Bad RNG
-163 score: Encouragement
-169 score: Encouragement
-175 score: Bad RNG
-181 score: Bad RNG
-188 score: Fun Fact
-194 score: Bad RNG
-200 score: Score Multiplier
-207 score: Bad RNG
-213 score: Category Three of a Kind
-220 score: Bad RNG
-227 score: Dice Fragment
-234 score: Bad RNG
-241 score: Fun Fact
-248 score: Dice Fragment
-255 score: Good RNG
-262 score: Good RNG
-270 score: Fun Fact
-277 score: Bad RNG
-285 score: Bad RNG
-293 score: Good RNG
-301 score: Category Fours
-309 score: Category Pair
-317 score: Encouragement
-325 score: Fun Fact
-333 score: Roll Fragment
-341 score: Roll Fragment
-350 score: Bad RNG
-358 score: Good RNG
-367 score: Good RNG
-376 score: Category Threes
-385 score: Story Chapter
-394 score: Category Ones
-403 score: Victory
-412 score: Bad RNG
-421 score: Story Chapter
-431 score: Roll Fragment
-440 score: Story Chapter
-450 score: Roll Fragment
-460 score: Story Chapter
-469 score: Story Chapter
-479 score: Good RNG
-489 score: Bad RNG
-500 score: Dice Fragment`
-            ]
 
 
 
