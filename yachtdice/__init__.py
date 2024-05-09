@@ -1,10 +1,9 @@
-from BaseClasses import Region, Entrance, Item, Tutorial, ItemClassification
+from BaseClasses import Region, Entrance, Item, Tutorial
 from .Items import YachtDiceItem, item_table
-from .Locations import YachtDiceLocation, all_locations, ini_locations, AdvData
-from .Options import yachtdice_options
-from .Rules import set_yacht_rules, set_yacht_completion_rules, diceSimulationStrings, Category
+from .Locations import YachtDiceLocation, all_locations, ini_locations
+from .Options import YachtDiceOptions
+from .Rules import set_yacht_rules, set_yacht_completion_rules
 from ..AutoWorld import World, WebWorld
-from Fill import FillError
 import math
 
 
@@ -30,8 +29,8 @@ class YachtDiceWorld(World):
     You 'beat' the game if you reach the target score.
     """
     game: str = "Yacht Dice"
-    option_definitions = yachtdice_options
-    options_dataclass = yachtdice_options
+    #option_definitions = yachtdice_options
+    options_dataclass = YachtDiceOptions
     
     web = YachtDiceWeb()
 
@@ -50,12 +49,12 @@ class YachtDiceWorld(World):
 
     def _get_yachtdice_data(self):
         return {
-            'world_seed': self.multiworld.per_slot_randoms[self.player].getrandbits(32),
-            'seed_name': self.multiworld.seed_name,
-            'player_name': self.multiworld.get_player_name(self.player),
-            'player_id': self.player,
-            'client_version': client_version,
-            'race': self.multiworld.is_race,
+            "world_seed": self.multiworld.per_slot_randoms[self.player].getrandbits(32),
+            "seed_name": self.multiworld.seed_name,
+            "player_name": self.multiworld.get_player_name(self.player),
+            "player_id": self.player,
+            "client_version": client_version,
+            "race": self.multiworld.is_race,
         }
     
 
@@ -77,7 +76,7 @@ class YachtDiceWorld(World):
         
         for plando_setting in self.multiworld.plando_items[self.player]:
             if plando_setting.get("from_pool", False) is False:
-                extra_plando_items += sum(value for value in plando_setting['items'].values())
+                extra_plando_items += sum(value for value in plando_setting["items"].values())
 
 
         # Generate item pool
@@ -119,7 +118,12 @@ class YachtDiceWorld(World):
         
         import sys
         if already_items > self.number_of_locations:
-            sys.exit(f"In Yacht Dice, there are more items than locations. Items: {already_items}, locations: {self.number_of_locations}")
+            sys.exit(
+                f"In Yacht Dice, there are more items than locations. "
+                f"Items: {already_items}, "
+                f"locations: {self.number_of_locations}"
+            )
+
         
         
         
@@ -168,7 +172,8 @@ class YachtDiceWorld(World):
             p = 0.1
             
         already_items = len(itempool) + extra_plando_items
-        itempool += ["Good RNG" if random.random() > p else "Bad RNG" for _ in range(self.number_of_locations - already_items)]
+        itempool += ["Good RNG" if random.random() > p else "Bad RNG" 
+                     for _ in range(self.number_of_locations - already_items)]
 
         
         already_items = len(itempool) + extra_plando_items
@@ -255,7 +260,8 @@ class YachtDiceWorld(World):
         
         victory_id = int(goal_percentage_location / 100 * len(board.locations))-1
         
-        #Add the victory item to the correct location. The website declares that the game is complete when the victory item is obtained.
+        # Add the victory item to the correct location. 
+        # The website declares that the game is complete when the victory item is obtained.
         board.locations[victory_id].place_locked_item(self.create_item("Victory"))
         
         
@@ -286,11 +292,24 @@ class YachtDiceWorld(World):
 
     def fill_slot_data(self):
 
-        slot_data = self._get_yachtdice_data()
-        for option_name in yachtdice_options:
-            option = getattr(self.multiworld, option_name)[self.player]
-            if slot_data.get(option_name, None) is None and type(option.value) in {str, int}:
-                slot_data[option_name] = int(option.value)
+        yacht_dice_data = self._get_yachtdice_data()
+        
+        yacht_dice_options = self.options.as_dict(
+            "number_of_dice_and_rolls", 
+            "number_of_dice_fragments_per_dice", 
+            "number_of_roll_fragments_per_roll", 
+            "number_of_extra_roll_fragments",
+            "game_difficulty",
+            "goal_location_percentage", 
+            "score_multiplier_type", 
+            "add_extra_points", 
+            "add_story_chapters", 
+            "which_story"
+        )
+        
+        slot_data = {**yacht_dice_data, **yacht_dice_options}
+          
+                
         slot_data["goal_score"] = self.goal_score
         slot_data["last_check_score"] = self.max_score
         slot_data["ap_world_version"] = self.ap_world_version

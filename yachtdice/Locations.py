@@ -22,7 +22,7 @@ starting_index = 16871244500
 def all_locations_fun(max_score):
     location_table = {}
     for i in range(max_score):
-        location_table[f"{i} score"] = AdvData(starting_index+i, 'Board', i)
+        location_table[f"{i} score"] = AdvData(starting_index+i, "Board", i)
     return location_table
 
 def ini_locations(max_score, num_locs, dif):
@@ -43,13 +43,14 @@ def ini_locations(max_score, num_locs, dif):
         if(curscore <= hiscore):
             curscore = hiscore + 1
         hiscore = curscore
-        location_table[f"{curscore} score"] = AdvData(starting_index + curscore, 'Board', curscore)
+        location_table[f"{curscore} score"] = AdvData(starting_index + curscore, "Board", curscore)
         
-    location_table[f'{max_score} score'] = AdvData(starting_index + max_score, 'Board', max_score)
+    location_table[f"{max_score} score"] = AdvData(starting_index + max_score, "Board", max_score)
     return location_table
 
-
-all_locations = all_locations_fun(1000) #we need to do this function to initialize all scores from 1 to 1000, even though not all are used
+# we need to run this function to initialize all scores from 1 to 1000, even though not all are used
+# this in order to make sure no other worlds use any ids that are similar to Yacht Dice
+all_locations = all_locations_fun(1000) 
 
 
     

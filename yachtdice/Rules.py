@@ -1,13 +1,7 @@
 from ..generic.Rules import set_rule
-from BaseClasses import MultiWorld, CollectionState
-from statistics import mean
-import random
+from BaseClasses import MultiWorld
 from .YachtWeights import yacht_weights
 import math
-
-
-
-
 
 
 class Category:
@@ -30,9 +24,15 @@ class Category:
 
 
 def extractProgression(state, player, options):
-    number_of_dice = state.count("Dice", player) + state.count("Dice Fragment", player) // options.number_of_dice_fragments_per_dice.value
+    number_of_dice = (
+        state.count("Dice", player) 
+        + state.count("Dice Fragment", player) // options.number_of_dice_fragments_per_dice.value
+    )
 
-    number_of_rerolls = state.count("Roll", player) + state.count("Roll Fragment", player) // options.number_of_roll_fragments_per_roll.value
+    number_of_rerolls = (
+        state.count("Roll", player) 
+        + state.count("Roll Fragment", player) // options.number_of_roll_fragments_per_roll.value
+    )
 
     number_of_mults = state.count("Score Multiplier", player)
     
@@ -88,11 +88,6 @@ def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff, scoremu
     tup = tuple([tuple(sorted([c.name for c in categories])), nbDice, nbRolls, multiplier])
     
     
-    
-    # tup = (('Choice', 'Choice', 
-    #         'Sixes', 'Fours',
-    #         'Yacht','LargeStraight', 
-    #         'Fives', 'FourOfAKind', 'Ones', 'SmallStraight'), 4, 3, 0.06)
 
     if tup in cache.keys():
         return cache[tup]
@@ -148,8 +143,9 @@ def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff, scoremu
             cumulative_prob += dist[val]
             if cumulative_prob >= percentile:
                 return prev_val  # Return the value before reaching the desired percentile
-        return prev_val if prev_val is not None else sorted_values[0]  # Return the first value if percentile is lower than all probabilities
-
+            
+        # Return the first value if percentile is lower than all probabilities
+        return prev_val if prev_val is not None else sorted_values[0]  
             
     def mean_distribution(dist):
         total_mean = sum(val * prob for val, prob in dist.items())

@@ -1,6 +1,5 @@
-import typing
-from Options import Choice, Option, Toggle, Range
-
+from Options import Choice, Range, PerGameCommonOptions
+from dataclasses import dataclass
 
 class numberOfDiceAndRolls(Choice):
     """
@@ -98,7 +97,7 @@ class goalLocationPercentage(Range):
     """
     What percentage of checks you need to get, to 'finish' the game.
     Low percentage means you can probably 'finish' the game with some of the dice/rolls/categories.
-    High percentage means you probably need most of the usefull items, and on higher difficulties you might need them all.
+    High percentage means you need most of the useful items, and on higher difficulties you might need them all.
     """
     display_name = "Goal percentage location"
     range_start = 70
@@ -175,18 +174,16 @@ class whichStory(Choice):
     
 
 
-
-yachtdice_options: typing.Dict[str, type(Option)] = {
-    "number_of_dice_and_rolls": numberOfDiceAndRolls,
-    # "number_of_extra_rolls": numberOfExtraRolls,
-    "number_of_dice_fragments_per_dice": numberDiceFragmentsPerDice,
-    "number_of_extra_dice_fragments": numberExtraDiceFragments,
-    "number_of_roll_fragments_per_roll": numberRollFragmentsPerRoll,
-    "number_of_extra_roll_fragments": numberExtraRollFragments,
-    "game_difficulty": gameDifficulty,
-    "goal_location_percentage": goalLocationPercentage,
-    "score_multiplier_type": scoreMultiplierType,
-    "add_extra_points": addExtraPoints,
-    "add_story_chapters": addStoryChapters,
-    "which_story": whichStory
-}
+@dataclass
+class YachtDiceOptions(PerGameCommonOptions):
+    number_of_dice_and_rolls: numberOfDiceAndRolls
+    number_of_dice_fragments_per_dice: numberDiceFragmentsPerDice
+    number_of_extra_dice_fragments: numberExtraDiceFragments
+    number_of_roll_fragments_per_roll: numberRollFragmentsPerRoll
+    number_of_extra_roll_fragments: numberExtraRollFragments
+    game_difficulty: gameDifficulty
+    goal_location_percentage: goalLocationPercentage
+    score_multiplier_type: scoreMultiplierType
+    add_extra_points: addExtraPoints
+    add_story_chapters: addStoryChapters
+    which_story: whichStory
