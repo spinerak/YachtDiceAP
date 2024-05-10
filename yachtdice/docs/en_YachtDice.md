@@ -1,6 +1,6 @@
 # Yacht Dice
 
-Yacht Dice is a straightforward game where you cast your dice to chart a course for high scores, unlocking valuable treasures along the way. Discover more dice, extra rolls, multipliers, and unlockable categories to navigate the game's depths. Roll your way to victory by reaching the target score!
+Yacht Dice is a straightforward game, custom-made for Archipelago, where you cast your dice to chart a course for high scores, unlocking valuable treasures along the way. Discover more dice, extra rolls, multipliers, and unlockable categories to navigate the game's depths. Roll your way to victory by reaching the target score!
 
 ## Where is the settings page?
 
