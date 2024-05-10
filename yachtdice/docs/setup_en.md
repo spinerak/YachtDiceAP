@@ -3,7 +3,7 @@
 ## Required Software
 
 - A browser (you are probably using one right now!).
-- Archipelago from the [Archipelago Releases Page](https://github.com/ArchipelagoMW/Archipelago/releases)
+- Archipelago from the [Archipelago Releases Page](https://github.com/ArchipelagoMW/Archipelago/releases).
 
 ## Playing the game
 Open the Yacht Dice website. There are two options:
