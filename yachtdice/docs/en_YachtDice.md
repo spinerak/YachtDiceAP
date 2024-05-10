@@ -1,5 +1,7 @@
 # Yacht Dice
 
+Yacht Dice is a straightforward game where you cast your dice to chart a course for high scores, unlocking valuable treasures along the way. Discover more dice, extra rolls, multipliers, and unlockable categories to navigate the game's depths. Roll your way to victory by reaching the target score!
+
 ## Where is the settings page?
 
 The [player settings page for this game](../player-settings) contains all the options you need to configure and export a config file.
@@ -17,3 +19,4 @@ There are other items too, like extra points, lore, fun facts etc.
 ## What is the victory condition?
 
 Reaching the target score completes the game. There are options for setting the location of the target score. The target score is displayed on the website.
+
