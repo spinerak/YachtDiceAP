@@ -24,7 +24,7 @@ class YachtDiceWeb(WebWorld):
 
 class YachtDiceWorld(World):
     """
-    Yacht Dice is a game where you roll dice to reach high scores, which unlocks items.
+    Yacht Dice is a simple game where you roll dice to reach high scores, which unlocks items.
     You can find more dice, more rolls, higher multipliers and unlock categories.
     You 'beat' the game if you reach the target score.
     """
