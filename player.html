@@ -831,6 +831,9 @@
                     <input type="checkbox" id="showTimestamp">
                     <label for="showTimestamp">Show timestamps</label> <br><br>
 
+                    <input type="checkbox" id="showItemClassification">
+                    <label for="showItemClassification">Show item classifiction as text</label> <br><br>
+
 
 
                 </div>
@@ -839,7 +842,7 @@
             <br>
 
             <input type="text" id="diceValues" style="display: none; text-align: center;">
-            <div id="log" contenteditable="true" readonly>
+            <div id="log" contenteditable="true" spellcheck="false" readonly>
              </div>
              <br>
             <!-- Text field -->
@@ -999,6 +1002,13 @@
         }
         showTimestamp.addEventListener('click', function () {
             localStorage.setItem('settings_timestamp', showTimestamp.checked)
+        });
+        const showItemClassification = document.getElementById('showItemClassification');
+        if (localStorage.getItem('settings_showItemClassification') === 'true') {
+            showItemClassification.checked = true;
+        }
+        showItemClassification.addEventListener('click', function () {
+            localStorage.setItem('settings_showItemClassification', showItemClassification.checked)
         });
         const showLinenumber = document.getElementById('showLinenumber');
         if (localStorage.getItem('settings_linenumber') === 'true') {
@@ -1451,25 +1461,11 @@
 
         var messageCount = 0
 
-        function addBRToLog(){
-            var logTextarea = document.getElementById("log");
-            var isScrolledToBottom = logTextarea.scrollHeight - logTextarea.clientHeight <= logTextarea.scrollTop + 1;
-            logTextarea.appendChild(document.createElement("br"));
-            if (isScrolledToBottom) {
-                logTextarea.scrollTop = logTextarea.scrollHeight - logTextarea.clientHeight;
-            }
-        }
-
-        function addSpanToLog(span){
-            var logTextarea = document.getElementById("log");
-            var isScrolledToBottom = logTextarea.scrollHeight - logTextarea.clientHeight <= logTextarea.scrollTop + 1;
-            logTextarea.appendChild(span);
-            if (isScrolledToBottom) {
-                logTextarea.scrollTop = logTextarea.scrollHeight - logTextarea.clientHeight;
-            }
-        }
+        let currentFrag = null
 
         function addStartLineToLog(){
+            currentFrag = document.createDocumentFragment();
+
             var span = document.createElement("span");
             // if (color) {
             //     span.style.color = color;
@@ -1481,9 +1477,75 @@
             if (document.getElementById("showTimestamp").checked) {
                 span.textContent += "[" + new Date().toLocaleTimeString('en-US', { hour12: false }) + "] ";
             }
-            addSpanToLog(span)
+            currentFrag.appendChild(span);
             messageCount += 1;
         }
+
+        function addSpanToLog(span) {
+            var lastSpan = currentFrag.lastElementChild;
+
+            // Check if there's a last span in the fragment and if it matches the new span's attributes
+            if (lastSpan && 
+                lastSpan.style.color === span.style.color && 
+                lastSpan.style.fontWeight === span.style.fontWeight &&
+                lastSpan.title === span.title) {
+                // Append the text content of the new span to the last span in the fragment
+                lastSpan.textContent += span.textContent;
+            } else {
+                // Append the new span to the fragment
+                currentFrag.appendChild(span);
+            }
+        }
+
+
+        function addBRToLog(){
+            var logTextarea = document.getElementById("log");
+            var isScrolledToBottom = logTextarea.scrollHeight - logTextarea.clientHeight <= logTextarea.scrollTop + 1;
+            currentFrag.appendChild(document.createElement("br"));
+            logTextarea.appendChild(currentFrag);
+
+            cleanLog();
+
+            if (isScrolledToBottom) {
+                logTextarea.scrollTop = logTextarea.scrollHeight - logTextarea.clientHeight;
+            }
+        }
+
+        function cleanLog() {
+            var logTextarea = document.getElementById("log");
+            
+            // Check if logTextarea has more than 2000 children (assumed to be <span> elements)
+            if (logTextarea.children.length > 2000) {
+                // Create a new <span> element
+                var newSpan = document.createElement("span");
+                
+                // Concatenate text content of the first 1000 children into the new <span>
+                for (var i = 0; i < 1000; i++) {
+                    if (logTextarea.children[0]) { // Ensure there's a child to process
+                        newSpan.textContent += logTextarea.children[0].textContent;
+                        // Check if the first child is a <br> element
+                        if (logTextarea.children[0].tagName.toLowerCase() === 'br') {
+                            // Append line break directly to newSpan
+                            newSpan.textContent += " /// "
+                        }
+                        logTextarea.removeChild(logTextarea.children[0]); // Remove the first child
+                    }
+                }
+                
+                // Append the new <span> containing the concatenated text
+                // Insert the new <span> at the beginning of logTextarea
+                if (logTextarea.children.length > 0) {
+                    logTextarea.insertBefore(newSpan, logTextarea.children[0]);
+                } else {
+                    // If logTextarea is empty after removing children, simply append the new <span>
+                    logTextarea.appendChild(newSpan);
+                }
+            }
+        }
+
+
+
+
 
         function addToLog(message, showalert = false) {
             var logTextarea = document.getElementById("log");
@@ -1494,28 +1556,10 @@
             //     span.style.color = color;
             // }
 
-            if (document.getElementById("showLinenumber").checked) {
-                span.textContent = "[" + messageCount + "]";
-            }
-            if (document.getElementById("showTimestamp").checked) {
-                if (span.textContent !== "") {
-                    span.textContent += " ";
-                }
-                span.textContent += "[" + new Date().toLocaleTimeString('en-US', { hour12: false }) + "]";
-            }
-            if (span.textContent !== "") {
-                span.textContent += " ";
-            }
-            span.textContent += message;
-
-            logTextarea.appendChild(span);
-            logTextarea.appendChild(document.createElement("br"));
-
-            messageCount += 1;
-
-            if (isScrolledToBottom) {
-                logTextarea.scrollTop = logTextarea.scrollHeight - logTextarea.clientHeight;
-            }
+            addStartLineToLog();
+            span.innerText += message;
+            addSpanToLog(span);
+            addBRToLog();
         }
 
 
@@ -1585,6 +1629,21 @@
                     case "Story Chapter":
                         ST();
                         break;
+                    case "1 Extra Point":
+                        gotExtraPoint(1, true);
+                        submitScore();
+                        updateButtonValues();
+                        break;
+                    case "10 Extra Points":
+                        gotExtraPoint(10, true);
+                        submitScore();
+                        updateButtonValues();
+                        break;
+                    case "100 Extra Points":
+                        gotExtraPoint(100, true);
+                        submitScore();
+                        updateButtonValues();
+                        break;
                 }
                 if (category.substring(0, 7) === "Victory") {
                     sendWin();
@@ -1612,6 +1671,7 @@
         var currentRolls = 0; // Current number of Rolls
         var difficulty = 1; // Difficulty (1 easy, 4 extreme)
         var scoremultipliertype = -100;
+        var extrapointsinlogic = 0;
 
         var diceContainers = []; // Array to store references to dice containers
         var diceSize = 100; // Initial dice size
@@ -1930,10 +1990,13 @@
         }
 
         // Function to increase number of rolls
-        function gotExtraPoint() {
+        function gotExtraPoint(num = 1, inlogic = false) {
             let el = document.getElementById("cat17");
             let currentValue = parseInt(el.textContent); // Get the current text content and parse it to an integer
-            el.textContent = currentValue + 1; // Increment the parsed value by 1 and update the text content
+            el.textContent = currentValue + num; // Increment the parsed value by 1 and update the text content
+            if(inlogic){
+                extrapointsinlogic += num
+            }
             el.style.display = 'table-cell'; // or 'inline-block', depending on the button's initial display property
             document.getElementById("catlab17").style.display = 'table-cell';
         }
@@ -2811,12 +2874,13 @@
             const multiplier = stepScoreMult;
             const diff = difficulty;
             const smt = scoremultipliertype;
+            const expoints = extrapointsinlogic;
             // console.log(categories)
             // console.log(nbDice)
             // console.log(nbRolls)
             // console.log(multiplier)
             // console.log(diff)
-            return diceSimulationStringsForJS(categories, nbDice, nbRolls, multiplier, diff, smt)
+            return diceSimulationStringsForJS(categories, nbDice, nbRolls, multiplier, diff, smt) + expoints
         }
 
         function diceSimulationStringsForJS(categories, nbDice, nbRolls, multiplier, diff, smt) {
@@ -3053,7 +3117,7 @@
                 connectionOK();
 
 
-                console.log("JSON ", packet)
+                // console.log("JSON ", packet)
                 const data = packet.data
                 let showtext = ""
 
@@ -3073,34 +3137,47 @@
                             }else{
                                 span.style.color = "rgb(213, 213, 180)"
                             }
-                            text = client.players.name(Number(text))
+                            //let pn = client.players.name(Number(text))
+                            let playerAlias = client.players.alias(Number(text));
+                            let playerGame = client.players.game(Number(text));
+                            text = playerAlias;
+                            span.title = "Game: "+playerGame;
                             
                         }
                         if (type == 'item_id') {
                             span.style.fontWeight = "bold";
                             text = client.items.name(client.players.game(Number(data[i].player)), Number(text))
+
                             if (data[i].flags == 4) {
-                                // text += "?!?" //trap!
                                 span.style.color = "rgb(211, 113, 102)";
                                 span.title = "Item class: trap"
+                                if (document.getElementById("showItemClassification").checked) {
+                                    text += "?!?" //trap!
+                                }
                             }
                             if (data[i].flags == 3) {
                                 text += "" //???
                             }
                             if (data[i].flags == 2) {
-                                // text += "!" //useful
                                 span.style.color = "rgb(98, 122, 198)"
                                 span.title = "Item class: useful"
+                                if (document.getElementById("showItemClassification").checked) {
+                                    text += "!"
+                                }
                             }
                             if (data[i].flags == 1) {
-                                // text += "!!" //progression
                                 span.style.color = "rgb(168, 147, 228)"
                                 span.title = "Item class: progression"
+                                if (document.getElementById("showItemClassification").checked) {
+                                    text += "!!"
+                                }
                             }
                             if (data[i].flags == 0) {
-                                // text += "..." //normal
                                 span.style.color = "rgb(6, 217, 217)"
                                 span.title = "Item class: normal"
+                                if (document.getElementById("showItemClassification").checked) {
+                                    text += "..."
+                                }
                             }
                         }
                         if (type == 'location_id') {
@@ -3267,13 +3344,19 @@
                     whichstory = Math.floor(Math.random() * story.length) + 1
                 }
                 if (!packet.slot_data.ap_world_version) {
-                    addToLog("Warning, apworld version is not provided in the packet, so it's generated with a very old version, not even 0.3. Website version: 0.4.\nSee Yacht Dice pins on discord for older releases and use the html that matches the apworld version.", true);
-                } else if (packet.slot_data.ap_world_version == "0.4") {
+                    addToLog("Warning, apworld version is not provided in the packet, so it's generated with a very old version, not even 0.3. Please update your apworld. Website version: 1.0.", true);
+                    addToLog("https://github.com/spinerak/YachtDiceAP/releases")
+                } else if (packet.slot_data.ap_world_version == "1.0") {
                     // correct apworld.
+                } else if (packet.slot_data.ap_world_version == "0.4") {
+                    // addToLog("Apworld 1.0 is in testing... Please ho")
+                    // addToLog("https://github.com/spinerak/YachtDiceAP/releases")
                 } else if (packet.slot_data.ap_world_version == "0.3") {
-                    addToLog("Apworld 0.4 released on discord, consider using that one next time. But no worries, your version (0.3) will stay supported here!");
+                    addToLog("Apworld 1.0 released on discord, consider using that one next time. But no worries, your version (0.3) is supported here!");
+                    addToLog("https://github.com/spinerak/YachtDiceAP/releases")
                 } else {
-                    addToLog("Warning, apworld version does not match with website version.\nApworld: " + packet.slot_data.ap_world_version + ", website: 0.4.\nSee Yacht Dice pins on discord for older releases and use the html that matches the apworld version.", true);
+                    addToLog("Warning, apworld version does not match with website version.\nApworld: " + packet.slot_data.ap_world_version + ", website: 1.0.", true);
+                    addToLog("https://github.com/spinerak/YachtDiceAP/releases")
                 }
             }
             if (offline) {
@@ -3645,6 +3728,7 @@
             let ndf = amDiceF
             let nrf = amRollsF
             let mu = 0
+            let extrapointsinlogicgen = 0
 
 
 
@@ -3833,7 +3917,7 @@
                 // Obtain and remove the first element from itempool
                 const firstElement = itempool.shift();
 
-                let maxinLogic = diceSimulationStringsForJS(cats, Math.floor(ndf / amDiceF), Math.floor(nrf / amRollsF), mu, di, smt)
+                let maxinLogic = diceSimulationStringsForJS(cats, Math.floor(ndf / amDiceF), Math.floor(nrf / amRollsF), mu, di, smt) + extrapointsinlogicgen
 
 
                 const validKeys = Object.keys(result).filter(key => Number(key) <= maxinLogic && result[key] === "");
@@ -3928,6 +4012,15 @@
                         break;
                     case "Category Yacht":
                         cats.push(new Category("Yacht"));
+                        break;
+                    case "1 Extra Point":
+                        extrapointsinlogicgen += 1
+                        break;
+                    case "10 Extra Points":
+                        extrapointsinlogicgen += 10
+                        break;
+                    case "100 Extra Points":
+                        extrapointsinlogicgen += 100
                         break;
                 }
 
