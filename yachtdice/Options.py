@@ -141,6 +141,36 @@ class addExtraPoints(Choice):
     option_never = 3
     default = 2
     
+    
+class extraPointsGameMode(Choice):
+    """
+    This extra game mode shuffles many extra points in the pool, 
+    and your goal is to reach a score of 1000.
+    
+    yes_1_per_item: hundreds of "1 Extra Point" items are shuffled into the pool.
+    NOT recommended in multiplayer, unless everyone is aware of the hundred of extra items
+    
+    yes_10_per_item: puts tens of "10 Extra Points" into the item pool.
+    
+    yes_100_per_item: puts a few "100 Extra Points" into the item pool.
+    """
+    display_name = "Extra points game mode"
+    option_no_thanks = 1
+    option_yes_1_per_item = 2
+    option_yes_10_per_item = 3
+    option_yes_100_per_item = 4
+    default = 1
+    
+class minimizeExtraItems(Choice):
+    """
+    Would you like to minimize the number of extra items in the pool?
+    Note that if you put this on, categories Fives, Sixes and Pair are put early into the playthrough.
+    """
+    display_name = "Minimize extra items"
+    option_no_dont = 1
+    option_yes_please = 2
+    default = 1
+    
 class addStoryChapters(Choice):
     """
     Yacht Dice typically has space for more items.
@@ -184,6 +214,8 @@ class YachtDiceOptions(PerGameCommonOptions):
     game_difficulty: gameDifficulty
     goal_location_percentage: goalLocationPercentage
     score_multiplier_type: scoreMultiplierType
+    minimize_extra_items: minimizeExtraItems
     add_extra_points: addExtraPoints
+    extra_points_game_mode: extraPointsGameMode
     add_story_chapters: addStoryChapters
     which_story: whichStory

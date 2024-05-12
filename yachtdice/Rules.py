@@ -3,16 +3,19 @@ from BaseClasses import MultiWorld
 from .YachtWeights import yacht_weights
 import math
 
+#This class adds logic to the apworld.
+#In short, we ran a simulation for every possible combination of dice and rolls you can have, per category.
+#This simulation has a good strategy for locking dice.
+#This gives rise to an approximate discrete distribution per category.
+#We calculate the distribution of the total score.
+#We then pick a correct percentile to reflect the correct score that should be in logic.
+#The score is logic is *much* lower than the actual maximum reachable score.
 
 class Category:
     def __init__(self, name):
         self.name = name
 
-    def maxScore(self, nbDice, nbRolls):
-        if nbDice == 0 or nbRolls == 0:
-            return 0
-        return max(yacht_weights[self.name, nbDice, nbRolls])
-
+    #return mean score of a category
     def meanScore(self, nbDice, nbRolls):
         if nbDice == 0 or nbRolls == 0:
             return 0
@@ -24,6 +27,9 @@ class Category:
 
 
 def extractProgression(state, player, options):
+    #method to obtain a list of what items the player has.
+    #this includes categories, dice, rolls and score multiplier.
+    
     number_of_dice = (
         state.count("Dice", player) 
         + state.count("Dice Fragment", player) // options.number_of_dice_fragments_per_dice.value
@@ -35,6 +41,7 @@ def extractProgression(state, player, options):
     )
 
     number_of_mults = state.count("Score Multiplier", player)
+    
     
     score_mult = -10000
     if options.score_multiplier_type.value == 1: #fixed
@@ -76,32 +83,29 @@ def extractProgression(state, player, options):
         categories.append(Category("FullHouse"))
     if state.has("Category Yacht", player, 1):
         categories.append(Category("Yacht"))
-
-    return [categories, number_of_dice, number_of_rerolls, score_mult]
+        
     
+    extra_points_in_logic = state.count("1 Extra Point", player)
+    extra_points_in_logic += state.count("10 Extra Points", player) * 10
+    extra_points_in_logic += state.count("100 Extra Points", player) * 100
 
-cache = {}
+    return [categories, number_of_dice, number_of_rerolls, score_mult, extra_points_in_logic]
+    
+#We will store the results of this function as it is called often for the same parameters.
+yachtdice_cache = {}
 
+#Function that returns the feasible score in logic based on items obtained.
 def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff, scoremulttype):
+    tup = tuple([tuple(sorted([c.name for c in categories])), nbDice, nbRolls, multiplier]) #identifier
     
-
-    tup = tuple([tuple(sorted([c.name for c in categories])), nbDice, nbRolls, multiplier])
+    #if already computed, return the result
+    if tup in yachtdice_cache.keys():
+        return yachtdice_cache[tup]
     
-    
-
-    if tup in cache.keys():
-        return cache[tup]
-    
-    # print(tup)
-    # categories = []
-    # for t in tup[0]:
-    #     categories.append(Category(t))
-    # nbDice = tup[1]
-    # nbRolls = tup[2]
-    # multiplier = tup[3]
-    
+    #sort categories because for the step multiplier, you will want low-scorig categories first
     categories.sort(key=lambda category: category.meanScore(nbDice, nbRolls))
 
+    #function to add two discrete distribution.
     def add_distributions(dist1, dist2, mult):
         combined_dist = {}
         for val1, prob1 in dist1.items():
@@ -112,8 +116,8 @@ def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff, scoremu
                     combined_dist[int(val1 + val2 * mult)] = prob1 * prob2
         return combined_dist
     
+    #function to take the maximum of 'times' i.i.d. dist1.
     def max_dist(dist1, times):
-        # Perform multiplication 'times' times
         new_dist = {0: 1}
         for _ in range(times):
             c = new_dist.copy()
@@ -129,10 +133,9 @@ def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff, scoremu
                     else:
                         new_dist[new_val] = new_prob
             
-        
         return new_dist
 
-    
+    #Returns percentile value of a distribution.
     def percentile_distribution(dist, percentile):
         sorted_values = sorted(dist.keys())
         cumulative_prob = 0
@@ -147,17 +150,14 @@ def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff, scoremu
         # Return the first value if percentile is lower than all probabilities
         return prev_val if prev_val is not None else sorted_values[0]  
             
-    def mean_distribution(dist):
-        total_mean = sum(val * prob for val, prob in dist.items())
-        return total_mean
-
-
+    #calculate total distribution
     total_dist = {0: 1}
     for j in range(len(categories)):
         dist = yacht_weights[categories[j].name, nbDice, nbRolls].copy()
         for key in dist.keys():
             dist[key] /= 100000
             
+        #for higher difficulties, the simulation gets multiple tries for categories.
         dist = max_dist(dist, max(1, len(categories) // (6 - diff)))
         
         cur_mult = -100
@@ -167,34 +167,24 @@ def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff, scoremu
             cur_mult = j * multiplier
         total_dist = add_distributions(total_dist, dist, 1 + cur_mult )
     
-    cache[tup] = math.floor(percentile_distribution(total_dist, .40))
-    
-    # print(cache[tup])
-    # print()
-    
-    return cache[tup]
+    #save result into the cache, then return it
+    yachtdice_cache[tup] = math.floor(percentile_distribution(total_dist, .40))
+    return yachtdice_cache[tup]
 
-
-
-
-def diceSimulation(state, player, options, diff):
-    categories, nbDice, nbRolls, multiplier = extractProgression(state, player, options)
-
-
-    return diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff, options.score_multiplier_type.value)
-
+# Returns the feasible score that one can reach with the current state, options and difficulty.
+def diceSimulation(state, player, options):
+    categories, nbDice, nbRolls, multiplier, expoints = extractProgression(state, player, options)
+    return diceSimulationStrings(categories, nbDice, nbRolls, multiplier, 
+                                 options.game_difficulty.value, options.score_multiplier_type.value) + expoints
 
 # Sets rules on entrances and advancements that are always applied
-def set_yacht_rules(world: MultiWorld, player: int, options, diff):
-        
+def set_yacht_rules(world: MultiWorld, player: int, options):
     for l in world.get_locations(player):
         set_rule(l, 
                     lambda state, 
                     curscore=l.yacht_dice_score, 
                     player=player: 
-                    diceSimulation(state, player, options, diff) >= curscore)
-
-    
+                    diceSimulation(state, player, options) >= curscore)
 
 # Sets rules on completion condition
 def set_yacht_completion_rules(world: MultiWorld, player: int):

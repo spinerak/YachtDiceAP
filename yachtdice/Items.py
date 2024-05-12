@@ -1,18 +1,14 @@
 from BaseClasses import Item, ItemClassification
 import typing
 
-
 class ItemData(typing.NamedTuple):
     code: typing.Optional[int]
     classification: ItemClassification
 
-
 class YachtDiceItem(Item):
     game: str = "Yacht Dice"
 
-
-
-starting_index = 16871244000
+#the starting index is chosen semi-randomly to be 16871244000
 
 item_table = {
     "Victory": ItemData(16871244000-1, ItemClassification.progression),
@@ -40,14 +36,14 @@ item_table = {
     "Category Full House": ItemData(16871244117, ItemClassification.progression),
     "Category Yacht": ItemData(16871244118, ItemClassification.progression),
 
-
     "Encouragement": ItemData(16871244200, ItemClassification.filler),
     "Fun Fact": ItemData(16871244201, ItemClassification.filler),
     "Story Chapter": ItemData(16871244202, ItemClassification.filler),
     "Good RNG": ItemData(16871244203, ItemClassification.filler),
     "Bad RNG": ItemData(16871244204, ItemClassification.trap),
-    "Extra Point": ItemData(16871244205, ItemClassification.useful)
-
-
+    "Extra Point": ItemData(16871244205, ItemClassification.useful),
+    
+    "1 Extra Point": ItemData(16871244301, ItemClassification.progression),
+    "10 Extra Points": ItemData(16871244302, ItemClassification.progression),
+    "100 Extra Points": ItemData(16871244303, ItemClassification.progression)
 }
-
