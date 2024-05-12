@@ -169,7 +169,7 @@ Yacht Dice:
   goal_location_percentage:
     # What percentage of checks you need to get, to 'finish' the game.
     # Low percentage means you can probably 'finish' the game with some of the dice/rolls/categories.
-    # High percentage means you probably need most of the usefull items, and on higher difficulties you might need them all.
+    # High percentage means you need most of the useful items, and on higher difficulties you might need them all.
     #
     # You can define additional values between the minimum and maximum values.
     # Minimum value is 70
@@ -195,6 +195,12 @@ Yacht Dice:
     fixed_multiplier: 50
     step_multiplier: 0
 
+  minimize_extra_items:
+    # Would you like to minimize the number of extra items in the pool?
+    # Note that if you put this on, categories Fives, Sixes and Pair are put early into the playthrough.
+    no_dont: 50
+    yes_please: 0
+
   add_extra_points:
     # Yacht Dice typically has space for more items.
     # Would you like extra points shuffled in the item pool?
@@ -202,6 +208,21 @@ Yacht Dice:
     all_of_it: 0
     sure: 50
     never: 0
+
+  extra_points_game_mode:
+    # This extra game mode shuffles many extra points in the pool, 
+    # and your goal is to reach a score of 1000.
+    # 
+    # yes_1_per_item: hundreds of "1 Extra Point" items are shuffled into the pool.
+    # NOT recommended in multiplayer, unless everyone is aware of the hundred of extra items
+    # 
+    # yes_10_per_item: puts tens of "10 Extra Points" into the item pool.
+    # 
+    # yes_100_per_item: puts a few "100 Extra Points" into the item pool.
+    no_thanks: 50
+    yes_1_per_item: 0
+    yes_10_per_item: 0
+    yes_100_per_item: 0
 
   add_story_chapters:
     # Yacht Dice typically has space for more items.
