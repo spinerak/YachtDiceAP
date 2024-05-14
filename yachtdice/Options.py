@@ -126,33 +126,18 @@ class scoreMultiplierType(Choice):
     option_step_multiplier = 2
     default = 1 
     
-    
-    
-    
-class addExtraPoints(Choice):
+class pointsGameMode(Choice):
     """
-    Yacht Dice typically has space for more items.
-    Would you like extra points shuffled in the item pool?
-    They make the game a little bit easier.
-    """
-    display_name = "Extra points in the pool"
-    option_all_of_it = 1
-    option_sure = 2
-    option_never = 3
-    default = 2
-    
-    
-class extraPointsGameMode(Choice):
-    """
-    This extra game mode shuffles many extra points in the pool, 
+    This extra game mode shuffles many points items in the pool, 
     and your goal is to reach a score of 1000.
     
-    yes_1_per_item: hundreds of "1 Extra Point" items are shuffled into the pool.
+    yes_1_per_item: hundreds of "1 Point" items are shuffled into the pool.
     NOT recommended in multiplayer, unless everyone is aware of the hundred of extra items
     
-    yes_10_per_item: puts tens of "10 Extra Points" into the item pool.
+    yes_10_per_item: puts tens of "10 Points" (and a few 1 Points) into the item pool.
     
-    yes_100_per_item: puts a few "100 Extra Points" into the item pool.
+    yes_100_per_item: puts a few "100 Points" (and a few 1 and 10 Points) into the item pool. 
+    Warning: will unlock many checks if an 100 Points item is collected.
     """
     display_name = "Extra points game mode"
     option_no_thanks = 1
@@ -169,8 +154,23 @@ class minimizeExtraItems(Choice):
     display_name = "Minimize extra items"
     option_no_dont = 1
     option_yes_please = 2
-    default = 1
+    default = 1    
     
+class addExtraPoints(Choice):
+    """
+    Yacht Dice typically has space for more items.
+    Would you like extra points shuffled in the item pool?
+    They make the game a little bit easier, as they are not considered in the logic.
+    all_of_it: put as many extra points in locations as possible
+    sure: put some extra points in
+    never: don't but any extra points
+    """
+    display_name = "Extra points in the pool"
+    option_all_of_it = 1
+    option_sure = 2
+    option_never = 3
+    default = 2
+      
 class addStoryChapters(Choice):
     """
     Yacht Dice typically has space for more items.
@@ -183,8 +183,6 @@ class addStoryChapters(Choice):
     option_never = 3
     default = 2
     
-    
-
 class whichStory(Choice):
     """
     The most important part of Yacht Dice is the narrative. 
@@ -199,11 +197,9 @@ class whichStory(Choice):
     option_whispers_of_fate = 4
     option_a_yacht_dice_odyssey = 5
     option_a_rollin_rhyme_adventure = 6
-    option_random = -1
+    option_random_story = -1
     default = -1
     
-
-
 @dataclass
 class YachtDiceOptions(PerGameCommonOptions):
     number_of_dice_and_rolls: numberOfDiceAndRolls
@@ -216,6 +212,6 @@ class YachtDiceOptions(PerGameCommonOptions):
     score_multiplier_type: scoreMultiplierType
     minimize_extra_items: minimizeExtraItems
     add_extra_points: addExtraPoints
-    extra_points_game_mode: extraPointsGameMode
+    points_game_mode: pointsGameMode
     add_story_chapters: addStoryChapters
     which_story: whichStory

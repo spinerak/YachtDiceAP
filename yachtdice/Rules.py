@@ -20,8 +20,8 @@ class Category:
         if nbDice == 0 or nbRolls == 0:
             return 0
         meanScore = 0
-        for key in yacht_weights[self.name, nbDice, nbRolls]:
-            meanScore += key*yacht_weights[self.name, nbDice, nbRolls][key]/100000
+        for key in yacht_weights[self.name, min(8,nbDice), min(8,nbRolls)]:
+            meanScore += key*yacht_weights[self.name, min(8,nbDice), min(8,nbRolls)][key]/100000
         return meanScore
 
 
@@ -85,9 +85,9 @@ def extractProgression(state, player, options):
         categories.append(Category("Yacht"))
         
     
-    extra_points_in_logic = state.count("1 Extra Point", player)
-    extra_points_in_logic += state.count("10 Extra Points", player) * 10
-    extra_points_in_logic += state.count("100 Extra Points", player) * 100
+    extra_points_in_logic = state.count("1 Point", player)
+    extra_points_in_logic += state.count("10 Points", player) * 10
+    extra_points_in_logic += state.count("100 Points", player) * 100
 
     return [categories, number_of_dice, number_of_rerolls, score_mult, extra_points_in_logic]
     
@@ -153,7 +153,7 @@ def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff, scoremu
     #calculate total distribution
     total_dist = {0: 1}
     for j in range(len(categories)):
-        dist = yacht_weights[categories[j].name, nbDice, nbRolls].copy()
+        dist = yacht_weights[categories[j].name, min(8,nbDice), min(8,nbRolls)].copy()
         for key in dist.keys():
             dist[key] /= 100000
             

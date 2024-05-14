@@ -20,7 +20,7 @@ starting_index = 16871244500 #500 more than the startin index for items
 #Function that is called when this file is loaded, which loads in ALL possible locations, score 1 to 1000
 def all_locations_fun(max_score):
     location_table = {}
-    for i in range(max_score):
+    for i in range(max_score+1):
         location_table[f"{i} score"] = LocData(starting_index+i, "Board", i)
     return location_table
 
@@ -52,7 +52,7 @@ def ini_locations(max_score, num_locs, dif):
     #Finally, add a check for the actual max_score. 
     #This is *not* counted in num_locs, since the victory items is not as well.
     location_table[f"{max_score} score"] = LocData(starting_index + max_score, "Board", max_score)
-    print(location_table)
+
     return location_table
 
 lookup_id_to_name: typing.Dict[int, str] = {data.id: item_name for item_name, data in all_locations.items() if data.id}

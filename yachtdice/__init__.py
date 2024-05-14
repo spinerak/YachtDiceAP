@@ -114,18 +114,18 @@ class YachtDiceWorld(World):
         itempool += ["Category Full House"]
         itempool += ["Category Yacht"]
         
-        if(self.options.extra_points_game_mode.value >= 4):
+        if(self.options.points_game_mode.value >= 4):
             while self.extra_points_for_game_mode >= 89: #rather have 100 points than lot of smaller items
-                itempool += ["100 Extra Points"]
+                itempool += ["100 Points"]
                 self.extra_points_for_game_mode -= 100
                 
-        if(self.options.extra_points_game_mode.value >= 3):
+        if(self.options.points_game_mode.value >= 3):
             while self.extra_points_for_game_mode >= 7: #rather have 10 points that lot of 1 points.
-                itempool += ["10 Extra Points"]
+                itempool += ["10 Points"]
                 self.extra_points_for_game_mode -= 10
         
-        if(self.options.extra_points_game_mode.value >= 2 and self.extra_points_for_game_mode > 0):        
-            itempool += ["1 Extra Point"] * self.extra_points_for_game_mode
+        if(self.options.points_game_mode.value >= 2 and self.extra_points_for_game_mode > 0):        
+            itempool += ["1 Point"] * self.extra_points_for_game_mode
         
         #count the number of locations in the game. extra_plando_items is set in generate_early
         #and counts number of plando items *not* from pool.
@@ -196,7 +196,7 @@ class YachtDiceWorld(World):
             p = 0.1
             
         already_items = len(itempool) + self.extra_plando_items
-        itempool += ["Good RNG" if self.random.random() > p else "Bad RNG" 
+        itempool += ["Good RNG" 
                      for _ in range(self.number_of_locations - already_items)]
 
         #we're done adding items. Now because of the last step, number of items should be number of locations
@@ -216,6 +216,8 @@ class YachtDiceWorld(World):
         #set rules per location, and add the rule for beating the game
         set_yacht_rules(self.multiworld, self.player, self.options)
         set_yacht_completion_rules(self.multiworld, self.player)
+        
+    
 
     
     def generate_early(self):
@@ -233,7 +235,7 @@ class YachtDiceWorld(World):
             self.max_score = 683
             
         self.extra_points_for_game_mode = 0
-        if(self.options.extra_points_game_mode.value >= 2):
+        if(self.options.points_game_mode.value >= 2):
             self.extra_points_for_game_mode = 1000 - self.max_score
             self.max_score = 1000
             
@@ -285,11 +287,11 @@ class YachtDiceWorld(World):
         min_number_of_locations = max(min_number_of_locations + 10, 
                                        math.ceil(min_number_of_locations * extraPercentage))
         
-        if(self.options.extra_points_game_mode == 2):
+        if(self.options.points_game_mode == 2):
             min_number_of_locations += self.extra_points_for_game_mode
-        if(self.options.extra_points_game_mode == 3):
+        if(self.options.points_game_mode == 3):
             min_number_of_locations += self.extra_points_for_game_mode // 10 + 10
-        if(self.options.extra_points_game_mode == 4):
+        if(self.options.points_game_mode == 4):
             min_number_of_locations += self.extra_points_for_game_mode // 100 + 20
         
         #then to make sure generation works, we need to add locations, in case important items are placed late
@@ -336,10 +338,11 @@ class YachtDiceWorld(World):
         self.multiworld.regions += [menu, board]
 
     def pre_fill(self):
-        print(self.options)
+        
         #in the pre_fill, make sure one dice and one roll is early, so that you'll have 2 dice and 2 rolls soon
         self.multiworld.early_items[self.player]["Dice"] = 1
         self.multiworld.early_items[self.player]["Roll"] = 1
+                
         
         #put more items early since we want less extra items.
         if self.options.minimize_extra_items.value == 2:
