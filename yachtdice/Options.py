@@ -210,8 +210,8 @@ class YachtDiceOptions(PerGameCommonOptions):
     game_difficulty: gameDifficulty
     goal_location_percentage: goalLocationPercentage
     score_multiplier_type: scoreMultiplierType
+    points_game_mode: pointsGameMode
     minimize_extra_items: minimizeExtraItems
     add_extra_points: addExtraPoints
-    points_game_mode: pointsGameMode
     add_story_chapters: addStoryChapters
     which_story: whichStory
