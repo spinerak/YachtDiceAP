@@ -1630,16 +1630,19 @@
                         ST();
                         break;
                     case "1 Extra Point":
+                    case "1 Point":
                         gotExtraPoint(1, true);
                         submitScore();
                         updateButtonValues();
                         break;
                     case "10 Extra Points":
+                    case "10 Points":
                         gotExtraPoint(10, true);
                         submitScore();
                         updateButtonValues();
                         break;
                     case "100 Extra Points":
+                    case "100 Points":
                         gotExtraPoint(100, true);
                         submitScore();
                         updateButtonValues();
@@ -2884,7 +2887,7 @@
         }
 
         function diceSimulationStringsForJS(categories, nbDice, nbRolls, multiplier, diff, smt) {
-            categories.sort((a, b) => a.meanScore(nbDice, nbRolls) - b.meanScore(nbDice, nbRolls));
+            categories.sort((a, b) => a.meanScore(Math.min(8,nbDice), Math.min(8,nbRolls)) - b.meanScore(Math.min(8,nbDice), Math.min(8,nbRolls)));
 
             function addDistributions(dist1, dist2, mult) {
                 const combinedDist = {};
@@ -2938,7 +2941,7 @@
 
             let totalDist = { 0: 1 };
             for (let j = 0; j < categories.length; j++) {
-                const dist = { ...yacht_weights[categories[j].name + '_' + nbDice + '_' + nbRolls] };
+                const dist = { ...yacht_weights[categories[j].name + '_' + Math.min(8,nbDice) + '_' + Math.min(8,nbRolls)] };
                 for (const key in dist) {
                     dist[key] /= 100000;
                 }
@@ -4014,12 +4017,15 @@
                         cats.push(new Category("Yacht"));
                         break;
                     case "1 Extra Point":
+                    case "1 Point":
                         extrapointsinlogicgen += 1
                         break;
                     case "10 Extra Points":
+                    case "10 Points":
                         extrapointsinlogicgen += 10
                         break;
                     case "100 Extra Points":
+                    case "100 Point":
                         extrapointsinlogicgen += 100
                         break;
                 }
