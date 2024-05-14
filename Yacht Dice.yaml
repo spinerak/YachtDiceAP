@@ -204,21 +204,25 @@ Yacht Dice:
   add_extra_points:
     # Yacht Dice typically has space for more items.
     # Would you like extra points shuffled in the item pool?
-    # They make the game a little bit easier.
+    # They make the game a little bit easier, as they are not considered in the logic.
+    # all_of_it: put as many extra points in locations as possible
+    # sure: put some extra points in
+    # never: don't but any extra points
     all_of_it: 0
     sure: 50
     never: 0
 
-  extra_points_game_mode:
-    # This extra game mode shuffles many extra points in the pool, 
+  points_game_mode:
+    # This extra game mode shuffles many points items in the pool, 
     # and your goal is to reach a score of 1000.
     # 
-    # yes_1_per_item: hundreds of "1 Extra Point" items are shuffled into the pool.
+    # yes_1_per_item: hundreds of "1 Point" items are shuffled into the pool.
     # NOT recommended in multiplayer, unless everyone is aware of the hundred of extra items
     # 
-    # yes_10_per_item: puts tens of "10 Extra Points" into the item pool.
+    # yes_10_per_item: puts tens of "10 Points" (and a few 1 Points) into the item pool.
     # 
-    # yes_100_per_item: puts a few "100 Extra Points" into the item pool.
+    # yes_100_per_item: puts a few "100 Points" (and a few 1 and 10 Points) into the item pool. 
+    # Warning: will unlock many checks if an 100 Points item is collected.
     no_thanks: 50
     yes_1_per_item: 0
     yes_10_per_item: 0
@@ -243,4 +247,4 @@ Yacht Dice:
     whispers_of_fate: 0
     a_yacht_dice_odyssey: 0
     a_rollin_rhyme_adventure: 0
-    random: 50
+    random_story: 50
