@@ -43,7 +43,7 @@ item_table = {
     "Bad RNG": ItemData(16871244204, ItemClassification.trap),
     "Extra Point": ItemData(16871244205, ItemClassification.useful),
     
-    "1 Point": ItemData(16871244301, ItemClassification.skip_balancing),
+    "1 Point": ItemData(16871244301, ItemClassification.progression_skip_balancing),
     "10 Points": ItemData(16871244302, ItemClassification.progression),
     "100 Points": ItemData(16871244303, ItemClassification.progression)
 }
