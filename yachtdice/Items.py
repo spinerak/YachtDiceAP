@@ -35,6 +35,25 @@ item_table = {
     "Category Large Straight": ItemData(16871244116, ItemClassification.progression),
     "Category Full House": ItemData(16871244117, ItemClassification.progression),
     "Category Yacht": ItemData(16871244118, ItemClassification.progression),
+    
+    "Category Distincts": ItemData(16871244123, ItemClassification.progression),
+    "Category Two times Ones": ItemData(16871244124, ItemClassification.progression),
+    "Category Half of Sixes": ItemData(16871244125, ItemClassification.progression),
+    "Category Twos and Threes": ItemData(16871244126, ItemClassification.progression),
+    "Category Sum of Odds": ItemData(16871244127, ItemClassification.progression),
+    "Category Sum of Evens": ItemData(16871244128, ItemClassification.progression),
+    "Category Double Threes and Fours": ItemData(16871244129, ItemClassification.progression),
+    "Category Quadruple Ones and Twos": ItemData(16871244130, ItemClassification.progression),
+    "Category Micro Straight": ItemData(16871244131, ItemClassification.progression),
+    "Category Three Odds": ItemData(16871244132, ItemClassification.progression),
+    "Category 1-2-1 Consecutive": ItemData(16871244133, ItemClassification.progression),
+    "Category Three Distinct Dice": ItemData(16871244134, ItemClassification.progression),
+    "Category Two Pair": ItemData(16871244135, ItemClassification.progression),
+    "Category 2-1-2 Consecutive": ItemData(16871244136, ItemClassification.progression),
+    "Category Five Distinct Dice": ItemData(16871244137, ItemClassification.progression),
+    "Category 1-6 Full House": ItemData(16871244138, ItemClassification.progression),
+    
+    
 
     "Encouragement": ItemData(16871244200, ItemClassification.filler),
     "Fun Fact": ItemData(16871244201, ItemClassification.filler),
@@ -43,7 +62,7 @@ item_table = {
     "Bad RNG": ItemData(16871244204, ItemClassification.trap),
     "Extra Point": ItemData(16871244205, ItemClassification.useful),
     
-    "1 Point": ItemData(16871244301, ItemClassification.skip_balancing),
+    "1 Point": ItemData(16871244301, ItemClassification.progression_skip_balancing),
     "10 Points": ItemData(16871244302, ItemClassification.progression),
     "100 Points": ItemData(16871244303, ItemClassification.progression)
 }

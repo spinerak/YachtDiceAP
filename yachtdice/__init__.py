@@ -210,6 +210,7 @@ class YachtDiceWorld(World):
         #and add them to the itempool
         for item in itempool:
             self.multiworld.itempool += [item]
+            
                         
 
     def set_rules(self):
@@ -336,6 +337,7 @@ class YachtDiceWorld(World):
         menu.exits.append(connection)
         connection.connect(board)
         self.multiworld.regions += [menu, board]
+        
 
     def pre_fill(self):
         

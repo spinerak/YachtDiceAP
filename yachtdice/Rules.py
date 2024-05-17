@@ -88,6 +88,7 @@ def extractProgression(state, player, options):
     extra_points_in_logic = state.count("1 Point", player)
     extra_points_in_logic += state.count("10 Points", player) * 10
     extra_points_in_logic += state.count("100 Points", player) * 100
+    
 
     return [categories, number_of_dice, number_of_rerolls, score_mult, extra_points_in_logic]
     
@@ -153,7 +154,11 @@ def diceSimulationStrings(categories, nbDice, nbRolls, multiplier, diff, scoremu
     #calculate total distribution
     total_dist = {0: 1}
     for j in range(len(categories)):
-        dist = yacht_weights[categories[j].name, min(8,nbDice), min(8,nbRolls)].copy()
+        if nbDice == 0 or nbRolls == 0:
+            dist = {0: 100000}
+        else:
+            dist = yacht_weights[categories[j].name, min(8,nbDice), min(8,nbRolls)].copy()
+        
         for key in dist.keys():
             dist[key] /= 100000
             
