@@ -554,6 +554,67 @@
             text-align: left;
             font-family: Arial, sans-serif;
         }
+
+        .NS_table-container {
+            background-color: #732;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 20px;
+            max-width: 90%;
+        }
+        .NS_boxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            text-align: center;
+        }
+        .NS_category-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #521;
+            border-radius: 5px;
+            padding: 0px 10px;
+            flex: 1 1 calc(50% - 20px);
+            box-sizing: border-box;
+            transition: background-color 0.3s;
+            margin: 0px 0;
+            text-align: center;
+            min-height: 10px;
+        }
+
+        .NS_category-button:disabled {
+            background-color: #616161;
+            color: #cacaca;
+            cursor: not-allowed;
+        }
+        .NS_category-box:hover {
+            background-color: #622;
+        }
+        .NS_category-label {
+            font-weight: bold;
+            text-align: center;
+        }
+        .NS_category-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 20px;
+            margin: 2px 0px;
+            cursor: pointer;
+            transition: background-color 1s;
+        }
+        .NS_category-button:hover {
+            background-color: #0056b3;
+        }
+        @media (max-width: 600px) {
+            .NS_category-box {
+                flex: 1 1 100%;
+            }
+        }
     </style>
 </head>
 
@@ -757,7 +818,7 @@
             Click on a dice to lock.
 
             <br>
-            <br><button id="Roll-button">Roll (3 remaining)</button><br><br>
+            <br><button id="Roll-button" class="NS_category-button">Roll (3 remaining)</button><br><br>
 
 
             <div class="info-and-settings-container">
@@ -779,6 +840,8 @@
                     <!--<input type="number" id="dice-size" value="70" min="10" max="200">-->
                     <button id="increaseDiceSize">+</button>
                     <br><br>
+                    <input type="checkbox" id="toggleRandomStyleStartup" checked>
+                    <label for="toggleRandomStyleStartup">Random style on startup</label> <br><br>
                     <!-- <button id="changeStyle">Change dice style</button>
                     <br><br> -->
                     <!-- Custom dropdown for selecting skin -->
@@ -832,10 +895,10 @@
                     <input type="checkbox" id="toggleTimer">
                     <label for="toggleTimer">Enable timer</label> <br><br>
 
-                    <input type="checkbox" id="showLinenumber" checked>
+                    <input type="checkbox" id="showLinenumber">
                     <label for="showLinenumber">Show line number</label> <br><br>
 
-                    <input type="checkbox" id="showTimestamp">
+                    <input type="checkbox" id="showTimestamp" checked>
                     <label for="showTimestamp">Show timestamps</label> <br><br>
 
                     <input type="checkbox" id="showItemClassification">
@@ -863,173 +926,160 @@
         </div>
         <div class="right">
             <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Categories</th>
-                            <th>Score</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td id="catlab1" style="display: none;" title="One point for every one">Ones</td>
-                            <td><button id="category1" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab2" style="display: none;" title="Two points for every two">Twos</td>
-                            <td><button id="category2" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab3" style="display: none;" title="Three points for every three">Threes</td>
-                            <td><button id="category3" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab4" style="display: none;" title="Four points for every four">Fours</td>
-                            <td><button id="category4" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab5" style="display: none;" title="Five points for every five">Fives</td>
-                            <td><button id="category5" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab6" style="display: none;" title="Six points for every six">Sixes</td>
-                            <td><button id="category6" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab7" style="display: none;" title="Points equal to sum of dice">Choice </td>
-                            <td><button id="category7" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab8" style="display: none;"
-                                title="Points equal to sum of dice after flipping dice">Inverse Choice</td>
-                            <td><button id="category8" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab9" style="display: none;" title="10 points if two dice are the same">Pair (10)
-                            </td>
-                            <td><button id="category9" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab10" style="display: none;" title="20 points if three dice are the same">Three
-                                of a Kind (20)</td>
-                            <td><button id="category10" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab11" style="display: none;" title="30 points if four dice are the same">Four of
-                                a Kind (30)</td>
-                            <td><button id="category11" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab12" style="display: none;" title="20 points if three-in-a-row (eg 231)">Tiny
-                                Str. (20)</td>
-                            <td><button id="category12" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab13" style="display: none;" title="30 points if four-in-a-row (eg 4231)">Small
-                                Str. (30)</td>
-                            <td><button id="category13" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab14" style="display: none;" title="40 points if five-in-a-row (eg 42315)">
-                                Large Str. (40)</td>
-                            <td><button id="category14" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab15" style="display: none;"
-                                title="25 points if three dice and two dice are the same (eg 61661)">Full House (25)
-                            </td>
-                            <td><button id="category15" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab16" style="display: none;" title="50 points if five dice are the same">Yacht
-                                (50)</td>
-                            <td><button id="category16" style="display: none;">0</button></td>
-                        </tr>
+                <div class="NS_table-container">
+                    <div class="NS_boxes">
+                        <div class="NS_category-box" id="catbox1">
+                            <span id="catlab1" class="NS_category-label" title="One point for every one">Ones</span>
+                            <button id="category1" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox2">
+                            <span id="catlab2" class="NS_category-label" title="Two points for every two">Twos</span>
+                            <button id="category2" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox3">
+                            <span id="catlab3" class="NS_category-label" title="Three points for every three">Threes</span>
+                            <button id="category3" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox4">
+                            <span id="catlab4" class="NS_category-label" title="Four points for every four">Fours</span>
+                            <button id="category4" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox5">
+                            <span id="catlab5" class="NS_category-label" title="Five points for every five">Fives</span>
+                            <button id="category5" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox6">
+                            <span id="catlab6" class="NS_category-label" title="Six points for every six">Sixes</span>
+                            <button id="category6" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox7">
+                            <span id="catlab7" class="NS_category-label" title="Points equal to sum of dice">Choice</span>
+                            <button id="category7" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox8">
+                            <span id="catlab8" class="NS_category-label" title="Points equal to sum of dice after flipping dice">Inverse Choice</span>
+                            <button id="category8" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox9">
+                            <span id="catlab9" class="NS_category-label" title="10 points if two dice are the same">Pair (10)</span>
+                            <button id="category9" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox10">
+                            <span id="catlab10" class="NS_category-label" title="20 points if three dice are the same">Three of a Kind (20)</span>
+                            <button id="category10" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox11">
+                            <span id="catlab11" class="NS_category-label" title="30 points if four dice are the same">Four of a Kind (30)</span>
+                            <button id="category11" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox12">
+                            <span id="catlab12" class="NS_category-label" title="20 points if three-in-a-row (eg 231)">Tiny Str. (20)</span>
+                            <button id="category12" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox13">
+                            <span id="catlab13" class="NS_category-label" title="30 points if four-in-a-row (eg 4231)">Small Str. (30)</span>
+                            <button id="category13" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox14">
+                            <span id="catlab14" class="NS_category-label" title="40 points if five-in-a-row (eg 42315)">Large Str. (40)</span>
+                            <button id="category14" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox15">
+                            <span id="catlab15" class="NS_category-label" title="25 points if a value appears three times and a OTHER value appears twice (eg 61661)">Full House (25)</span>
+                            <button id="category15" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox16">
+                            <span id="catlab16" class="NS_category-label" title="50 points if five dice are the same">Yacht (50)</span>
+                            <button id="category16" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox17">
+                            <span id="catlab17" class="NS_category-label" title="One point for every distinct number">Distincts</span>
+                            <button id="category17" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox18">
+                            <span id="catlab18" class="NS_category-label" title="Two points for every one">Two times Ones</span>
+                            <button id="category18" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox19">
+                            <span id="catlab19" class="NS_category-label" title="Three points for every six">Half of Sixes</span>
+                            <button id="category19" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox20">
+                            <span id="catlab20" class="NS_category-label" title="Two / three points per two / three">Twos and Threes</span>
+                            <button id="category20" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox21">
+                            <span id="catlab21" class="NS_category-label" title="Points equal to sum of odd dice">Sum of Odds</span>
+                            <button id="category21" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox22">
+                            <span id="catlab22" class="NS_category-label" title="Points equal to sum of even dice">Sum of Evens</span>
+                            <button id="category22" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox23">
+                            <span id="catlab23" class="NS_category-label" title="Six / eight points per three / four">Double Threes and Fours</span>
+                            <button id="category23" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox24">
+                            <span id="catlab24" class="NS_category-label" title="Four / eight points per one / two">Quadruple Ones and Twos</span>
+                            <button id="category24" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox25">
+                            <span id="catlab25" class="NS_category-label" title="10 points if two-in-a-row (eg 54)">Micro Straight (10)</span>
+                            <button id="category25" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox26">
+                            <span id="catlab26" class="NS_category-label" title="20 points if three dice are odd">Three Odds (20)</span>
+                            <button id="category26" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox27">
+                            <span id="catlab27" class="NS_category-label" title="30 points if three dice are consecutive, the middle appearing twice (eg 3221)">1-2-1 Consecutive</span>
+                            <button id="category27" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox28">
+                            <span id="catlab28" class="NS_category-label" title="30 points if there are three distinct dice values">Three Distinct Dice (20)</span>
+                            <button id="category28" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox29">
+                            <span id="catlab29" class="NS_category-label" title="30 points if two values appear twice">Two Pair (30)</span>
+                            <button id="category29" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox30">
+                            <span id="catlab30" class="NS_category-label" title="40 points if three dice are consecutive, the outside ones appearing twice (eg 11233)">2-1-2 Consecutive</span>
+                            <button id="category30" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox31">
+                            <span id="catlab31" class="NS_category-label" title="25 points if there are five distinct values">Five Distinct Dice (25)</span>
+                            <button id="category31" class="NS_category-button">0</button>
+                        </div>
+                        <div class="NS_category-box" id="catbox32">
+                            <span id="catlab32" class="NS_category-label" title="50 points for a full house with ones AND sixes (eg 11166 or 16616)">1-6 Full House (50)</span>
+                            <button id="category32" class="NS_category-button">0</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="NS_boxes">
+                        <div class="NS_category-box">
+                            <span id="catlabextrapoints" class="NS_category-label" title="Extra points for getting 'Extra Point' items">Extra points</span>
+                            <button id="catextrapoints" disabled class="NS_category-button" style="background-color: rgba(51, 51, 51, 0);">0</button>
 
-                        <tr>
-                            <td id="catlab17" style="display: none;" title="One point for every distinct number">Distincts</td>
-                            <td><button id="category17" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab18" style="display: none;" title="Two points for every one">Two times Ones</td>
-                            <td><button id="category18" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab19" style="display: none;" title="Three points for every six">Half of Sixes</td>
-                            <td><button id="category19" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab20" style="display: none;" title="Two / three points per two / three">Twos and Threes</td>
-                            <td><button id="category20" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab21" style="display: none;" title="Points equal to sum of odd dice">Sum of Odds</td>
-                            <td><button id="category21" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab22" style="display: none;" title="Points equal to sum of even dice">Sum of Evens</td>
-                            <td><button id="category22" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab23" style="display: none;" title="Six / eight points per three / four">Double Threes and Fours</td>
-                            <td><button id="category23" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab24" style="display: none;"
-                                title="Four / Eight points per one / two">Quadruple Ones and Twos</td>
-                            <td><button id="category24" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab25" style="display: none;" title="10 points if two-in-a-row (eg 54)">Micro Straight (10)
-                            </td>
-                            <td><button id="category25" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab26" style="display: none;" title="20 points if three dice are odd">Three Odds (20)</td>
-                            <td><button id="category26" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab27" style="display: none;" title="30 points if three dice are consecutive, the middle appearing twice (eg 3221)">1-2-1 Consecutive</td>
-                            <td><button id="category27" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab28" style="display: none;" title="30 points if there are three distinct dice values">Three Distinct Dice (20)</td>
-                            <td><button id="category28" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab29" style="display: none;" title="30 points if two values appear twice">Two Pair (30)</td>
-                            <td><button id="category29" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab30" style="display: none;" title="40 points if three dice are consecutive, the outside ones appearing twice (eg 11233)">2-1-2 Consecutive</td>
-                            <td><button id="category30" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab31" style="display: none;" title="25 points if there are five distinct values">Five Distinct Dice (25)</td>
-                            <td><button id="category31" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td id="catlab32" style="display: none;" title="50 points for a full house with ones and sixes (eg 11166 or 16616)">1-6 Full House (50)</td>
-                            <td><button id="category32" style="display: none;">0</button></td>
-                        </tr>
-
-                        <tr>
-                            <td id="catlabextrapoints" style="display: none;" title="Extra points for getting 'Extra Point' items">Extra points</td>
-                            <td id="catextrapoints" style="display: none;">0</button></td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight: bold;">Total</td>
-                            <td id="total" style="font-weight: bold;">0</td>
-
-                        </tr>
-
-                    </tbody>
-                </table>
-                <button id="resetBtn">Reset</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <hr>
+                    <div class="NS_boxes"></div>
+                        <div class="NS_category-box">
+                            <span class="NS_category-label" style="font-weight: bold;">Total</span>
+                            <button id="total" disabled class="NS_category-button"  style="background-color: rgba(51, 51, 51, 0); font-weight: bold; font-size: 100%;">0</span>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <button id="resetBtn" class="NS_category-button">Reset</button>
                 <br>
                 Highest collected: <span id="highestsubmitted">0</span>
                 <br>
-                Next check: <span id="nextgoal">?</span>
+                Next check: <span id="nextgoal">?</span> <span id="nextgoalitem">?</span>
                 <br>
                 Goal score: <span id="finalgoal">?</span>
                 <br>
@@ -1039,8 +1089,7 @@
                 <br>
                 <div id="timer" style="display: none;">00:00:00</div>
                 <br>
-                <br>
-                <button id="saveBtn">Save (see chat)</button>
+                <button id="saveBtn" class="NS_category-button">Save (see chat)</button>
             </div>
         </div>
     </div>
@@ -1093,13 +1142,18 @@
             localStorage.setItem('settings_linenumber', showLinenumber.checked)
         });
 
+        // random dice style on startup later in code
+
+
+
+
         const checkbox_ani = document.getElementById('toggleAnimations');
 
         // Check the value of local storage and set checkbox state accordingly
-        if (localStorage.getItem('settings_animation') === 'true') {
-            checkbox_ani.checked = true;
-        } else {
+        if (localStorage.getItem('settings_animation') === 'false') {
             checkbox_ani.checked = false;
+        } else {
+            checkbox_ani.checked = true;
         }
 
         checkbox_ani.addEventListener('click', function () {
@@ -1343,15 +1397,6 @@
                     "Skins/Blue/6.png",
                 ],
                 [
-                    "Skins/Graph/0.png",
-                    "Skins/Graph/1.png",
-                    "Skins/Graph/2.png",
-                    "Skins/Graph/3.png",
-                    "Skins/Graph/4.png",
-                    "Skins/Graph/5.png",
-                    "Skins/Graph/6.png"
-                ],
-                [
                     "Skins/Fruity/0.webp",
                     "Skins/Fruity/1.webp",
                     "Skins/Fruity/2.webp",
@@ -1370,24 +1415,6 @@
                     "Skins/Unknown/6.webp"
                 ],
                 [
-                    "Skins/Kanji/0.webp",
-                    "Skins/Kanji/1.webp",
-                    "Skins/Kanji/2.webp",
-                    "Skins/Kanji/3.webp",
-                    "Skins/Kanji/4.webp",
-                    "Skins/Kanji/5.webp",
-                    "Skins/Kanji/6.webp"
-                ],
-                [
-                    "Skins/QR/0.webp",
-                    "Skins/QR/1.webp",
-                    "Skins/QR/2.webp",
-                    "Skins/QR/3.webp",
-                    "Skins/QR/4.webp",
-                    "Skins/QR/5.webp",
-                    "Skins/QR/6.webp"
-                ],
-                [
                     "Skins/Ladybug/0.webp",
                     "Skins/Ladybug/1.webp",
                     "Skins/Ladybug/2.webp",
@@ -1395,15 +1422,6 @@
                     "Skins/Ladybug/4.webp",
                     "Skins/Ladybug/5.webp",
                     "Skins/Ladybug/6.webp"
-                ],
-                [
-                    "Skins/Cubes/0.webp",
-                    "Skins/Cubes/1.webp",
-                    "Skins/Cubes/2.webp",
-                    "Skins/Cubes/3.webp",
-                    "Skins/Cubes/4.webp",
-                    "Skins/Cubes/5.webp",
-                    "Skins/Cubes/6.webp"
                 ],
                 [
                     "Skins/Horror/0.webp",
@@ -1440,6 +1458,42 @@
                     "Skins/Hana/4L.webp",
                     "Skins/Hana/5L.webp",
                     "Skins/Hana/6L.webp"
+                ],
+                [
+                    "Skins/Cubes/0.webp",
+                    "Skins/Cubes/1.webp",
+                    "Skins/Cubes/2.webp",
+                    "Skins/Cubes/3.webp",
+                    "Skins/Cubes/4.webp",
+                    "Skins/Cubes/5.webp",
+                    "Skins/Cubes/6.webp"
+                ],
+                [
+                    "Skins/Kanji/0.webp",
+                    "Skins/Kanji/1.webp",
+                    "Skins/Kanji/2.webp",
+                    "Skins/Kanji/3.webp",
+                    "Skins/Kanji/4.webp",
+                    "Skins/Kanji/5.webp",
+                    "Skins/Kanji/6.webp"
+                ],
+                [
+                    "Skins/QR/0.webp",
+                    "Skins/QR/1.webp",
+                    "Skins/QR/2.webp",
+                    "Skins/QR/3.webp",
+                    "Skins/QR/4.webp",
+                    "Skins/QR/5.webp",
+                    "Skins/QR/6.webp"
+                ],
+                [
+                    "Skins/Graph/0.png",
+                    "Skins/Graph/1.png",
+                    "Skins/Graph/2.png",
+                    "Skins/Graph/3.png",
+                    "Skins/Graph/4.png",
+                    "Skins/Graph/5.png",
+                    "Skins/Graph/6.png"
                 ]
             ];
 
@@ -1647,6 +1701,8 @@
             button.style.display = 'none';
             let lab = document.getElementById("catlab" + i)
             lab.style.display = 'none';
+            // let box = document.getElementById("catbox" + i)
+            // box.style.display = 'none';
         }
 
         // Function to make the button visible
@@ -1655,6 +1711,9 @@
             button.style.display = 'table-cell'; // or 'inline-block', depending on the button's initial display property
             let lab = document.getElementById("catlab" + i)
             lab.style.display = 'table-cell';
+            // let box = document.getElementById("catbox" + i)
+            // box.style.display = 'flex';
+
             gotCategories[i - 1] = true;
         }
 
@@ -1963,13 +2022,27 @@
 
         document.getElementById("diceValues").addEventListener("input", updateButtonValues);
 
+        const checkbox_randstyle = document.getElementById('toggleRandomStyleStartup');
+
 
         let diceStyle = 0;
-        if (localStorage.getItem('settings_dicestyle') !== null) {
-            // Retrieve the integer from local storage
-            const storedIntegerString = localStorage.getItem('settings_dicestyle');
-            diceStyle = parseInt(storedIntegerString, 10); // Parse the string back to an integer
+        // Check the value of local storage and set checkbox state accordingly
+        if (localStorage.getItem('settings_randomstyleonstartup') === 'false') {
+            if (localStorage.getItem('settings_dicestyle') !== null) {
+                // Retrieve the integer from local storage
+                const storedIntegerString = localStorage.getItem('settings_dicestyle');
+                diceStyle = parseInt(storedIntegerString, 10); // Parse the string back to an integer
+            }
+        } else if(localStorage.getItem('settings_randomstyleonstartup') === 'true'){
+            diceStyle = Math.floor(Math.random() * 10)
+        } else {
+            localStorage.setItem('settings_randomstyleonstartup', checkbox_randstyle.checked);
         }
+        console.log("dicestyle is "+diceStyle)
+
+        checkbox_randstyle.addEventListener('click', function () {
+            localStorage.setItem('settings_randomstyleonstartup', checkbox_randstyle.checked);
+        });
 
 
 
@@ -3294,6 +3367,19 @@
                 addBRToLog();
             };
 
+            //Function that gets called when a location is scouted
+            const locationHintListener = (packet) => {
+                console.log("locationHint ", packet)
+                let p = packet.locations[0].player //Player ID
+                let id = packet.locations[0].item //item ID
+
+                let itt = client.items.name(client.players.game(Number(p)), Number(id)) //get item name
+                let gamet = client.players.game(Number(p)) //get game name
+                let playerAlias = client.players.alias(Number(p));
+
+                document.getElementById("nextgoalitem").innerText = "(" + itt + " from "+gamet + " for "+playerAlias + ")";
+            };
+
             // client.removeListener(SERVER_PACKET_TYPE.CONNECTED, connectedListener);
             // client.removeListener(SERVER_PACKET_TYPE.ROOM_UPDATE, roomupdateListener);
             // client.removeListener("ReceivedItems", receiveditemsListener);
@@ -3303,6 +3389,7 @@
             client.addListener(SERVER_PACKET_TYPE.ROOM_UPDATE, roomupdateListener);
             client.addListener("ReceivedItems", receiveditemsListener);
             client.addListener(SERVER_PACKET_TYPE.PRINT_JSON, jsonListener);
+            client.addListener("LocationInfo", locationHintListener);
 
         }
 
@@ -3481,6 +3568,10 @@
 
         }
 
+        function askWhatNextItemIs(firstMissingLocId){
+            client.locations.scout(CREATE_AS_HINT_MODE.NO_HINT, firstMissingLocId);
+        }
+
         function updateRequiresValue(packet) {
 
             if (!offline) {
@@ -3488,9 +3579,11 @@
                     // do nothing
                 } else if (packet.missing_locations.length === 0) {
                     nextgoal = "-"
+                    document.getElementById("nextgoalitem").innerText = "";
                 } else {
                     const firstMissingLocId = packet.missing_locations[0];
                     nextgoal = firstMissingLocId - 16871244500
+                    askWhatNextItemIs(firstMissingLocId)
                 }
 
                 if (!packet.checked_locations) {
@@ -3506,6 +3599,7 @@
 
             if (offline) {
                 nextgoal = Math.min(...Object.keys(missingLocations).map(Number))
+                document.getElementById("nextgoalitem").innerText = "(" + missingLocations[nextgoal] + ")";
             }
 
 
@@ -3534,14 +3628,17 @@
 
                     if (missingLocations.length > 0) {
                         nextgoal = missingLocations[0] - 16871244500;
+                        askWhatNextItemIs(missingLocations[0])
                     } else {
                         nextgoal = "-"
+                        document.getElementById("nextgoalitem").innerText = "";
                     }
                 }
 
                 if (offline) {
                     sendCheck(inputValue)
                     nextgoal = Math.min(...Object.keys(missingLocations).map(Number))
+                    document.getElementById("nextgoalitem").innerText = "(" + missingLocations[nextgoal] +")";
                 }
 
                 if (inputValue >= finalgoal) {
@@ -3758,7 +3855,7 @@
                 const updatedURL = modifiedURL.toString();
 
                 // Print the updated URL
-                addToLog("To continue next time, go to this link:\n" + updatedURL)
+                addToLog("To continue next time, go to this link: \n" + updatedURL)
             });
 
 
@@ -3769,10 +3866,18 @@
             let whichcategories = 0;
             if (getUrlParameter('offlineseed') != '') {
                 let offlineseedStr = getUrlParameter('offlineseed')
-                numDiceF = parseInt(offlineseedStr.charAt(0), 10);
-                di = parseInt(offlineseedStr.charAt(1), 10);
-                smt = parseInt(offlineseedStr.charAt(2), 10);
-                pg = parseInt(offlineseedStr.charAt(3), 10);
+                if (!offlineseedStr.includes("-")) {
+                    numDiceF = parseInt(offlineseedStr.charAt(0), 10);
+                    di = parseInt(offlineseedStr.charAt(1), 10);
+                    smt = parseInt(offlineseedStr.charAt(2), 10);
+                    pg = parseInt(offlineseedStr.charAt(3), 10);
+                }else{
+                    numDiceF = parseInt(offlineseedStr.charAt(0), 10);
+                    di = parseInt(offlineseedStr.charAt(1), 10);
+                    smt = parseInt(offlineseedStr.charAt(2), 10);
+                    pg = parseInt(offlineseedStr.charAt(3), 10);
+                    whichcategories = parseInt(offlineseedStr.charAt(4), 10);
+                }
             } else {
                 numDiceF = parseInt(document.getElementById('offlineoptions_numberOfDice').value);
                 // Get selected values from dropdown menus
@@ -3899,12 +4004,18 @@
 
 
             let seed = -1;
+            let seednr = -1;
 
             let inps = getUrlParameter('offlineseed')
-            if (inps != "") {
-                seed = parseInt(inps)
+            if (inps !== "") {
+                seed = inps
+                if (inps.includes("-")) {
+                    seednr = parseInt(inps.split("-")[1]);
+                } else {
+                    seed = parseInt(inps);
+                }
             } else {
-                seed = parseInt(numDiceF + "" + di + "" + smt + "" + pg + (10000 + Math.floor(Math.random() * 90000)))
+                seed = numDiceF + "" + di + "" + smt + "" + pg + "" + whichcategories +"-"+ (10000 + Math.floor(Math.random() * 90000))
             }
 
 
@@ -3913,7 +4024,7 @@
 
             console.log("Seed ", seed)
             addToLog("Playing seed " + seed)
-            const prng = sfc32(seed);
+            const prng = sfc32(seednr);
 
 
             if (pg == 1) {
