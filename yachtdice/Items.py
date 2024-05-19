@@ -51,7 +51,7 @@ item_table = {
     "Category Two Pair": ItemData(16871244135, ItemClassification.progression),
     "Category 2-1-2 Consecutive": ItemData(16871244136, ItemClassification.progression),
     "Category Five Distinct Dice": ItemData(16871244137, ItemClassification.progression),
-    "Category 1-6 Full House": ItemData(16871244138, ItemClassification.progression),
+    "Category 4&5 Full House": ItemData(16871244138, ItemClassification.progression),
     
     
 

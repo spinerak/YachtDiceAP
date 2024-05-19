@@ -38,7 +38,7 @@ class YachtDiceWorld(World):
 
     location_name_to_id = {name: data.id for name, data in all_locations.items()}
 
-    ap_world_version = "1.0"
+    ap_world_version = "1.0.1"
 
 
     def _get_yachtdice_data(self):
