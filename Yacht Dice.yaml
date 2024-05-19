@@ -195,6 +195,22 @@ Yacht Dice:
     fixed_multiplier: 50
     step_multiplier: 0
 
+  points_game_mode:
+    # This extra game mode shuffles many points items in the pool, 
+    # and your goal is to reach a score of 1000.
+    # 
+    # yes_1_per_item: hundreds of "1 Point" items are shuffled into the pool.
+    # NOT recommended in multiplayer, unless everyone is aware of the hundred of extra items
+    # 
+    # yes_10_per_item: puts tens of "10 Points" (and a few 1 Points) into the item pool.
+    # 
+    # yes_100_per_item: puts a few "100 Points" (and a few 1 and 10 Points) into the item pool. 
+    # Warning: will unlock many checks if an 100 Points item is collected.
+    no_thanks: 50
+    yes_1_per_item: 0
+    yes_10_per_item: 0
+    yes_100_per_item: 0
+
   minimize_extra_items:
     # Would you like to minimize the number of extra items in the pool?
     # Note that if you put this on, categories Fives, Sixes and Pair are put early into the playthrough.
@@ -211,22 +227,6 @@ Yacht Dice:
     all_of_it: 0
     sure: 50
     never: 0
-
-  points_game_mode:
-    # This extra game mode shuffles many points items in the pool, 
-    # and your goal is to reach a score of 1000.
-    # 
-    # yes_1_per_item: hundreds of "1 Point" items are shuffled into the pool.
-    # NOT recommended in multiplayer, unless everyone is aware of the hundred of extra items
-    # 
-    # yes_10_per_item: puts tens of "10 Points" (and a few 1 Points) into the item pool.
-    # 
-    # yes_100_per_item: puts a few "100 Points" (and a few 1 and 10 Points) into the item pool. 
-    # Warning: will unlock many checks if an 100 Points item is collected.
-    no_thanks: 50
-    yes_1_per_item: 0
-    yes_10_per_item: 0
-    yes_100_per_item: 0
 
   add_story_chapters:
     # Yacht Dice typically has space for more items.
