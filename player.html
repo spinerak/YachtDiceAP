@@ -580,7 +580,7 @@
             padding: 0px 10px;
             flex: 1 1 calc(50% - 20px);
             box-sizing: border-box;
-            transition: background-color 0.3s;
+            transition: background-color 0.2s;
             margin: 0px 0;
             text-align: center;
             min-height: 10px;
@@ -1011,7 +1011,7 @@
                             <button id="category14" class="NS_category-button">0</button>
                         </div>
                         <div class="NS_category-box" id="catbox15">
-                            <div id="catlab15" class="NS_category-label" title="25 points if a value appears three times and a OTHER value appears twice (eg 61661)">Full House (25)</div>
+                            <div id="catlab15" class="NS_category-label" title="25 points if a value appears three times and a different value appears twice (eg 61661)">Full House (25)</div>
                             <div id="catmult15" class="NS_mult-label">×0</div>
                             <button id="category15" class="NS_category-button">0</button>
                         </div>
@@ -1434,6 +1434,15 @@
                     "Skins/Rubees/6.webp"
                 ],
                 [
+                    "Skins/Paper/0.webp",
+                    "Skins/Paper/1.webp",
+                    "Skins/Paper/2.webp",
+                    "Skins/Paper/3.webp",
+                    "Skins/Paper/4.webp",
+                    "Skins/Paper/5.webp",
+                    "Skins/Paper/6.webp"
+                ],
+                [
                     "Skins/Ruben/0.webp",
                     "Skins/Ruben/1.webp",
                     "Skins/Ruben/2.webp",
@@ -1830,9 +1839,24 @@
                         increasenumRolls(1);
                         break;
                     case "Score Multiplier":
-                        increaseScoreMult();
+                        if (scoremultipliertype == 0) { //very old version
+                            stepScoreMult += 0.02;
+                        }
+                        if (scoremultipliertype == 1) {
+                            fixedScoreMult += 0.1;
+                        }
+                        if (scoremultipliertype == 2) {
+                            stepScoreMult += 0.01;
+                        }
+                        break;
+                    case "Fixed Score Multiplier":
+                        fixedScoreMult += 0.1;
+                        break;
+                    case "Step Score Multiplier":
+                        stepScoreMult += 0.01;
                         break;
                     case "Extra Point":
+                    case "Bonus Point":
                         gotExtraPoint();
                         submitScore();
                         updateButtonValues();
@@ -1904,9 +1928,9 @@
             diceSize = parseInt(storedIntegerString, 10); // Parse the string back to an integer
         }
 
-
+        var fixedScoreMult = 0
         var stepScoreMult = 0
-        var curScoreMult = 0
+        var turnNumber = 0
 
 
         var missingLocations = []
@@ -1927,7 +1951,7 @@
             // Get the label elements by their IDs
             var numDiceLabel = document.getElementById("num-dice");
             var numRollsLabel = document.getElementById("max-Rolls");
-            var stepScoreMultLabel = document.getElementById("score-mult");
+            var scoreMultiplierLabel = document.getElementById("score-mult");
 
             // Set text content for each label
             if (amDiceF > 1) {
@@ -1942,15 +1966,12 @@
                 numRollsLabel.textContent = Math.floor(numRollsF / amRollsF);
             }
 
-            if (scoremultipliertype == 0) {
-                stepScoreMultLabel.textContent = (1 + curScoreMult).toFixed(2) + " (+" + stepScoreMult.toFixed(2) + ")";
+            if(stepScoreMult > 0){
+                scoreMultiplierLabel.textContent = (1 + fixedScoreMult + turnNumber * stepScoreMult).toFixed(2) + " (" + (1+fixedScoreMult).toFixed(2) + " + " + turnNumber+"×"+stepScoreMult.toFixed(2)+")";
+            }else{
+                scoreMultiplierLabel.textContent = (1 + fixedScoreMult + turnNumber * stepScoreMult).toFixed(2);
             }
-            if (scoremultipliertype == 1) {
-                stepScoreMultLabel.textContent = (1 + curScoreMult).toFixed(2);
-            }
-            if (scoremultipliertype == 2) {
-                stepScoreMultLabel.textContent = (1 + curScoreMult).toFixed(2) + " (+" + stepScoreMult.toFixed(2) + ")";
-            }
+            
 
         }
 
@@ -2093,12 +2114,7 @@
             }
             calculateTotalAndUpdate();
             nextTurn();
-            if (scoremultipliertype == 0) {
-                curScoreMult = 0
-            }
-            if (scoremultipliertype == 2) {
-                curScoreMult = 0
-            }
+            turnNumber = 0;
             updateParButtons();
             canRoll = true;
         });
@@ -2119,7 +2135,7 @@
                 diceStyle = parseInt(storedIntegerString, 10); // Parse the string back to an integer
             }
         } else if(localStorage.getItem('settings_randomstyleonstartup') === 'true'){
-            diceStyle = Math.floor(Math.random() * 12)
+            diceStyle = Math.floor(Math.random() * 13)
         } else {
             localStorage.setItem('settings_randomstyleonstartup', checkbox_randstyle.checked);
         }
@@ -2328,12 +2344,7 @@
         function nextTurn() {
 
             currentRolls = 0;
-            if (scoremultipliertype == 0) {
-                curScoreMult += stepScoreMult
-            }
-            if (scoremultipliertype == 2) {
-                curScoreMult += stepScoreMult
-            }
+            turnNumber += 1;
 
             updateRollButton();
 
@@ -2404,6 +2415,7 @@
 
             let rollSound = document.createElement("audio");
             rollSound.src = "Sounds/rollsound.mp3"; // Set the source of the roll sound
+            console.log(i)
             rollSound.id = `rollSound${i}`; // Set an ID for the roll sound
             rollSound.volume = document.getElementById("soundEffectVolume").value
 
@@ -2419,16 +2431,7 @@
 
 
         function changeScoreMult() {
-            if (scoremultipliertype == 0) {
-                stepScoreMult += 0.02;
-            }
-            if (scoremultipliertype == 1) {
-                curScoreMult += 0.1;
-                stepScoreMult += 0.1;
-            }
-            if (scoremultipliertype == 2) {
-                stepScoreMult += 0.01;
-            }
+            
 
         }
 
@@ -2599,7 +2602,7 @@
 
             var button = document.getElementById(buttonId);
             if (!button.disabled) {
-                score = Math.floor(score * (1 + curScoreMult) * Math.pow(2,catquan-1));
+                score = Math.floor(score * (1 + fixedScoreMult + turnNumber * stepScoreMult) * Math.pow(2,catquan-1));
                 button.textContent = score
                 if (score >= needForLastGoal) {
                     button.style.backgroundColor = "#FF2700";
@@ -3137,23 +3140,13 @@
             }
 
 
-            // Define inputs
             const nbDice = Math.floor(numDiceF / amDiceF);
             const nbRolls = Math.floor(numRollsF / amRollsF);
-            const multiplier = stepScoreMult;
-            const diff = difficulty;
-            const smt = scoremultipliertype;
-            const expoints = extrapointsinlogic;
-            // console.log(categories)
-            // console.log(nbDice)
-            // console.log(nbRolls)
-            // console.log(multiplier)
-            // console.log(diff)
             
-            return diceSimulationStringsForJS(categories, nbDice, nbRolls, multiplier, diff, smt) + expoints
+            return diceSimulationStringsForJS(categories, nbDice, nbRolls, fixedScoreMult, stepScoreMult, difficulty) + extrapointsinlogic
         }
 
-        function diceSimulationStringsForJS(categories, nbDice, nbRolls, multiplier, diff, smt) {
+        function diceSimulationStringsForJS(categories, nbDice, nbRolls, fixscmu, stescmu, diff) {
             categories.sort((a, b) => a.meanScore(Math.min(8,nbDice), Math.min(8,nbRolls)) - b.meanScore(Math.min(8,nbDice), Math.min(8,nbRolls)));
 
             function addDistributions(dist1, dist2, mult) {
@@ -3208,7 +3201,7 @@
 
 
             let percReturn = [0, 0.4, 0.4, 0.45, 0.45, 0.45][diff]
-            let diffDivide = [0, 9, 5, 3, 2, 1][diff]
+            let diffDivide = [0, 9, 8, 5, 4, 3][diff]
 
 
             if (apworldversion === "?" || 
@@ -3218,6 +3211,10 @@
                 apworldversion === "0.3") {
                 diffDivide = 6 - diff
                 percReturn = 0.4
+            }
+            if (apworldversion === "1.1"){
+                percReturn = [0, 0.4, 0.4, 0.45, 0.45, 0.45][diff]
+                diffDivide = [0, 9, 5, 3, 2, 1][diff]
             }
 
             let totalDist = { 0: 1 };
@@ -3233,18 +3230,8 @@
                 const factor = Math.max(1, Math.floor(categories.length / diffDivide));
                 const maxDistResult = maxDist(dist, factor);
 
-                let cur_mult = -100
-                if (smt == 0) { //fixed
-                    cur_mult = j * multiplier
-                }
-                if (smt == 1) { //fixed
-                    cur_mult = multiplier
-                }
-                if (smt == 2) { //fixed
-                    cur_mult = j * multiplier
-                }
 
-                totalDist = addDistributions(totalDist, maxDistResult, (1 + cur_mult) * Math.pow(2,categories[j].quantity-1));
+                totalDist = addDistributions(totalDist, maxDistResult, (1 + fixscmu + j * stescmu) * Math.pow(2,categories[j].quantity-1));
             }
 
 
@@ -3634,7 +3621,7 @@
                 if (packet.slot_data.score_multiplier_type) {
                     scoremultipliertype = packet.slot_data.score_multiplier_type;
                 } else {
-                    scoremultipliertype = 0 //0.3 version, step, 2% per item.
+                    scoremultipliertype = 0 //0.3 version or newest versions, step, 2% per item.
                 }
                 maxscoreinlogic = getMaxScoreInLogic()
 
@@ -3647,26 +3634,26 @@
                 }
                 if (!packet.slot_data.ap_world_version) {
                     addToLog("Warning, apworld version is not provided in the packet, so it's generated with a very old version, not even 0.3. Please update your apworld. Website version: 1.1", true);
-                    addToLog("https://github.com/spinerak/YachtDiceAP/releases")
+                    addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                 } else {
                     apworldversion = packet.slot_data.ap_world_version;
                     if (apworldversion == "1.0.1") {
                         addToLog("Apworld 1.1 is out, but you can play your 1.0.1 version here still :3", true)
-                        addToLog("https://github.com/spinerak/YachtDiceAP/releases")
+                        addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "1.1") {
                         // up to date
                     } else if (apworldversion == "1.0") {
                         addToLog("Apworld 1.1 is out! But you can play your version 1.0 here as well :)", true);
-                        addToLog("https://github.com/spinerak/YachtDiceAP/releases")
+                        addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "0.4") {
                         addToLog("Apworld 1.1 is out! But you can play your version 0.4 here as well :)", true)
-                        addToLog("https://github.com/spinerak/YachtDiceAP/releases")
+                        addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "0.3") {
                         addToLog("Apworld 1.1 released, consider using that one next time.", true);
-                        addToLog("https://github.com/spinerak/YachtDiceAP/releases")
+                        addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else {
                         addToLog("Warning, apworld version does not match with website version.\nApworld: " + apworldversion + ", website: 1.1", true);
-                        addToLog("https://github.com/spinerak/YachtDiceAP/releases")
+                        addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     }
                 }
             }
@@ -4067,7 +4054,7 @@
             if(whichcategories == 0){
                 cats = [new Category("Choice", 1), new Category("Choice", 1)]
             }else if(whichcategories == 1){
-                cats = [new Category("DoubleThreesAndFours", 1), new Category("QuadrupleOnesAndTwos", 1)]
+                cats = [new Category("Choice", 1), new Category("Choice", 1)]
             }else{
                 console.log("UNKNOWN whichcategories, please report...")
             }
@@ -4075,7 +4062,8 @@
 
             let ndf = amDiceF
             let nrf = amRollsF
-            let mu = 0
+            let fixedmu = 0
+            let stepmu = 0
             let extrapointsinlogicgen = 0
 
 
@@ -4290,7 +4278,7 @@
                 // Obtain and remove the first element from itempool
                 const firstElement = itempool.shift();
 
-                let maxinLogic = diceSimulationStringsForJS(cats, Math.floor(ndf / amDiceF), Math.floor(nrf / amRollsF), mu, di, smt) + extrapointsinlogicgen
+                let maxinLogic = diceSimulationStringsForJS(cats, Math.floor(ndf / amDiceF), Math.floor(nrf / amRollsF), fixedmu, stepmu, di) + extrapointsinlogicgen
                 
 
                 const validKeys = Object.keys(result).filter(key => Number(key) <= maxinLogic && result[key] === "");
@@ -4323,16 +4311,17 @@
                         break;
                     case "Score Multiplier":
                         if (smt == 0) {
-                            mu += 0.02;
+                            fixedmu += 0.02;
                         }
                         if (smt == 1) {
-                            mu += 0.1;
+                            fixedmu += 0.1;
                         }
                         if (smt == 2) {
-                            mu += 0.01;
+                            stepmu += 0.01;
                         }
                         break;
                     case "Extra Point":
+                    case "Bonus Point":
                         //nothing changes for logic
                         break;
                     case "Encouragement":
