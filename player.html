@@ -1025,9 +1025,12 @@
                     <hr>
                     <div class="NS_boxes">
                         <div class="NS_category-box">
-                            <div id="catlabextrapoints" class="NS_category-label" title="Extra points for getting 'Extra Point' items">Extra points</div>
+                            <div id="catlabextrapoints" class="NS_category-label" title="Extra points are in logic and might be necessary">Extra points</div>
                             <button id="catextrapoints" disabled class="NS_category-button" style="background-color: rgba(51, 51, 51, 0);">0</button>
-
+                        </div>
+                        <div class="NS_category-box">
+                            <div id="catlabbonuspoints" class="NS_category-label" title="Bonus points make the game easier as they are out of logic">Bonus points</div>
+                            <button id="catbonuspoints" disabled class="NS_category-button" style="background-color: rgba(51, 51, 51, 0);">0</button>
                         </div>
                     </div>
                     <hr>
@@ -1050,11 +1053,17 @@
                 <br>
                 Last check: <span id="lastcheck">?</span>
                 <br>
-                Max score in logic: <span id="maxlogic">?</span>
+                Max score in logic: <span id="maxlogic">?</span> (<span id="diffmode">?</span>)
                 <br>
                 <div id="timer" style="display: none;">00:00:00</div>
                 <br>
                 <button id="saveBtn" class="NS_category-button">Save (see chat)</button>
+                <br>
+                Difficulty testing: <br>
+                <input type="checkbox" id="disableItemGet">
+                <label for="disableItemGet">Disable score submit (for testing/debug) </label> 
+                <br>
+                Max score in logic Easy/Medium/Hard/Extreme: <span id="maxlogicalldif">?</span>
             </div>
         </div>
     </div>
@@ -1371,15 +1380,6 @@
                     "Skins/Fruity/6.webp"
                 ],
                 [
-                    "Skins/Unknown/0.webp",
-                    "Skins/Unknown/1.webp",
-                    "Skins/Unknown/2.webp",
-                    "Skins/Unknown/3.webp",
-                    "Skins/Unknown/4.webp",
-                    "Skins/Unknown/5.webp",
-                    "Skins/Unknown/6.webp"
-                ],
-                [
                     "Skins/Ladybug/0.webp",
                     "Skins/Ladybug/1.webp",
                     "Skins/Ladybug/2.webp",
@@ -1407,6 +1407,24 @@
                     "Skins/Kids/6.webp"
                 ],
                 [
+                    "Skins/Rubees/0.webp",
+                    "Skins/Rubees/1.webp",
+                    "Skins/Rubees/2.webp",
+                    "Skins/Rubees/3.webp",
+                    "Skins/Rubees/4.webp",
+                    "Skins/Rubees/5.webp",
+                    "Skins/Rubees/6.webp"
+                ],
+                [
+                    "Skins/Paper/0.webp",
+                    "Skins/Paper/1.webp",
+                    "Skins/Paper/2.webp",
+                    "Skins/Paper/3.webp",
+                    "Skins/Paper/4.webp",
+                    "Skins/Paper/5.webp",
+                    "Skins/Paper/6.webp"
+                ],
+                [
                     "Skins/Hana/0.webp",
                     "Skins/Hana/1A.webp",
                     "Skins/Hana/2A.webp",
@@ -1425,22 +1443,13 @@
                     "Skins/Hana/6L.webp"
                 ],
                 [
-                    "Skins/Rubees/0.webp",
-                    "Skins/Rubees/1.webp",
-                    "Skins/Rubees/2.webp",
-                    "Skins/Rubees/3.webp",
-                    "Skins/Rubees/4.webp",
-                    "Skins/Rubees/5.webp",
-                    "Skins/Rubees/6.webp"
-                ],
-                [
-                    "Skins/Paper/0.webp",
-                    "Skins/Paper/1.webp",
-                    "Skins/Paper/2.webp",
-                    "Skins/Paper/3.webp",
-                    "Skins/Paper/4.webp",
-                    "Skins/Paper/5.webp",
-                    "Skins/Paper/6.webp"
+                    "Skins/Unknown/0.webp",
+                    "Skins/Unknown/1.webp",
+                    "Skins/Unknown/2.webp",
+                    "Skins/Unknown/3.webp",
+                    "Skins/Unknown/4.webp",
+                    "Skins/Unknown/5.webp",
+                    "Skins/Unknown/6.webp"
                 ],
                 [
                     "Skins/Ruben/0.webp",
@@ -2135,7 +2144,7 @@
                 diceStyle = parseInt(storedIntegerString, 10); // Parse the string back to an integer
             }
         } else if(localStorage.getItem('settings_randomstyleonstartup') === 'true'){
-            diceStyle = Math.floor(Math.random() * 13)
+            diceStyle = Math.floor(Math.random() * 10)
         } else {
             localStorage.setItem('settings_randomstyleonstartup', checkbox_randstyle.checked);
         }
@@ -2277,13 +2286,16 @@
         // Function to increase number of rolls
         function gotExtraPoint(num = 1, inlogic = false) {
             let el = document.getElementById("catextrapoints");
+            if(!inlogic){
+                el = document.getElementById("catbonuspoints");
+            }
             let currentValue = parseInt(el.textContent); // Get the current text content and parse it to an integer
             el.textContent = currentValue + num; // Increment the parsed value by 1 and update the text content
             if(inlogic){
                 extrapointsinlogic += num
             }
             el.style.display = 'table-cell'; // or 'inline-block', depending on the button's initial display property
-            document.getElementById("catlabextrapoints").style.display = 'table-cell';
+            // document.getElementById("catlabextrapoints").style.display = 'table-cell';
         }
 
 
@@ -2415,7 +2427,6 @@
 
             let rollSound = document.createElement("audio");
             rollSound.src = "Sounds/rollsound.mp3"; // Set the source of the roll sound
-            console.log(i)
             rollSound.id = `rollSound${i}`; // Set an ID for the roll sound
             rollSound.volume = document.getElementById("soundEffectVolume").value
 
@@ -2573,6 +2584,7 @@
                 }
             });
             total += parseInt(document.getElementById("catextrapoints").textContent);
+            total += parseInt(document.getElementById("catbonuspoints").textContent);
             document.getElementById("total").textContent = total
             return total;
         }
@@ -3085,7 +3097,7 @@
             }
         }
 
-        function getMaxScoreInLogic() {
+        function getMaxScoreInLogic(forcediff = -1) {
 
             // Create Category objects. Note, for alt categories we just use logic of regular categories
             const categories = [];
@@ -3142,8 +3154,117 @@
 
             const nbDice = Math.floor(numDiceF / amDiceF);
             const nbRolls = Math.floor(numRollsF / amRollsF);
+
+            let diffhere = difficulty
+            if(forcediff>=0){
+                diffhere = forcediff
+            }
+
+            if (apworldversion === "?" || 
+                apworldversion === "1.0.1" ||  
+                apworldversion === "1.0" || 
+                apworldversion === "0.4" || 
+                apworldversion === "1.1"){
+                return diceSimulationStringsForJS(categories, nbDice, nbRolls, fixedScoreMult, stepScoreMult, diffhere) + extrapointsinlogic
+            }
+            return diceSimulationStringsForJS2(categories, nbDice, nbRolls, fixedScoreMult, stepScoreMult, diffhere) + extrapointsinlogic
             
-            return diceSimulationStringsForJS(categories, nbDice, nbRolls, fixedScoreMult, stepScoreMult, difficulty) + extrapointsinlogic
+        }
+
+        
+
+        function diceSimulationStringsForJS2(categories, nbDice, nbRolls, fixscmu, stescmu, diff) {
+            categories.sort((a, b) => a.meanScore(Math.min(8,nbDice), Math.min(8,nbRolls)) - b.meanScore(Math.min(8,nbDice), Math.min(8,nbRolls)));
+
+            function addDistributions(dist1, dist2) {
+                const combinedDist = {};
+                for (const [val1, prob1] of Object.entries(dist1)) {
+                    for (const [val2, prob2] of Object.entries(dist2)) {
+                        const newVal = parseInt(val1) + parseInt(val2);
+                        if (newVal in combinedDist) {
+                            combinedDist[newVal] += prob1 * prob2;
+                        } else {
+                            combinedDist[newVal] = prob1 * prob2;
+                        }
+                    }
+                }
+                return combinedDist;
+            }
+
+            function maxDist(dist1, mults) {
+                let newDist = { 0: 1 };
+                for (let i = 0; i < mults.length; i++) {
+                    let mult = mults[i]
+                    const c = { ...newDist };
+                    newDist = {};
+                    for (const [val1, prob1] of Object.entries(c)) {
+                        for (const [val2, prob2] of Object.entries(dist1)) {
+                            const newVal = Math.max(parseInt(val1), parseInt(val2 * mult));
+                            const newProb = prob1 * prob2;
+                            if (newVal in newDist) {
+                                newDist[newVal] += newProb;
+                            } else {
+                                newDist[newVal] = newProb;
+                            }
+                        }
+                    }
+                }
+                return newDist;
+            }
+
+            function percentileDistribution(dist, percentile) {
+                const sortedValues = Object.keys(dist).sort((a, b) => a - b);
+                let cumulativeProb = 0;
+                let prevVal = null;
+
+                for (const val of sortedValues) {
+                    prevVal = val;
+                    cumulativeProb += dist[val];
+                    if (cumulativeProb >= percentile) {
+                        return prevVal;
+                    }
+                }
+                return prevVal !== null ? prevVal : sortedValues[0];
+            }
+
+
+            // let percReturn = [0, 0.30, 0.45, 0.53, 0.7, 0.9][diff]
+            // let diffDivide = [0, 9, 8, 4, 2, 1][diff]
+
+
+            let percReturn = [[0], [0.1, 0.5], [0.3, 0.7], [0.5, 0.85], [0.85, 0.95]][diff]
+            let diffDivide = [0, 9, 7, 3, 2][diff]
+
+
+            let totalDist = { 0: 1 };
+            for (let j = 0; j < categories.length; j++) {
+                const dist = { ...yacht_weights[categories[j].name + '_' + Math.min(8,nbDice) + '_' + Math.min(8,nbRolls)] };
+                
+                for (const key in dist) {
+                    dist[key] /= 100000;
+                }
+
+                let cat_mult = Math.pow(2,categories[j].quantity-1)
+
+                let max_tries = Math.floor(j / diffDivide);
+                let mults = [];
+
+                for (let ii = Math.max(0, j - max_tries); ii <= j; ii++) {
+                    mults.push((1 + fixscmu + stescmu * ii) * cat_mult);
+                }
+
+                const maxDistResult = maxDist(dist, mults);
+
+                totalDist = addDistributions(totalDist, maxDistResult);
+            }
+
+            function sum(arr) {
+                return arr.reduce((a, b) => a + b, 0);
+            }
+
+            //console.log(totalDist)
+            const flooredPercentiles = percReturn.map(perc => Math.floor(percentileDistribution(totalDist, perc)));
+            return Math.floor(sum(flooredPercentiles) / percReturn.length);
         }
 
         function diceSimulationStringsForJS(categories, nbDice, nbRolls, fixscmu, stescmu, diff) {
@@ -3199,7 +3320,7 @@
                 return prevVal !== null ? prevVal : sortedValues[0];
             }
 
-
+            //THIS IS OLD!!!
             let percReturn = [0, 0.4, 0.4, 0.45, 0.45, 0.45][diff]
             let diffDivide = [0, 9, 8, 5, 4, 3][diff]
 
@@ -3628,6 +3749,26 @@
                 document.getElementById("finalgoal").innerText = finalgoal;
                 document.getElementById("lastcheck").innerText = lastgoal;
                 document.getElementById("maxlogic").innerText = maxscoreinlogic;
+
+                let dt = 'Unknown'
+                switch(difficulty){
+                    case 1:
+                        dt = 'Easy'
+                        break
+                    case 2:
+                        dt = 'Medium'
+                        break
+                    case 3:
+                        dt = 'Hard'
+                        break
+                    case 4:
+                        dt = 'Extreme'
+                        break
+                }
+                
+                document.getElementById("diffmode").innerText = dt;
+                
+
                 whichstory = packet.slot_data.which_story;
                 if (whichstory == -1) {
                     whichstory = Math.floor(Math.random() * story.length) + 1
@@ -3642,6 +3783,8 @@
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "1.1") {
                         // up to date
+                    } else if (apworldversion == "2.0") {
+                        addToLog("This version is currently being tested :3", true)
                     } else if (apworldversion == "1.0") {
                         addToLog("Apworld 1.1 is out! But you can play your version 1.0 here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
@@ -3719,6 +3862,10 @@
 
 
         function submitScore() {
+            
+            if(document.getElementById("disableItemGet").checked){
+                return;
+            }
             calculateTotalAndUpdate();
             var inputValue = parseInt(document.getElementById("total").innerText);
             highestsubmitted = Math.max(highestsubmitted, inputValue);
@@ -3762,6 +3909,7 @@
             document.getElementById("nextgoal").innerText = nextgoal;
             document.getElementById("highestsubmitted").innerText = highestsubmitted;
             document.getElementById("maxlogic").innerText = maxscoreinlogic
+            document.getElementById("maxlogicalldif").innerText = getMaxScoreInLogic(1) + "/" + getMaxScoreInLogic(2) + "/" + getMaxScoreInLogic(3) + "/" + getMaxScoreInLogic(4)
         }
 
         function sendCheck(locid) {
