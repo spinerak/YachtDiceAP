@@ -795,7 +795,14 @@
     </div>
 
 
-
+    <script>
+        document.getElementById('name').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent the default form submission
+                document.getElementById('loginbutton').click(); // Click the login button
+            }
+        });
+    </script>
 
 
 
@@ -863,6 +870,10 @@
                         <button id>Select dice style</button>
                         <div class="dropdown-options" id="dropdownOptions"></div>
                     </div>
+                    <br>
+                    <input type="checkbox" id="requireExactScore">
+                    <label for="requireExactScore">Need exact score (above 10)</label>
+
 
                     <br><br>
                     <div id="musicplayerdiv">
@@ -1152,6 +1163,14 @@
             localStorage.setItem('settings_enableSoundEffects', checkbox_sx.checked);
         });
 
+        
+        function playNewItemSound(){
+            const checkbox_sx = document.getElementById('enableSoundEffects');
+            if(checkbox_sx.checked){
+                newItemSound.play();
+            }
+        }
+
 
 
 
@@ -1183,11 +1202,6 @@
             return (num < 10 ? "0" : "") + num;
         }
 
-        document.getElementById("Roll-button").addEventListener("click", function () {
-            if (!timerInterval) {
-                startTimer();
-            }
-        });
     </script>
 
 
@@ -1221,9 +1235,12 @@
 
 
 
+
         var playPauseButton = document.getElementById('playPauseButton');
         var currentTrackIndex = 0;
         var tracks = [
+            "Sounds/Dreams Interlace.mp3",
+            "Sounds/Interlude.mp3",
             "Sounds/Yacht Dice.mp3",
             "Sounds/Into The Waves.mp3",
             "Sounds/Rolling Ambience.mp3",
@@ -1234,25 +1251,7 @@
             // Add more tracks here as needed
         ];
 
-        musicPlayer.src = tracks[0];
-
-        // Check if the audio file exists
-        var audioSrc = tracks[0];
-        // Replace with the path to your MP3 file
-        var audioCheck = new Audio();
-        audioCheck.src = audioSrc;
-
-        audioCheck.onerror = function () {
-            // If the audio file is not found, hide the button
-            document.getElementById("playButton").style.display = "none";
-            document.getElementById("musicplayerdiv").style.display = "none";
-            console.log("Didn't find the soundtrack mp3. That's fine :)")
-        }
-
-
-
-
-
+        //musicPlayer.src = tracks[0];
 
 
         function playPause() {
@@ -1264,6 +1263,9 @@
         }
 
         function play() {
+            if(musicPlayer.src == ""){
+                musicPlayer.src = tracks[0]
+            }
             var playPromise = musicPlayer.play();
 
             if (playPromise !== undefined) {
@@ -1501,6 +1503,15 @@
                     "Skins/Graph/4.png",
                     "Skins/Graph/5.png",
                     "Skins/Graph/6.png"
+                ],
+                [
+                    "Skins/APlogo/0.png",
+                    "Skins/APlogo/1.png",
+                    "Skins/APlogo/2.png",
+                    "Skins/APlogo/3.png",
+                    "Skins/APlogo/4.png",
+                    "Skins/APlogo/5.png",
+                    "Skins/APlogo/6.png"
                 ]
             ];
 
@@ -1508,12 +1519,68 @@
         const customDropdown = document.getElementById("skinSelect");
         const dropdownOptions = document.getElementById("dropdownOptions");
 
+
+        let dropdownloaded = false;
+
         // Event listener to toggle dropdown options visibility
         customDropdown.addEventListener("click", function () {
             // Toggle the display of dropdown options
             if (dropdownOptions.style.display === "block") {
                 dropdownOptions.style.display = "none"; // Hide dropdown options
             } else {
+                if(!dropdownloaded){
+                    dropdownloaded = true;
+                    diceFaces.forEach((faces, index) => {
+                        const skinOption = document.createElement("div");
+                        skinOption.classList.add("skin-option");
+                        skinOption.onclick = () => selectSkin(index);
+
+                        const skinName = " "; // Assign skin name based on index
+                        skinOption.innerHTML = `<span>${skinName}</span>`;
+
+                        const imageContainer = document.createElement("div");
+                        imageContainer.classList.add("image-container");
+                        //imageContainer.style.marginTop = "10px"; // Add margin top (adjust as needed)
+
+
+                        // Loop through the faces array to add specific images (2, 4, and 6)
+                        for (let i = 1; i <= 6; i += 1) { // Iterate over indices 1, 3, and 5 (corresponding to 2, 4, and 6)
+                            const imageUrl = faces[i]; // Get the image URL at the current index
+
+                            const img = document.createElement("img");
+                            img.src = imageUrl;
+                            img.classList.add("preview-image");
+                            imageContainer.appendChild(img);
+                        }
+
+                        skinOption.appendChild(imageContainer);
+                        dropdownOptions.appendChild(skinOption);
+                    });
+                    const skinOption = document.createElement("div");
+                    skinOption.classList.add("skin-option");
+                    skinOption.onclick = () => selectSkin(diceFaces.length);
+
+                    const skinName = " "; // Assign skin name based on index
+                    skinOption.innerHTML = `<span>${skinName}</span>`;
+
+                    const imageContainer = document.createElement("div");
+                    imageContainer.classList.add("image-container");
+                    //imageContainer.style.marginTop = "10px"; // Add margin top (adjust as needed)
+
+
+                    // Loop through the faces array to add specific images (2, 4, and 6)
+                    for (let i = 1; i <= 6; i += 1) { // Iterate over indices 1, 3, and 5 (corresponding to 2, 4, and 6)
+                        const imageUrl = diceFaces[i][i]; // Get the image URL at the current index
+
+                        const img = document.createElement("img");
+                        img.src = imageUrl;
+                        img.classList.add("preview-image");
+                        imageContainer.appendChild(img);
+                    }
+
+                    skinOption.appendChild(imageContainer);
+                    dropdownOptions.appendChild(skinOption);
+                }
                 dropdownOptions.style.display = "block"; // Show dropdown options
             }
         });
@@ -1537,56 +1604,7 @@
         }
 
 
-        diceFaces.forEach((faces, index) => {
-            const skinOption = document.createElement("div");
-            skinOption.classList.add("skin-option");
-            skinOption.onclick = () => selectSkin(index);
-
-            const skinName = " "; // Assign skin name based on index
-            skinOption.innerHTML = `<span>${skinName}</span>`;
-
-            const imageContainer = document.createElement("div");
-            imageContainer.classList.add("image-container");
-            //imageContainer.style.marginTop = "10px"; // Add margin top (adjust as needed)
-
-
-            // Loop through the faces array to add specific images (2, 4, and 6)
-            for (let i = 1; i <= 6; i += 1) { // Iterate over indices 1, 3, and 5 (corresponding to 2, 4, and 6)
-                const imageUrl = faces[i]; // Get the image URL at the current index
-
-                const img = document.createElement("img");
-                img.src = imageUrl;
-                img.classList.add("preview-image");
-                imageContainer.appendChild(img);
-            }
-
-            skinOption.appendChild(imageContainer);
-            dropdownOptions.appendChild(skinOption);
-        });
-        const skinOption = document.createElement("div");
-        skinOption.classList.add("skin-option");
-        skinOption.onclick = () => selectSkin(diceFaces.length);
-
-        const skinName = " "; // Assign skin name based on index
-        skinOption.innerHTML = `<span>${skinName}</span>`;
-
-        const imageContainer = document.createElement("div");
-        imageContainer.classList.add("image-container");
-        //imageContainer.style.marginTop = "10px"; // Add margin top (adjust as needed)
-
-
-        // Loop through the faces array to add specific images (2, 4, and 6)
-        for (let i = 1; i <= 6; i += 1) { // Iterate over indices 1, 3, and 5 (corresponding to 2, 4, and 6)
-            const imageUrl = diceFaces[i][i]; // Get the image URL at the current index
-
-            const img = document.createElement("img");
-            img.src = imageUrl;
-            img.classList.add("preview-image");
-            imageContainer.appendChild(img);
-        }
-
-        skinOption.appendChild(imageContainer);
-        dropdownOptions.appendChild(skinOption);
+        
 
 
 
@@ -1838,7 +1856,7 @@
             var cat = getCategoryID(category)
             if (cat >= 0) {
                 makeVisible(getCategoryID(category));
-                newItemSound.play();
+                playNewItemSound();
             } else {
                 switch (category) {
                     case "Dice":
@@ -1863,15 +1881,15 @@
                         if (scoremultipliertype == 2) {
                             stepScoreMult += 0.01;
                         }
-                        newItemSound.play();
+                        playNewItemSound();
                         break;
                     case "Fixed Score Multiplier":
                         fixedScoreMult += 0.1;
-                        newItemSound.play();
+                        playNewItemSound();
                         break;
                     case "Step Score Multiplier":
                         stepScoreMult += 0.01;
-                        newItemSound.play();
+                        playNewItemSound();
                         break;
                     case "Extra Point":
                     case "Bonus Point":
@@ -1936,6 +1954,7 @@
         var currentRolls = 0; // Current number of Rolls
         var difficulty = 1; // Difficulty (1 easy, 4 extreme)
         var scoremultipliertype = -100;
+        var allowManualInput = 1; // default is yes
         var extrapointsinlogic = 0;
 
         var diceContainers = []; // Array to store references to dice containers
@@ -2072,17 +2091,35 @@
             var messageInput = document.getElementById("messageInput");
             var message = messageInput.value;
 
+            if(message == ''){
+                return;
+            }
+
             // Clear the text field
             messageInput.value = "";
 
 
-            if (message == 'manual') {
+            if (message == 'manual'){
+                if(offline){
+                    document.getElementById("diceValues").style.display = "inline-block";
+                    document.getElementById("diceValues").style.textAlign = "center";
+                    return;
+                }
+                if(!connectedonce){
+                    addToLog("Please login before enabling manual")
+                    return;
+                }
+                
+                if(allowManualInput == 2){
+                    addToLog("Manual entry is not allowed in this multiworld.")
+                    return;
+                }
                 document.getElementById("diceValues").style.display = "inline-block";
                 document.getElementById("diceValues").style.textAlign = "center";
             }
-            if (message == 'winrightnow') {
-                sendWin() //this is debug but I'll probably forget to remove it........
-            }
+            // if (message == 'winrightnow') {
+            //     sendWin() //this is debug but I'll probably forget to remove it........
+            // }
             if (message.startsWith('/changeport ')) {
                 // Extract the port number from the message
                 let newPort = message.substring('/changeport '.length);
@@ -2168,12 +2205,12 @@
 
 
         // Iterate through the double list and preload all images
-        diceFaces.forEach((innerList) => {
-            innerList.forEach((url) => {
-                const img = new Image();
-                img.src = url;
-            });
-        });
+        // diceFaces.forEach((innerList) => {
+        //     innerList.forEach((url) => {
+        //         const img = new Image();
+        //         img.src = url;
+        //     });
+        // });
 
 
 
@@ -2239,10 +2276,11 @@
 
         // Function to handle roll action
         function handleRollAction() {
+            if (!timerInterval) {
+                startTimer();
+            }
+
             let currentTime = new Date();
-
-
-
 
             if ((currentRolls < Math.floor(numRollsF / amRollsF))) {
                 if (canRoll) {
@@ -2276,7 +2314,7 @@
         function increaseNumDice(inc) {
             if (Math.floor(numDiceF / amDiceF) != Math.floor((numDiceF + inc) / amDiceF)) {
                 addDice(1);
-                newItemSound.play();
+                playNewItemSound();
             }
             numDiceF += inc;
         }
@@ -2288,7 +2326,7 @@
             inputnumRolls.value = numRollsF;
             updateRollButton();
             if (Math.floor(numRollsF / amRollsF) != Math.floor((numRollsF + inc) / amRollsF)) {
-                newItemSound.play();
+                playNewItemSound();
             }
         }
 
@@ -2310,7 +2348,7 @@
             }
             el.style.display = 'table-cell'; // or 'inline-block', depending on the button's initial display property
             // document.getElementById("catlabextrapoints").style.display = 'table-cell';
-            newItemSound.play();
+            playNewItemSound();
         }
 
 
@@ -2626,19 +2664,23 @@
 
         // Listener function for category buttons
         function updateButtonValue(buttonId, score, catquan, needForNextGoal, needForFinalGoal, needForLastGoal) {
-
+            score = Math.floor(score * (1 + fixedScoreMult + turnNumber * stepScoreMult) * Math.pow(2,catquan-1));
+            var requireExactScoreOK =  !document.getElementById("requireExactScore").checked || score == needForNextGoal
             var button = document.getElementById(buttonId);
-            if (!button.disabled) {
-                score = Math.floor(score * (1 + fixedScoreMult + turnNumber * stepScoreMult) * Math.pow(2,catquan-1));
+            if (!button.disabled) { 
                 button.textContent = score
-                if (score >= needForLastGoal) {
-                    button.style.backgroundColor = "#FF2700";
-                } else if (score >= needForFinalGoal && needForNextGoal <= needForFinalGoal) {
-                    button.style.backgroundColor = "#FFD700";
-                } else if (score >= needForNextGoal) {
-                    button.style.backgroundColor = "#4CAF50";
-                } else {
+                if(!requireExactScoreOK){ // you need the exact score but you didn't get it
                     button.style.backgroundColor = "";
+                }else{
+                    if (score >= needForLastGoal) {
+                        button.style.backgroundColor = "#FF2700";
+                    } else if (score >= needForFinalGoal && needForNextGoal <= needForFinalGoal) {
+                        button.style.backgroundColor = "#FFD700";
+                    } else if (score >= needForNextGoal) {
+                        button.style.backgroundColor = "#4CAF50";
+                    } else {
+                        button.style.backgroundColor = "";
+                    }
                 }
             } else {
                 button.style.backgroundColor = "";
@@ -3128,102 +3170,102 @@
             }
 
 
-            if (gotCategories[0] && (!categoryIsAlt[0] || logicversion == "Old")) {
-                categories.push(new Category('Ones', 1))
+            if (gotCategories[0]>0 && (!categoryIsAlt[0] || logicversion == "Old")) {
+                categories.push(new Category('Ones', gotCategories[0]))
             }
-            if (gotCategories[1] && (!categoryIsAlt[1] || logicversion == "Old")) {
-                categories.push(new Category('Twos', 1))
+            if (gotCategories[1]>0 && (!categoryIsAlt[1] || logicversion == "Old")) {
+                categories.push(new Category('Twos', gotCategories[1]))
             }
-            if (gotCategories[2] && (!categoryIsAlt[2] || logicversion == "Old")) {
-                categories.push(new Category('Threes', 1))
+            if (gotCategories[2]>0 && (!categoryIsAlt[2] || logicversion == "Old")) {
+                categories.push(new Category('Threes', gotCategories[2]))
             }
-            if (gotCategories[3] && (!categoryIsAlt[3] || logicversion == "Old")) {
-                categories.push(new Category('Fours', 1))
+            if (gotCategories[3]>0 && (!categoryIsAlt[3] || logicversion == "Old")) {
+                categories.push(new Category('Fours', gotCategories[3]))
             }
-            if (gotCategories[4] && (!categoryIsAlt[4] || logicversion == "Old")) {
-                categories.push(new Category('Fives', 1))
+            if (gotCategories[4]>0 && (!categoryIsAlt[4] || logicversion == "Old")) {
+                categories.push(new Category('Fives', gotCategories[4]))
             }
-            if (gotCategories[5] && (!categoryIsAlt[5] || logicversion == "Old")) {
-                categories.push(new Category('Sixes', 1))
+            if (gotCategories[5]>0 && (!categoryIsAlt[5] || logicversion == "Old")) {
+                categories.push(new Category('Sixes', gotCategories[5]))
             }
-            if (gotCategories[6] && (!categoryIsAlt[6] || logicversion == "Old")) {
-                categories.push(new Category('Choice', 1))
+            if (gotCategories[6]>0 && (!categoryIsAlt[6] || logicversion == "Old")) {
+                categories.push(new Category('Choice', gotCategories[6]))
             }
-            if (gotCategories[7] && (!categoryIsAlt[7] || logicversion == "Old")) {
-                categories.push(new Category('Choice', 1))
+            if (gotCategories[7]>0 && (!categoryIsAlt[7] || logicversion == "Old")) {
+                categories.push(new Category('Choice', gotCategories[7]))
             }
-            if (gotCategories[8] && (!categoryIsAlt[8] || logicversion == "Old")) {
-                categories.push(new Category('Pair', 1))
+            if (gotCategories[8]>0 && (!categoryIsAlt[8] || logicversion == "Old")) {
+                categories.push(new Category('Pair', gotCategories[8]))
             }
-            if (gotCategories[9] && (!categoryIsAlt[9] || logicversion == "Old")) {
-                categories.push(new Category('ThreeOfAKind', 1))
+            if (gotCategories[9]>0 && (!categoryIsAlt[9] || logicversion == "Old")) {
+                categories.push(new Category('ThreeOfAKind', gotCategories[9]))
             }
-            if (gotCategories[10] && (!categoryIsAlt[10] || logicversion == "Old")) {
-                categories.push(new Category('FourOfAKind', 1))
+            if (gotCategories[10]>0 && (!categoryIsAlt[10] || logicversion == "Old")) {
+                categories.push(new Category('FourOfAKind', gotCategories[10]))
             }
-            if (gotCategories[11] && (!categoryIsAlt[11] || logicversion == "Old")) {
-                categories.push(new Category('TinyStraight', 1))
+            if (gotCategories[11]>0 && (!categoryIsAlt[11] || logicversion == "Old")) {
+                categories.push(new Category('TinyStraight', gotCategories[11]))
             }
-            if (gotCategories[12] && (!categoryIsAlt[12] || logicversion == "Old")) {
-                categories.push(new Category('SmallStraight', 1))
+            if (gotCategories[12]>0 && (!categoryIsAlt[12] || logicversion == "Old")) {
+                categories.push(new Category('SmallStraight', gotCategories[12]))
             }
-            if (gotCategories[13] && (!categoryIsAlt[13] || logicversion == "Old")) {
-                categories.push(new Category('LargeStraight', 1))
+            if (gotCategories[13]>0 && (!categoryIsAlt[13] || logicversion == "Old")) {
+                categories.push(new Category('LargeStraight', gotCategories[13]))
             }
-            if (gotCategories[14] && (!categoryIsAlt[14] || logicversion == "Old")) {
-                categories.push(new Category('FullHouse', 1))
+            if (gotCategories[14]>0 && (!categoryIsAlt[14] || logicversion == "Old")) {
+                categories.push(new Category('FullHouse', gotCategories[14]))
             }
-            if (gotCategories[15] && (!categoryIsAlt[15] || logicversion == "Old")) {
-                categories.push(new Category('Yacht', 1))
+            if (gotCategories[15]>0 && (!categoryIsAlt[15] || logicversion == "Old")) {
+                categories.push(new Category('Yacht', gotCategories[15]))
             }
             if(logicversion == "New"){
-                if (gotCategories[0] && categoryIsAlt[0]) {
-                    categories.push(new Category('Distincts', 1))
+                if (gotCategories[0]>0 && categoryIsAlt[0]) {
+                    categories.push(new Category('Distincts', gotCategories[0]))
                 }
-                if (gotCategories[1] && categoryIsAlt[1]) {
-                    categories.push(new Category('Twos', 1))
+                if (gotCategories[1]>0 && categoryIsAlt[1]) {
+                    categories.push(new Category('Twos', gotCategories[1]))
                 }
-                if (gotCategories[2] && categoryIsAlt[2]) {
-                    categories.push(new Category('Threes', 1))
+                if (gotCategories[2]>0 && categoryIsAlt[2]) {
+                    categories.push(new Category('Threes', gotCategories[2]))
                 }
-                if (gotCategories[3] && categoryIsAlt[3]) {
-                    categories.push(new Category('TwosAndThrees', 1))
+                if (gotCategories[3]>0 && categoryIsAlt[3]) {
+                    categories.push(new Category('TwosAndThrees', gotCategories[3]))
                 }
-                if (gotCategories[4] && categoryIsAlt[4]) {
-                    categories.push(new Category('SumOfOdds', 1))
+                if (gotCategories[4]>0 && categoryIsAlt[4]) {
+                    categories.push(new Category('SumOfOdds', gotCategories[4]))
                 }
-                if (gotCategories[5] && categoryIsAlt[5]) {
-                    categories.push(new Category('SumOfEvens', 1))
+                if (gotCategories[5]>0 && categoryIsAlt[5]) {
+                    categories.push(new Category('SumOfEvens', gotCategories[5]))
                 }
-                if (gotCategories[6] && categoryIsAlt[6]) {
-                    categories.push(new Category('DoubleThreesAndFours', 1))
+                if (gotCategories[6]>0 && categoryIsAlt[6]) {
+                    categories.push(new Category('DoubleThreesAndFours', gotCategories[6]))
                 }
-                if (gotCategories[7] && categoryIsAlt[7]) {
-                    categories.push(new Category('QuadrupleOnesAndTwos', 1))
+                if (gotCategories[7]>0 && categoryIsAlt[7]) {
+                    categories.push(new Category('QuadrupleOnesAndTwos', gotCategories[7]))
                 }
-                if (gotCategories[8] && categoryIsAlt[8]) {
-                    categories.push(new Category('MicroStraight', 1))
+                if (gotCategories[8]>0 && categoryIsAlt[8]) {
+                    categories.push(new Category('MicroStraight', gotCategories[8]))
                 }
-                if (gotCategories[9] && categoryIsAlt[9]) {
-                    categories.push(new Category('ThreeOdds', 1))
+                if (gotCategories[9]>0 && categoryIsAlt[9]) {
+                    categories.push(new Category('ThreeOdds', gotCategories[9]))
                 }
-                if (gotCategories[10] && categoryIsAlt[10]) {
-                    categories.push(new Category('OneTwoOneConsecutive', 1))
+                if (gotCategories[10]>0 && categoryIsAlt[10]) {
+                    categories.push(new Category('OneTwoOneConsecutive', gotCategories[10]))
                 }
-                if (gotCategories[11] && categoryIsAlt[11]) {
-                    categories.push(new Category('ThreeDistinctDice', 1))
+                if (gotCategories[11]>0 && categoryIsAlt[11]) {
+                    categories.push(new Category('ThreeDistinctDice', gotCategories[11]))
                 }
-                if (gotCategories[12] && categoryIsAlt[12]) {
-                    categories.push(new Category('TwoPair', 1))
+                if (gotCategories[12]>0 && categoryIsAlt[12]) {
+                    categories.push(new Category('TwoPair', gotCategories[12]))
                 }
-                if (gotCategories[13] && categoryIsAlt[13]) {
-                    categories.push(new Category('TwoOneTwoConsecutive', 1))
+                if (gotCategories[13]>0 && categoryIsAlt[13]) {
+                    categories.push(new Category('TwoOneTwoConsecutive', gotCategories[13]))
                 }
-                if (gotCategories[14] && categoryIsAlt[14]) {
-                    categories.push(new Category('FiveDistinctDice', 1))
+                if (gotCategories[14]>0 && categoryIsAlt[14]) {
+                    categories.push(new Category('FiveDistinctDice', gotCategories[14]))
                 }
-                if (gotCategories[15] && categoryIsAlt[15]) {
-                    categories.push(new Category('FourAndFiveFullHouse', 1))
+                if (gotCategories[15]>0 && categoryIsAlt[15]) {
+                    categories.push(new Category('FourAndFiveFullHouse', gotCategories[15]))
                 }
             }
 
@@ -3354,7 +3396,8 @@
             }
 
             const flooredPercentiles = percReturn.map(perc => Math.floor(percentileDistribution(totalDist, perc)));
-            return Math.floor(sum(flooredPercentiles) / percReturn.length);
+            
+            return Math.max(Math.floor(sum(flooredPercentiles) / percReturn.length), 5);
         }
 
         function diceSimulationStringsForJS(categories, nbDice, nbRolls, fixscmu, stescmu, diff) {
@@ -3818,6 +3861,12 @@
 
         function updateSettings(packet) {
             if (!offline) {
+                if(packet.slot_data.seed_name == 75883564719266679466){
+                    const checkbox = document.getElementById('requireExactScore');
+                    checkbox.checked = true;
+                    checkbox.disabled = true;
+                    addToLog("Note, this game requires hitting the exact next goal score!")
+                }
                 amDiceF = packet.slot_data.number_of_dice_fragments_per_dice;
                 amRollsF = packet.slot_data.number_of_roll_fragments_per_roll;
                 finalgoal = packet.slot_data.goal_score;
@@ -3828,6 +3877,9 @@
                     scoremultipliertype = packet.slot_data.score_multiplier_type;
                 } else {
                     scoremultipliertype = 0 //0.3 version or newest versions, step, 2% per item.
+                }
+                if (packet.slot_data.allow_manual_input){
+                    allowManualInput = packet.slot_data.allow_manual_input;
                 }
                 maxscoreinlogic = getMaxScoreInLogic()
 
@@ -3859,35 +3911,46 @@
                     whichstory = Math.floor(Math.random() * story.length) + 1
                 }
                 if (!packet.slot_data.ap_world_version) {
-                    addToLog("Warning, apworld version is not provided in the packet, so it's generated with a very old version, not even 0.3. Please update your apworld. Website version: 1.1", true);
+                    addToLog("Warning, apworld version is not provided in the packet, so it's generated with a very old version, not even 0.3. Please update your apworld. Website version: 2.0.3", true);
                     addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                 } else {
                     apworldversion = packet.slot_data.ap_world_version;
                     if (apworldversion == "1.0.1") {
-                        addToLog("Apworld 2.0.2 is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "1.1") {
-                        addToLog("Apworld 2.0.2 is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
+                        addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
+                    } else if (apworldversion == "2.0.5") {
+                        //up to date
+                    } else if (apworldversion == "2.0.6") {
+                        //up to date
+                    } else if (apworldversion == "2.0.3") {
+                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
+                        addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
+                    } else if (apworldversion == "2.0.4") {
+                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "2.0.2") {
-                        //up to date
+                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
+                        addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "2.0.1") {
-                        addToLog("Apworld 2.0.2 is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "2.0") {
-                        addToLog("Apworld 2.0.2 is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "1.0") {
-                        addToLog("Apworld 2.0.2 is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "0.4") {
-                        addToLog("Apworld 2.0.2 is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "0.3") {
-                        addToLog("Apworld 2.0.2 is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else {
-                        addToLog("Warning, apworld version does not match with website version.\nApworld: " + apworldversion + ", website: 1.1", true);
+                        addToLog("Warning, apworld version does not match with website version.\nApworld: " + apworldversion + ", website: 2.0.5", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     }
                 }
@@ -3960,12 +4023,18 @@
             }
             calculateTotalAndUpdate();
             var inputValue = parseInt(document.getElementById("total").innerText);
+            
+            if(document.getElementById("requireExactScore").checked && inputValue > 10 && nextgoal != inputValue){
+                return;
+            }
             highestsubmitted = Math.max(highestsubmitted, inputValue);
 
             if (nextgoal != '-' && !isNaN(inputValue)) {
                 var updated_first = false
 
                 if (!offline) {
+
+
                     for (let i = nextgoal; i <= inputValue; i++) {
                         if (missingLocations.includes(i + 16871244500)) {
                             sendCheck(i + 16871244500);
@@ -4518,7 +4587,7 @@
                 // Obtain and remove the first element from itempool
                 const firstElement = itempool.shift();
 
-                let maxinLogic = diceSimulationStringsForJS(cats, Math.floor(ndf / amDiceF), Math.floor(nrf / amRollsF), fixedmu, stepmu, di) + extrapointsinlogicgen
+                let maxinLogic = diceSimulationStringsForJS2(cats, Math.floor(ndf / amDiceF), Math.floor(nrf / amRollsF), fixedmu, stepmu, di) + extrapointsinlogicgen
                 
 
                 const validKeys = Object.keys(result).filter(key => Number(key) <= maxinLogic && result[key] === "");
