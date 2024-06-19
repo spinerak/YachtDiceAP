@@ -39,24 +39,6 @@
             /* padding: 20px; */
         }
 
-        /* Table container styles
-        .table-container {
-            overflow-y: auto;
-            max-height: calc(100vh - 40px);
-        } */
-
-        /* Style for odd rows */
-        .table-container table tbody tr:nth-child(odd) {
-            background-color: #6a1a1a;
-            /* Change to the color you desire */
-        }
-
-        /* Style for even rows */
-        .table-container table tbody tr:nth-child(even) {
-            background-color: #5a1a1a;
-            /* Change to the slightly different color you desire */
-        }
-
 
         table {
             border-collapse: collapse;
@@ -562,7 +544,6 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             padding: 20px;
-            max-width: 90%;
         }
         .NS_boxes {
             display: flex;
@@ -629,6 +610,7 @@
         }
     </style>
 </head>
+
 
 
 <body>
@@ -860,6 +842,8 @@
                     <!--<input type="number" id="dice-size" value="70" min="10" max="200">-->
                     <button id="increaseDiceSize">+</button>
                     <br><br>
+                    <button id="changeColors1">Randomize colors</button>  <br>
+                    <br>
                     <input type="checkbox" id="toggleRandomStyleStartup" checked>
                     <label for="toggleRandomStyleStartup">Random style on startup</label> <br><br>
                     <!-- <button id="changeStyle">Change dice style</button>
@@ -940,7 +924,7 @@
             <br>
 
             <input type="text" id="diceValues" style="display: none; text-align: center;">
-            <div id="log" contenteditable="true" spellcheck="false" readonly>
+            <div id="log" contenteditable="false" spellcheck="false" readonly>
              </div>
              <br>
             <!-- Text field -->
@@ -957,82 +941,82 @@
                 <div class="NS_table-container">
                     <div class="NS_boxes">
                         <div class="NS_category-box" id="catbox1">
-                            <div id="catlab1" class="NS_category-label" title="One point for every one">Ones</div>
+                            <div id="catlab1" class="NS_category-label"></div>
                             <div id="catmult1" class="NS_mult-label">×0</div>
                             <button id="category1" class="NS_category-button">0</button>
                         </div>
                         <div class="NS_category-box" id="catbox2">
-                            <div id="catlab2" class="NS_category-label" title="Two points for every two">Twos</div>
+                            <div id="catlab2" class="NS_category-label">Twos</div>
                             <div id="catmult2" class="NS_mult-label">×0</div>
                             <button id="category2" class="NS_category-button">0</button>
                         </div>
                         <div class="NS_category-box" id="catbox3">
-                            <div id="catlab3" class="NS_category-label" title="Three points for every three">Threes</div>
+                            <div id="catlab3" class="NS_category-label">Threes</div>
                             <div id="catmult3" class="NS_mult-label">×0</div>
                             <button id="category3" class="NS_category-button">0</button>
                         </div>
                         <div class="NS_category-box" id="catbox4">
-                            <div id="catlab4" class="NS_category-label" title="Four points for every four">Fours</div>
+                            <div id="catlab4" class="NS_category-label"></div>
                             <div id="catmult4" class="NS_mult-label">×0</div>
                             <button id="category4" class="NS_category-button">0</button>
                         </div>
                         <div class="NS_category-box" id="catbox5">
-                            <div id="catlab5" class="NS_category-label" title="Five points for every five">Fives</div>
+                            <div id="catlab5" class="NS_category-label"></div>
                             <div id="catmult5" class="NS_mult-label">×0</div>
                             <button id="category5" class="NS_category-button">0</button>
                         </div>
                         <div class="NS_category-box" id="catbox6">
-                            <div id="catlab6" class="NS_category-label" title="Six points for every six">Sixes</div>
+                            <div id="catlab6" class="NS_category-label"></div>
                             <div id="catmult6" class="NS_mult-label">×0</div>
                             <button id="category6" class="NS_category-button">0</button>
                         </div>
                         <div class="NS_category-box" id="catbox7">
-                            <div id="catlab7" class="NS_category-label" title="Points equal to sum of dice">Choice</div>
+                            <div id="catlab7" class="NS_category-label"></div>
                             <div id="catmult7" class="NS_mult-label">×0</div>
                             <button id="category7" class="NS_category-button">0</button>
                         </div>
                         <div class="NS_category-box" id="catbox8">
-                            <div id="catlab8" class="NS_category-label" title="Points equal to sum of dice after flipping dice">Inverse Choice</div>
+                            <div id="catlab8" class="NS_category-label"></div>
                             <div id="catmult8" class="NS_mult-label">×0</div>
                             <button id="category8" class="NS_category-button">0</button>
                         </div>
                         <div class="NS_category-box" id="catbox9">
-                            <div id="catlab9" class="NS_category-label" title="10 points if two dice are the same">Pair (10)</div>
+                            <div id="catlab9" class="NS_category-label"></div>
                             <div id="catmult9" class="NS_mult-label">×0</div>
                             <button id="category9" class="NS_category-button">0</button>
                         </div>
                         <div class="NS_category-box" id="catbox10">
-                            <div id="catlab10" class="NS_category-label" title="20 points if three dice are the same">Three of a Kind (20)</div>
+                            <div id="catlab10" class="NS_category-label"></div>
                             <div id="catmult10" class="NS_mult-label">×0</div>
                             <button id="category10" class="NS_category-button">0</button>
                         </div>
                         <div class="NS_category-box" id="catbox11">
-                            <div id="catlab11" class="NS_category-label" title="30 points if four dice are the same">Four of a Kind (30)</div>
+                            <div id="catlab11" class="NS_category-label"></div>
                             <div id="catmult11" class="NS_mult-label">×0</div>
                             <button id="category11" class="NS_category-button">0</button>
                         </div>
                         <div class="NS_category-box" id="catbox12">
-                            <div id="catlab12" class="NS_category-label" title="20 points if three-in-a-row (eg 231)">Tiny Str. (20)</div>
+                            <div id="catlab12" class="NS_category-label"></div>
                             <div id="catmult12" class="NS_mult-label">×0</div>
                             <button id="category12" class="NS_category-button">0</button>
                         </div>
                         <div class="NS_category-box" id="catbox13">
-                            <div id="catlab13" class="NS_category-label" title="30 points if four-in-a-row (eg 4231)">Small Str. (30)</div>
+                            <div id="catlab13" class="NS_category-label"></div>
                             <div id="catmult13" class="NS_mult-label">×0</div>
                             <button id="category13" class="NS_category-button">0</button>
                         </div>
                         <div class="NS_category-box" id="catbox14">
-                            <div id="catlab14" class="NS_category-label" title="40 points if five-in-a-row (eg 42315)">Large Str. (40)</div>
+                            <div id="catlab14" class="NS_category-label"></div>
                             <div id="catmult14" class="NS_mult-label">×0</div>
                             <button id="category14" class="NS_category-button">0</button>
                         </div>
                         <div class="NS_category-box" id="catbox15">
-                            <div id="catlab15" class="NS_category-label" title="25 points if a value appears three times and a different value appears twice (eg 61661)">Full House (25)</div>
+                            <div id="catlab15" class="NS_category-label"></div>
                             <div id="catmult15" class="NS_mult-label">×0</div>
                             <button id="category15" class="NS_category-button">0</button>
                         </div>
                         <div class="NS_category-box" id="catbox16">
-                            <div id="catlab16" class="NS_category-label" title="50 points if five dice are the same">Yacht (50)</div>
+                            <div id="catlab16" class="NS_category-label"></div>
                             <div id="catmult16" class="NS_mult-label">×0</div>
                             <button id="category16" class="NS_category-button">0</button>
                         </div>
@@ -1040,12 +1024,12 @@
                     </div>
                     <hr>
                     <div class="NS_boxes">
-                        <div class="NS_category-box">
-                            <div id="catlabextrapoints" class="NS_category-label" title="Extra points are in logic and might be necessary">Extra points</div>
+                        <div class="NS_category-box" title="Extra points are in logic and might be necessary">
+                            <div id="catlabextrapoints" class="NS_category-label">Extra points</div>
                             <button id="catextrapoints" disabled class="NS_category-button" style="background-color: rgba(51, 51, 51, 0);">0</button>
                         </div>
-                        <div class="NS_category-box">
-                            <div id="catlabbonuspoints" class="NS_category-label" title="Bonus points make the game easier as they are out of logic">Bonus points</div>
+                        <div class="NS_category-box" title="Bonus points make the game easier as they are out of logic">
+                            <div id="catlabbonuspoints" class="NS_category-label">Bonus points</div>
                             <button id="catbonuspoints" disabled class="NS_category-button" style="background-color: rgba(51, 51, 51, 0);">0</button>
                         </div>
                     </div>
@@ -1083,9 +1067,154 @@
             </div>
         </div>
     </div>
-    <img id="boatImage" src="Images/boat.png" alt="Boat Image">
+    <img id="boatImage" src="Images/boaty.png" alt="Boat Image">
 
     <script>
+        var boatImage = document.getElementById("boatImage");
+        if (Math.random() < 0.3) {
+            boatImage.src = "Images/boat.png";
+        } else {
+            boatImage.src = "Images/boaty.png";
+        }
+    </script>
+
+    <script>
+        function changeColors(mode){
+            function generateColors(numColors, mode) {
+                var colors = [];
+
+                function generateRandomDarkColor() {
+                    // Generate random RGB values in the range [0, 128)
+                    var r = Math.floor(Math.random() * 128);
+                    var g = Math.floor(Math.random() * 128);
+                    var b = Math.floor(Math.random() * 128);
+
+                    // Convert to hexadecimal and format
+                    var color = "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+                    return color;
+                }
+
+                function generateSimilarColor(hexColor) {
+                    // Convert hex color to RGB
+                    var rgb = hexToRgb(hexColor);
+
+                    // Increase brightness (lighten)
+                    var r = Math.min(rgb.r + Math.floor(-25 + 50 * Math.random()), 255); // Increase red component
+                    var g = Math.min(rgb.g + Math.floor(-25 + 50 * Math.random()), 255); // Increase green component
+                    var b = Math.min(rgb.b + Math.floor(-25 + 50 * Math.random()), 255); // Increase blue component
+
+                    // Convert back to hex
+                    var lighterColor = rgbToHex(r, g, b);
+                    return lighterColor;
+                }
+
+                function generateLighterColor(hexColor) {
+                    // Convert hex color to RGB
+                    var rgb = hexToRgb(hexColor);
+
+                    // Increase brightness (lighten)
+                    var r = Math.min(rgb.r + Math.floor(50 * Math.random()), 255); // Increase red component
+                    var g = Math.min(rgb.g + Math.floor(50 * Math.random()), 255); // Increase green component
+                    var b = Math.min(rgb.b + Math.floor(50 * Math.random()), 255); // Increase blue component
+
+                    // Convert back to hex
+                    var lighterColor = rgbToHex(r, g, b);
+                    return lighterColor;
+                }
+
+                function generateDarkerColor(hexColor) {
+                    // Convert hex color to RGB
+                    var rgb = hexToRgb(hexColor);
+
+                    // Decrease brightness (darken)
+                    var r = Math.max(rgb.r - Math.floor(50 * Math.random()), 0); // Decrease red component
+                    var g = Math.max(rgb.g - Math.floor(50 * Math.random()), 0); // Decrease green component
+                    var b = Math.max(rgb.b - Math.floor(50 * Math.random()), 0); // Decrease blue component
+
+                    // Convert back to hex
+                    var darkerColor = rgbToHex(r, g, b);
+                    return darkerColor;
+                }
+
+                function hexToRgb(hex) {
+                    // Remove # if present
+                    hex = hex.replace(/^#/, '');
+
+                    // Convert to RGB
+                    var bigint = parseInt(hex, 16);
+                    var r = (bigint >> 16) & 255;
+                    var g = (bigint >> 8) & 255;
+                    var b = bigint & 255;
+
+                    return { r: r, g: g, b: b };
+                }
+
+                function rgbToHex(r, g, b) {
+                    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+                }
+
+                function componentToHex(c) {
+                    var hex = c.toString(16);
+                    return hex.length == 1 ? "0" + hex : hex;
+                }
+
+                if (mode === 1) {
+                    // Mode 1: Random hue (dark), then light and dark variations for each color entry
+                    var baseColor = generateRandomDarkColor();
+                    for (var i = 0; i < numColors; i++) {
+                        colors.push(generateSimilarColor(baseColor));
+                    }
+                } else if (mode === 2) {
+                    // Mode 2: Random dark colors
+                    for (var i = 0; i < numColors; i++) {
+                        colors.push(generateRandomDarkColor());
+                    }
+                } else if (mode === 3) {
+                    // Mode 3: Two random dark colors, with light and dark variations for each color entry
+                    var color1 = generateRandomDarkColor();
+                    var color2 = generateRandomDarkColor();
+
+                    for (var i = 0; i < numColors; i++) {
+                        var randomColor = Math.random() < 0.5 ? color1 : color2;
+                        colors.push(generateSimilarColor(randomColor));
+                        colors.push(generateSimilarColor(randomColor));
+                    }
+                }
+
+                return colors;
+            }
+
+            // Example usage:
+            var numColors = 5;
+            var colors = generateColors(numColors, mode);
+
+            document.querySelector('.NS_table-container').style.backgroundColor = colors[0];
+            document.querySelectorAll('.NS_category-box').forEach(function(box) {
+                box.style.backgroundColor = colors[1];
+            });
+
+            document.querySelector('.left').style.backgroundColor = colors[2];
+            document.querySelector('.right').style.backgroundColor = colors[3];
+            const styleString = `.NS_category-box:hover { background-color: ${colors[4]} !important; }`;   
+            document.head.appendChild(document.createElement('style')).innerHTML = styleString;  
+        } 
+        
+
+        document.getElementById('changeColors1').addEventListener('click', function() {
+            if(Math.random() < 0.333){
+                changeColors(1);
+            } else if(Math.random() < 0.5){
+                changeColors(2);
+            } else {
+                changeColors(3);
+            }
+        });
+    
+
+    </script>
+
+    <script>
+
         let timerInterval;
         let seconds = 0;
         let minutes = 0;
@@ -1739,96 +1868,158 @@
 
         // Function to make the button visible
         function makeVisible(i) {
-            if(i>16){
-                const targetId = `catlab${i - 16}`;
-                const targetElement = document.getElementById(targetId);
-                
-                if (targetElement) {
-                    let text, title;
+            
+            let text, title;
 
-                    switch(i) {
-                        case 17:
-                            text = "Distincts";
-                            title = "One point for every distinct number";
-                            break;
-                        case 18:
-                            text = "Two times Ones";
-                            title = "Two points for every one";
-                            break;
-                        case 19:
-                            text = "Half of Sixes";
-                            title = "Three points for every six";
-                            break;
-                        case 20:
-                            text = "Twos and Threes";
-                            title = "Two / three points per two / three";
-                            break;
-                        case 21:
-                            text = "Sum of Odds";
-                            title = "Points equal to sum of odd dice";
-                            break;
-                        case 22:
-                            text = "Sum of Evens";
-                            title = "Points equal to sum of even dice";
-                            break;
-                        case 23:
-                            text = "Double Threes and Fours";
-                            title = "Six / eight points per three / four";
-                            break;
-                        case 24:
-                            text = "Quadruple Ones and Twos";
-                            title = "Four / eight points per one / two";
-                            break;
-                        case 25:
-                            text = "Micro Straight (10)";
-                            title = "10 points if two-in-a-row (eg 54)";
-                            break;
-                        case 26:
-                            text = "Three Odds (20)";
-                            title = "20 points if three dice are odd";
-                            break;
-                        case 27:
-                            text = "1-2-1 Consecutive (30)";
-                            title = "30 points if three dice are consecutive, the middle appearing twice (eg 3221)";
-                            break;
-                        case 28:
-                            text = "Three Distinct Dice (20)";
-                            title = "30 points if there are three distinct dice values";
-                            break;
-                        case 29:
-                            text = "Two Pair (30)";
-                            title = "30 points if two values appear twice";
-                            break;
-                        case 30:
-                            text = "2-1-2 Consecutive (40)";
-                            title = "40 points if three dice are consecutive, the outside ones appearing twice (eg 11233)";
-                            break;
-                        case 31:
-                            text = "Five Distinct Dice (25)";
-                            title = "25 points if there are five distinct values";
-                            break;
-                        case 32:
-                            text = "4&5 Full House (50)";
-                            title = "50 points for a full house with fours AND fives (eg 44455 or 45545)";
-                            break;
-                        default:
-                            text = "Unknown";
-                            title = "Unknown";
-                            break;
-                    }
-
-                    targetElement.textContent = text;
-                    targetElement.title = title;
-                }
-                
-
-                i -= 16;
-                categoryIsAlt[i - 1] = true;
-
-
-
-
+            switch(i) {
+                case 1:
+                    text = "Ones";
+                    title = "One point for every one";
+                    break;
+                case 2:
+                    text = "Twos";
+                    title = "Two points for every two";
+                    break;
+                case 3:
+                    text = "Threes";
+                    title = "Three points for every three";
+                    break;
+                case 4:
+                    text = "Fours";
+                    title = "Four points for every four";
+                    break;
+                case 5:
+                    text = "Fives";
+                    title = "Five points for every five";
+                    break;
+                case 6:
+                    text = "Sixes";
+                    title = "Six points for every six";
+                    break;
+                case 7:
+                    text = "Choice";
+                    title = "Points equal to sum of dice";
+                    break;
+                case 8:
+                    text = "Inverse Choice";
+                    title = "Points equal to sum of dice after flipping dice";
+                    break;
+                case 9:
+                    text = "Pair (10)";
+                    title = "10 points if two dice are the same";
+                    break;
+                case 10:
+                    text = "Three of a Kind (20)";
+                    title = "20 points if three dice are the same";
+                    break;
+                case 11:
+                    text = "Four of a Kind (30)";
+                    title = "30 points if four dice are the same";
+                    break;
+                case 12:
+                    text = "Tiny Str. (20)";
+                    title = "20 points if three-in-a-row (eg 231)";
+                    break;
+                case 13:
+                    text = "Small Str. (30)";
+                    title = "30 points if four-in-a-row (eg 4231)";
+                    break;
+                case 14:
+                    text = "Large Str. (40)";
+                    title = "40 points if five-in-a-row (eg 42315)";
+                    break;
+                case 15:
+                    text = "Full House (25)";
+                    title = "25 points if a value appears three times and a different value appears twice (eg 61661)";
+                    break;
+                case 16:
+                    text = "Yacht (50)";
+                    title = "50 points if five dice are the same";
+                    break;
+                case 17:
+                    text = "Distincts";
+                    title = "One point for every distinct number";
+                    break;
+                case 18:
+                    text = "Two times Ones";
+                    title = "Two points for every one";
+                    break;
+                case 19:
+                    text = "Half of Sixes";
+                    title = "Three points for every six";
+                    break;
+                case 20:
+                    text = "Twos and Threes";
+                    title = "Two / three points per two / three";
+                    break;
+                case 21:
+                    text = "Sum of Odds";
+                    title = "Points equal to sum of odd dice";
+                    break;
+                case 22:
+                    text = "Sum of Evens";
+                    title = "Points equal to sum of even dice";
+                    break;
+                case 23:
+                    text = "Double Threes and Fours";
+                    title = "Six / eight points per three / four";
+                    break;
+                case 24:
+                    text = "Quadruple Ones and Twos";
+                    title = "Four / eight points per one / two";
+                    break;
+                case 25:
+                    text = "Micro Straight (10)";
+                    title = "10 points if two-in-a-row (eg 54)";
+                    break;
+                case 26:
+                    text = "Three Odds (20)";
+                    title = "20 points if three dice are odd";
+                    break;
+                case 27:
+                    text = "1-2-1 Consecutive (30)";
+                    title = "30 points if three dice are consecutive, the middle appearing twice (eg 3221)";
+                    break;
+                case 28:
+                    text = "Three Distinct Dice (20)";
+                    title = "30 points if there are three distinct dice values";
+                    break;
+                case 29:
+                    text = "Two Pair (30)";
+                    title = "30 points if two values appear twice";
+                    break;
+                case 30:
+                    text = "2-1-2 Consecutive (40)";
+                    title = "40 points if three dice are consecutive, the outside ones appearing twice (eg 11233)";
+                    break;
+                case 31:
+                    text = "Five Distinct Dice (25)";
+                    title = "25 points if there are five distinct values";
+                    break;
+                case 32:
+                    text = "4&5 Full House (50)";
+                    title = "50 points for a full house with fours AND fives (eg 44455 or 45545)";
+                    break;
+                default:
+                    text = "Unknown";
+                    title = "Unknown";
+                    break;
             }
+
+            
+            if(i > 16){
+                categoryIsAlt[i - 1] = true;
+                i -= 16;
+            }            
+
+            const targetId = `catlab${i}`;
+            const targetElement = document.getElementById(targetId);
+            const targetId2 = `catbox${i}`;
+            const targetElement2 = document.getElementById(targetId2);
+
+            targetElement.textContent = text;
+            targetElement2.title = title;
+            
             let button = document.getElementById('category' + i);
             button.style.display = 'table-cell'; // or 'inline-block', depending on the button's initial display property
             let lab = document.getElementById("catlab" + i)
@@ -2100,6 +2291,7 @@
 
 
             if (message == 'manual'){
+
                 if(offline){
                     document.getElementById("diceValues").style.display = "inline-block";
                     document.getElementById("diceValues").style.textAlign = "center";
@@ -3974,8 +4166,18 @@
 
         }
 
-        function askWhatNextItemIs(firstMissingLocId){
-            client.locations.scout(CREATE_AS_HINT_MODE.NO_HINT, firstMissingLocId);
+        let timeoutId; // Variable to hold the timeout ID
+
+        function askWhatNextItemIs(firstMissingLocId) {
+            // Clear any existing timeout
+            document.getElementById("nextgoalitem").innerText = "(?)";
+            clearTimeout(timeoutId);
+
+            // Set a new timeout with 1 second delay
+            timeoutId = setTimeout(() => {
+                // This code will execute after 1 second
+                client.locations.scout(CREATE_AS_HINT_MODE.NO_HINT, firstMissingLocId);
+            }, 1000); // 1000 milliseconds = 1 second
         }
 
         function updateRequiresValue(packet) {
