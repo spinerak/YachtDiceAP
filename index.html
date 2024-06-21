@@ -233,7 +233,7 @@
         }
 
         .login-description {
-            margin: 3px;
+            margin: 1px;
             /* Adjust the margin as needed */
             color: #ffffff;
         }
@@ -268,7 +268,8 @@
             color: #fff;
             /* Change text color as needed */
             cursor: pointer;
-            margin-right: 15px;
+            margin-left: 10px;
+            margin-right: 10px;
         }
 
         .music-button:hover {
@@ -294,6 +295,7 @@
             align-items: center;
             max-width: 600px;
             padding: 20px;
+            padding-top: 10px;
             background-color: #444;
             border-radius: 100px;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
@@ -361,7 +363,7 @@
         }
 
         .small-text {
-            font-size: 12px;
+            font-size: 11px;
             /* Adjust the size as needed */
             margin-left: auto;
             margin-right: auto;
@@ -383,6 +385,36 @@
             margin-bottom: 0px;
         }
 
+        @media screen and (max-width: 565px) {
+            .small-text {
+                font-size: 10px; /* Change this value to the desired smaller font size */
+            }
+            .tutoroll_list {
+                font-size: 12px; /* Change this value to the desired smaller font size */
+            }
+            .tutoroll_note {
+                font-size: 12px; /* Change this value to the desired smaller font size */
+            }
+            .tutoroll_tip {
+                font-size: 12px; /* Change this value to the desired smaller font size */
+            }
+            .login-description {
+                font-size: 12px; /* Change this value to the desired smaller font size */
+            }
+            
+        }
+
+        @media screen and (max-width: 413px) {
+            .small-text {
+                font-size: 8px; /* Change this value to the desired smaller font size */
+            }
+            .login-description {
+                font-size: 0px; /* Change this value to the desired smaller font size */
+            }
+        }
+
+
+
         .roll-button {
             background-color: #ffc107;
             /* Pretty yellow */
@@ -390,9 +422,9 @@
             /* Dark text color */
             border: none;
             /* No border */
-            padding: 20px 40px;
+            padding: 5px 10px;
             /* Increased padding for larger button */
-            font-size: 38px;
+            font-size: 30px;
             /* Increased font size */
             font-weight: bold;
             /* Bold text */
@@ -400,6 +432,7 @@
             /* Rounded corners */
             cursor: pointer;
             /* Cursor style */
+            margin-bottom: 10px;
             margin-left: auto;
             margin-right: auto;
             transition: background-color 0.3s, color 0.3s;
@@ -671,6 +704,19 @@
             padding-left: 5px;
         }
 
+        .header-and-button {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            text-align: center;
+        }
+
+        #optionsselector {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
 
 
     </style>
@@ -682,7 +728,17 @@
 
     <div class="tutoroll_page" id="tutorollpage">
         <div class="tutoroll_container">
-            <h1 class="tutoroll_header">Yacht Dice for Archipelago</h1>
+            <div class="header-and-button">
+                <h1 class="tutoroll_header">Yacht Dice</h1>
+                <div class="button-and-text">
+                    <!-- Music button -->
+                    <div>
+                        <p class="login-description">Rollin' with Yacht Dice,</p>
+                        <p class="login-description" id="emoji">sail into the night ⛵🎲</p>
+                    </div>
+                    <button id="playButton" class="music-button" onclick="playPause()">&#9835;</button>
+                </div>
+            </div>
 
             <div class="tutoroll_note_full">
                 <h3>Tutoroll</h3>
@@ -690,9 +746,8 @@
                     <li>Roll: Press roll or R key.</li>
                     <li>Lock: Click dice or press number keys.</li>
                     <li>You can roll multiple times.</li>
-                    <li>Select categories to high-score.</li>
+                    <li>Select categories to score.</li>
                     <li>Try again by clicking reset.</li>
-                    <li>Hover over categories to learn more.</li>
                 </ul>
             </div>
 
@@ -705,7 +760,6 @@
             <div class="tutoroll_tip">
                 <h3>Latest features</h3>
                 <ul class="tutoroll_list">
-                    <li>Version 2.0!</li>
                     <li>Always roll for a score of 1000.</li>
                     <li>New skins too!</li>
                 </ul>
@@ -714,10 +768,10 @@
 
             <br><br>
             <div class="tutocenter">
-                <button id="letsroll" class="roll-button">Let's roll!</button> <br><br>
+                <button id="letsrollsolo" class="roll-button">Solo play</button> <button id="letsroll" class="roll-button" style="background-color: #3667B1; color: #ffffff">Archipelago</button> <br><br>
             </div>
             <div class="small-text">
-                Yacht Dice for Archipelago is made by Spineraks. <br>
+                Yacht Dice is made by Spineraks. <br>
                 Huge thanks to SporyTike for all the skins! <br>
                 This site/game is based on Yacht Dice, a public domain dice game. <br>
                 The music is AI generated by Suno, non-commercial use. <br>
@@ -747,7 +801,6 @@
         <div class="login-form">
             <!-- Title with Yacht Dice - Login -->
             <h2 class="login-heading">Yacht Dice - Login</h2>
-            <!-- Additional text with emojis -->
 
 
             <div class="button-and-text">
@@ -772,8 +825,6 @@
                 <label for="name" class="login-label">Password:</label>
                 <input type="password" id="password" name="password" class="login-input" value="">
                 <input type="submit" value="Login" id="loginbutton" class="login-submit">
-                <input type="submit" value="Play offline (old version)" id="offlinebutton" class="login-submit"
-                    style="background-color: #d55049;">
             </div>
 
         </div>
@@ -782,16 +833,8 @@
 
     <div id="dropdownContainer" class="offlineoptions-container">
         <div>
-            <h2 class="login-heading">Options for your offline game</h2>
+            <h2 class="login-heading">Yacht Dice - solo play</h2>
             <div id="optionsselector">
-                <label for="offlineoptions_numberOfDice">Number of Dice:</label>
-                <select id="offlineoptions_numberOfDice">
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                </select>
-                <br><br>
 
                 <label for="offlineoptions_difficulty">Difficulty:</label>
                 <select id="offlineoptions_difficulty">
@@ -799,27 +842,6 @@
                     <option value="Medium" selected>Medium</option>
                     <option value="Hard">Hard</option>
                     <option value="Extreme">Extreme</option>
-                </select>
-                <br><br>
-
-                <label for="offlineoptions_scoreMultiplierType">Score Multiplier Type:</label>
-                <select id="offlineoptions_scoreMultiplierType">
-                    <option value="Fixed">Fixed</option>
-                    <option value="Step">Step</option>
-                </select>
-                <br><br>
-
-                <label for="offlineoptions_goalLocation">Location of goal:</label>
-                <select id="offlineoptions_goalLocation">
-                    <option value="1">90%</option>
-                    <option value="2">100%</option>
-                </select>
-                <br><br>
-
-                <label for="offlineoptions_whichCategories">Which categories:</label>
-                <select id="offlineoptions_whichCategories">
-                    <option value=0>Normal categories</option>
-                    <option value=1>Alternate categories (testing...)</option>
                 </select>
                 <br><br>
             </div>
@@ -834,7 +856,9 @@
                 <br>
                 1) this uses forwards fill instead of backwards fill,
                 <br>
-                2) there are no filler items and fewer items early on.
+                2) there are no filler items and fewer items early on,
+                <br>
+                3) there are fewer options.
                 <br>
                 This might make the offline version feel different.
         </div>
@@ -1115,8 +1139,8 @@
                 <br>
                 <button id="resetBtn" class="NS_category-button">Reset</button>
                 <br>
-                Highest collected: <span id="highestsubmitted">0</span>
-                <br>
+                <!-- Highest collected: <span id="highestsubmitted">0</span>
+                <br> -->
                 Next check: <span id="nextgoal">?</span> <span id="nextgoalitem">?</span>
                 <br>
                 Goal score: <span id="finalgoal">?</span>
@@ -1128,12 +1152,12 @@
                 <div id="timer" style="display: none;">00:00:00</div>
                 <br>
                 <button id="saveBtn" class="NS_category-button">Save (see chat)</button>
-                <!-- <br>
+                <br>
                 Difficulty testing: <br>
                 <input type="checkbox" id="disableItemGet">
                 <label for="disableItemGet">Disable score submit (for testing/debug) </label> 
                 <br>
-                Max score in logic Easy/Medium/Hard/Extreme: <span id="maxlogicalldif">?</span> -->
+                Max score in logic Easy/Medium/Hard/Extreme: <span id="maxlogicalldif">?</span>
             </div>
         </div>
     </div>
@@ -2165,12 +2189,12 @@
                     case "Score Multiplier":
                         if (scoremultipliertype == 0) { //very old version
                             stepScoreMult += 0.02;
-                        }
-                        if (scoremultipliertype == 1) {
+                        }else if (scoremultipliertype == 1) {
                             fixedScoreMult += 0.1;
-                        }
-                        if (scoremultipliertype == 2) {
+                        }else if (scoremultipliertype == 2) {
                             stepScoreMult += 0.01;
+                        }else{
+                            addToLog("Got a score multiplier while there shouldn't be one???????? Please report on discord, thanks :)", true)
                         }
                         playNewItemSound();
                         break;
@@ -2244,7 +2268,7 @@
         var amRollsF = 6;
         var currentRolls = 0; // Current number of Rolls
         var difficulty = 1; // Difficulty (1 easy, 4 extreme)
-        var scoremultipliertype = -100;
+        var scoremultipliertype = 0;
         var allowManualInput = 1; // default is yes
         var extrapointsinlogic = 0;
 
@@ -3593,8 +3617,8 @@
                 apworldversion === "1.1"){
                 return diceSimulationStringsForJS(categories, nbDice, nbRolls, fixedScoreMult, stepScoreMult, diffhere) + extrapointsinlogic
             }
+
             return diceSimulationStringsForJS2(categories, nbDice, nbRolls, fixedScoreMult, stepScoreMult, diffhere) + extrapointsinlogic
-            
         }
 
         
@@ -3704,8 +3728,9 @@
             }
 
             const flooredPercentiles = percReturn.map(perc => Math.floor(percentileDistribution(totalDist, perc)));
+            const max_score_result = Math.max(Math.floor(sum(flooredPercentiles) / percReturn.length), 5);
             
-            return Math.max(Math.floor(sum(flooredPercentiles) / percReturn.length), 5);
+            return max_score_result
         }
 
         function diceSimulationStringsForJS(categories, nbDice, nbRolls, fixscmu, stescmu, diff) {
@@ -3860,6 +3885,7 @@
 
             }
             if (offline) {
+                apworldversion = "offline"
                 updateSettings(null);
                 updateRequiresValue(null);
                 updateHighscoreAndGoal();
@@ -4180,11 +4206,9 @@
                 finalgoal = packet.slot_data.goal_score;
                 lastgoal = packet.slot_data.last_check_score;
                 difficulty = packet.slot_data.game_difficulty;
-                scoremultipliertype = -100
-                if (packet.slot_data.score_multiplier_type) {
+                scoremultipliertype = 0
+                if (packet.slot_data.score_multiplier_type) { //older versions
                     scoremultipliertype = packet.slot_data.score_multiplier_type;
-                } else {
-                    scoremultipliertype = 0 //0.3 version or newest versions, step, 2% per item.
                 }
                 if (packet.slot_data.allow_manual_input){
                     allowManualInput = packet.slot_data.allow_manual_input;
@@ -4264,10 +4288,10 @@
                 }
             }
             if (offline) {
-                amDiceF = 4;
-                amRollsF = 4;
-                finalgoal = 403;
-                lastgoal = 500;
+                amDiceF = 1;
+                amRollsF = 1;
+                finalgoal = 777;
+                lastgoal = 1000;
                 difficulty = 2;
                 scoremultipliertype = 0;
                 maxscoreinlogic = getMaxScoreInLogic()
@@ -4336,9 +4360,9 @@
 
         function submitScore() {
             
-            // if(document.getElementById("disableItemGet").checked){
-            //     return;
-            // }
+            if(document.getElementById("disableItemGet").checked){
+                return;
+            }
             calculateTotalAndUpdate();
             var inputValue = parseInt(document.getElementById("total").innerText);
             
@@ -4376,7 +4400,7 @@
                 }
 
                 if (inputValue >= finalgoal) {
-                    console.log("Win! But win is now initiated by receiving a Victory item.")
+                    // console.log("Win! But win is now initiated by receiving a Victory item.")
                     // sendWin()
                 }
             }
@@ -4386,9 +4410,9 @@
 
         function updateHighscoreAndGoal() {
             document.getElementById("nextgoal").innerText = nextgoal;
-            document.getElementById("highestsubmitted").innerText = highestsubmitted;
+            // document.getElementById("highestsubmitted").innerText = highestsubmitted;
             document.getElementById("maxlogic").innerText = maxscoreinlogic
-            // document.getElementById("maxlogicalldif").innerText = getMaxScoreInLogic(1) + "/" + getMaxScoreInLogic(2) + "/" + getMaxScoreInLogic(3) + "/" + getMaxScoreInLogic(4)
+            document.getElementById("maxlogicalldif").innerText = getMaxScoreInLogic(1) + "/" + getMaxScoreInLogic(2) + "/" + getMaxScoreInLogic(3) + "/" + getMaxScoreInLogic(4)
         }
 
         function sendCheck(locid) {
@@ -4396,14 +4420,13 @@
                 // Assuming client is already defined elsewhere
                 // Replace `client.locations.check` with the actual function you have for sending checks
                 client.locations.check(locid);
-                console.log("Sent check for locid:", locid);
             }
             if (offline) {
                 for (let i = 1; i <= locid; i++) {
                     if (missingLocations.hasOwnProperty(i)) {
                         const value = missingLocations[i]; // Get the value associated with the key
-                        openCategory(value, i); // Call the function openCategories with the value
                         delete missingLocations[i]; // Remove the key from missingLocations
+                        openCategory(value, i); // Call the function openCategories with the value
                     }
                 }
                 maxscoreinlogic = getMaxScoreInLogic();
@@ -4557,17 +4580,34 @@
 
         let offline = false;
 
-        document.getElementById("offlinebutton").addEventListener("click", function () {
+        document.getElementById("letsrollsolo").addEventListener("click", function () {
+            document.getElementById("tutorollpage").style.display = "none";
+            document.getElementById("login-container").style.display = "none";
+            document.getElementById("dropdownContainer").style.display = "flex";
             if (getUrlParameter('offlineseed') == '') { //save game, skip options
-                document.getElementById("login-container").style.display = "none";
-                document.getElementById("dropdownContainer").style.display = "flex";
+                document.getElementById("optionsselector").style.display = "flex";
             } else {
-                document.getElementById("login-container").style.display = "none";
                 document.getElementById("optionsselector").style.display = "none";
-                document.getElementById("dropdownContainer").style.display = "flex";
-
             }
         });
+
+        let mode = getUrlParameter('p')
+        if(mode == 'AP'){
+            document.getElementById("tutorollpage").style.display = "none";
+            document.getElementById("login-container").style.display = "flex";
+        }
+        if(mode == 'solo'){
+            document.getElementById("tutorollpage").style.display = "none";
+            document.getElementById("login-container").style.display = "none";
+            document.getElementById("dropdownContainer").style.display = "flex";
+            if (getUrlParameter('offlineseed') == '') { //save game, skip options
+                document.getElementById("optionsselector").style.display = "flex";
+            } else {
+                document.getElementById("optionsselector").style.display = "none";
+            }
+        }
+
+
 
         // Show the login screen when the "Login" button is clicked
         document.getElementById("playofflineafteroptions").addEventListener("click", function () {
@@ -4595,125 +4635,39 @@
             });
 
 
-            let numDiceF = -1
-            let di = -1;
-            let smt = -1;
-            let pg = -1;
-            let whichcategories = 0;
+            let offline_difficulty = -1;
+            
             if (getUrlParameter('offlineseed') != '') {
                 let offlineseedStr = getUrlParameter('offlineseed')
-                if (!offlineseedStr.includes("-")) {
-                    numDiceF = parseInt(offlineseedStr.charAt(0), 10);
-                    di = parseInt(offlineseedStr.charAt(1), 10);
-                    smt = parseInt(offlineseedStr.charAt(2), 10);
-                    pg = parseInt(offlineseedStr.charAt(3), 10);
-                }else{
-                    numDiceF = parseInt(offlineseedStr.charAt(0), 10);
-                    di = parseInt(offlineseedStr.charAt(1), 10);
-                    smt = parseInt(offlineseedStr.charAt(2), 10);
-                    pg = parseInt(offlineseedStr.charAt(3), 10);
-                    whichcategories = parseInt(offlineseedStr.charAt(4), 10);
-                }
+                offline_difficulty = parseInt(offlineseedStr.charAt(0), 10);
             } else {
-                numDiceF = parseInt(document.getElementById('offlineoptions_numberOfDice').value);
                 // Get selected values from dropdown menus
                 const difficultyDropdown = document.getElementById('offlineoptions_difficulty');
-                const scoreMultiplierTypeDropdown = document.getElementById('offlineoptions_scoreMultiplierType');
-                whichcategories = parseInt(document.getElementById('offlineoptions_whichCategories').value);
 
 
-
-
-                // Determine di (difficulty index) based on selected difficulty
+                // Determine offline_difficulty (difficulty index) based on selected difficulty
                 const selectedDifficulty = difficultyDropdown.value;
+                
+                document.getElementById("diffmode").innerText = selectedDifficulty;
                 switch (selectedDifficulty) {
                     case 'Easy':
-                        di = 1;
+                        offline_difficulty = 1;
                         break;
                     case 'Medium':
-                        di = 2;
+                        offline_difficulty = 2;
                         break;
                     case 'Hard':
-                        di = 3;
+                        offline_difficulty = 3;
                         break;
                     case 'Extreme':
-                        di = 4;
+                        offline_difficulty = 4;
                         break;
                     default:
-                        di = -1; // Handle other cases (optional)
-                }
-                
-                pg = parseFloat(document.getElementById('offlineoptions_goalLocation').value);
-            
-
-                // Determine smt (score multiplier type index) based on selected score multiplier type
-                const selectedScoreMultiplierType = scoreMultiplierTypeDropdown.value;
-                switch (selectedScoreMultiplierType) {
-                    case 'Fixed':
-                        smt = 1;
-                        break;
-                    case 'Step':
-                        smt = 2;
-                        break;
-                    default:
-                        smt = -1; // Handle other cases (optional)
-                }
-            
-            
-            
-            
+                        offline_difficulty = -1; // Handle other cases (optional)
+                }   
             }
 
-
-
-
-            const numRollsF = 10 - numDiceF
-
-
-            const exDiceF = 3
-            const exRollsF = 3
-
-
-            difficulty = di;
-            scoremultipliertype = smt
-
-            let cats = []
-            if(whichcategories == 0){
-                cats = [new Category("Choice", 1), new Category("Choice", 1)]
-            }else if(whichcategories == 1){
-                cats = [new Category("Choice", 1), new Category("Choice", 1)]
-            }else{
-                console.log("UNKNOWN whichcategories, please report...")
-            }
-
-
-            let ndf = amDiceF
-            let nrf = amRollsF
-            let fixedmu = 0
-            let stepmu = 0
-            let extrapointsinlogicgen = 0
-
-
-
-
-            if (di === 1) {
-                lastgoal = 400;
-            } else if (di === 2) {
-                lastgoal = 500;
-            } else if (di === 3) {
-                lastgoal = 630;
-            } else if (di === 4) {
-                lastgoal = 683;
-            } else {
-                // Handle other cases (optional)
-                lastgoal = 0; // Default value if di is not within expected range
-            }
-
-
-
-
-
-
+            difficulty = offline_difficulty;
 
 
 
@@ -4736,10 +4690,6 @@
                 }
             }
 
-            const r = () => Math.random();
-            const now = Date.now();
-
-
             let seed = -1;
             let seednr = -1;
 
@@ -4752,78 +4702,149 @@
                     seed = parseInt(inps);
                 }
             } else {
-                seed = numDiceF + "" + di + "" + smt + "" + pg + "" + whichcategories +"-"+ (10000 + Math.floor(Math.random() * 90000))
+                seed = offline_difficulty + "" + (1000000 + Math.floor(Math.random() * 9000000))
+                seednr = seed
             }
 
 
 
 
 
-            console.log("Seed ", seed)
+            console.log("Seed ", seed, seednr)
             addToLog("Playing seed " + seed)
             const prng = sfc32(seednr);
-
-
-            if (pg == 1) {
-                pg = 0.8;
-            } else if (pg == 2) {
-                pg = 1;
+            
+            for(let i = 0; i < 10; i++){
+                prng()
             }
 
+            let offline_available_catgories = []
 
+            prng() < 0.7 ? offline_available_catgories.push("Category Choice") : offline_available_catgories.push("Category Double Threes and Fours");
+            prng() < 0.7 ? offline_available_catgories.push("Category Inverse Choice") : offline_available_catgories.push("Category Quadruple Ones and Twos");
+            prng() < 0.7 ? offline_available_catgories.push("Category Ones") : offline_available_catgories.push("Category Distincts");
+            prng() < 0.7 ? offline_available_catgories.push("Category Twos") : offline_available_catgories.push("Category Two times Ones");
+            prng() < 0.7 ? offline_available_catgories.push("Category Threes") : offline_available_catgories.push("Category Half of Sixes");
+            prng() < 0.7 ? offline_available_catgories.push("Category Fours") : offline_available_catgories.push("Category Twos and Threes");
+            prng() < 0.7 ? offline_available_catgories.push("Category Fives") : offline_available_catgories.push("Category Sum of Odds");
+            prng() < 0.7 ? offline_available_catgories.push("Category Sixes") : offline_available_catgories.push("Category Sum of Evens");
+            prng() < 0.7 ? offline_available_catgories.push("Category Pair") : offline_available_catgories.push("Category Micro Straight");
+            prng() < 0.7 ? offline_available_catgories.push("Category Three of a Kind") : offline_available_catgories.push("Category Three Odds");
+            prng() < 0.7 ? offline_available_catgories.push("Category Four of a Kind") : offline_available_catgories.push("Category 1-2-1 Consecutive");
+            prng() < 0.7 ? offline_available_catgories.push("Category Tiny Straight") : offline_available_catgories.push("Category Three Distinct Dice");
+            prng() < 0.7 ? offline_available_catgories.push("Category Small Straight") : offline_available_catgories.push("Category Two Pair");
+            prng() < 0.7 ? offline_available_catgories.push("Category Large Straight") : offline_available_catgories.push("Category 2-1-2 Consecutive");
+            prng() < 0.7 ? offline_available_catgories.push("Category Full House") : offline_available_catgories.push("Category Five Distinct Dice");
+            prng() < 0.7 ? offline_available_catgories.push("Category Yacht") : offline_available_catgories.push("Category 4&5 Full House");
+
+            openCategories(["Dice", "Roll", offline_available_catgories[0], offline_available_catgories[1]])
+            
             // Initialize an empty array for the item pool
             let itempool = [];
 
             // Calculate and add items based on conditions
-            if (amDiceF === 1) {
-                itempool = itempool.concat(Array(numDiceF - 1).fill("Dice"));
-            } else {
-                itempool.push("Dice"); // Always add a full dice
-                itempool = itempool.concat(Array(amDiceF * (numDiceF - 2) + exDiceF).fill("Dice Fragment"));
+            itempool = itempool.concat(Array(4).fill("Dice"));
+            itempool = itempool.concat(Array(2).fill("Roll"));
+
+            for(let i = 2; i < 16; i++){
+                itempool.push(offline_available_catgories[i])
             }
 
-            if (amRollsF === 1) {
-                itempool = itempool.concat(Array(numRollsF - 1).fill("Roll"));
-            } else {
-                itempool.push("Roll"); // Always add a full roll
-                itempool = itempool.concat(Array(amRollsF * (numRollsF - 2) + exRollsF).fill("Roll Fragment"));
+            let cats = offline_available_catgories
+
+
+            let dice = 5
+            let rolls = 3
+            let mult = 0
+            let points = 0
+
+            let category_mappings = {
+                "Category Ones": "Ones",
+                "Category Twos": "Twos",
+                "Category Threes": "Threes",
+                "Category Fours": "Fours",
+                "Category Fives": "Fives",
+                "Category Sixes": "Sixes",
+                "Category Choice": "Choice",
+                "Category Inverse Choice": "Choice",
+                "Category Pair": "Pair",
+                "Category Three of a Kind": "ThreeOfAKind",
+                "Category Four of a Kind": "FourOfAKind",
+                "Category Tiny Straight": "TinyStraight",
+                "Category Small Straight": "SmallStraight",
+                "Category Large Straight": "LargeStraight",
+                "Category Full House": "FullHouse",
+                "Category Yacht": "Yacht",
+                "Category Distincts": "Distincts",
+                "Category Two times Ones": "Twos",
+                "Category Half of Sixes": "Threes",
+                "Category Twos and Threes": "TwosAndThrees",
+                "Category Sum of Odds": "SumOfOdds",
+                "Category Sum of Evens": "SumOfEvens",
+                "Category Double Threes and Fours": "DoubleThreesAndFours",
+                "Category Quadruple Ones and Twos": "QuadrupleOnesAndTwos",
+                "Category Micro Straight": "MicroStraight",
+                "Category Three Odds": "ThreeOdds",
+                "Category 1-2-1 Consecutive": "OneTwoOneConsecutive",
+                "Category Three Distinct Dice": "ThreeDistinctDice",
+                "Category Two Pair": "TwoPair",
+                "Category 2-1-2 Consecutive": "TwoOneTwoConsecutive",
+                "Category Five Distinct Dice": "FiveDistinctDice",
+                "Category 4&5 Full House": "FourAndFiveFullHouse",
             }
 
-            // Add fixed items
-            itempool = itempool.concat(Array(10).fill("Score Multiplier"));
-            if(whichcategories == 0){
-                itempool.push("Category Ones");
-                itempool.push("Category Twos");
-                itempool.push("Category Threes");
-                itempool.push("Category Fours");
-                itempool.push("Category Fives");
-                itempool.push("Category Sixes");
-                itempool.push("Category Pair");
-                itempool.push("Category Three of a Kind");
-                itempool.push("Category Four of a Kind");
-                itempool.push("Category Tiny Straight");
-                itempool.push("Category Small Straight");
-                itempool.push("Category Large Straight");
-                itempool.push("Category Full House");
-                itempool.push("Category Yacht");
-            }else if(whichcategories == 1){
-                itempool.push("Category Distincts");
-                itempool.push("Category Two times Ones");
-                itempool.push("Category Half of Sixes");
-                itempool.push("Category Twos and Threes");
-                itempool.push("Category Sum of Odds");
-                itempool.push("Category Sum of Evens");
-                itempool.push("Category Micro Straight");
-                itempool.push("Category Three Odds");
-                itempool.push("Category 1-2-1 Consecutive");
-                itempool.push("Category Three Distinct Dice");
-                itempool.push("Category Two Pair");
-                itempool.push("Category 2-1-2 Consecutive");
-                itempool.push("Category Five Distinct Dice");
-                itempool.push("Category 4&5 Full House");
-            }else{
-                console.log("WRONG whichcategories, oh ow")
-            }
+            
+            let cats_for_logic = []
+            do{
+                let random_number = prng();
+                if(random_number < 0.5){
+                    if(prng()<0.2){
+                        points += 10
+                        itempool.push("10 Points")
+                    }else{
+                        points += 1
+                        itempool.push("1 Point")
+                    }
+                } else if(random_number < 0.7){
+                    mult += 0.1
+                    itempool.push("Fixed Score Multiplier")
+                } else if(random_number < 0.75){
+                    if(prng() < 0.8){
+                        if(rolls < 5){
+                            rolls += 1
+                            itempool.push("Roll")
+                        }
+                    }else{
+                        dice += 1
+                        itempool.push("Dice")
+                    }
+                } else {
+                    const cat_now = offline_available_catgories[Math.floor(prng()*16)]
+                    cats.push(cat_now)
+                    itempool.push(cat_now)
+                }
+
+                
+
+
+                cats_for_logic = [];
+                const catCounts = {};
+
+                // Count occurrences of each cat
+                cats.forEach(cat => {
+                    if (catCounts[cat]) {
+                        catCounts[cat]++;
+                    } else {
+                        catCounts[cat] = 1;
+                    }
+                });
+
+                // Log the count of each unique cat
+                for (const [cat, count] of Object.entries(catCounts)) {
+                    cats_for_logic.push(new Category(category_mappings[cat], count))
+                }
+            } while(diceSimulationStringsForJS2(cats_for_logic, dice, rolls, mult, 0, offline_difficulty) + points < 1000);
+
 
 
 
@@ -4847,6 +4868,7 @@
 
                 return array;
             }
+
 
             itempool = shuffleArrayWithSeed(itempool)
 
@@ -4878,7 +4900,14 @@
 
 
 
+            let offline_categories_names = [offline_available_catgories[0], offline_available_catgories[1]]
 
+
+            let offline_number_dice = 1
+            let offline_number_rolls = 1
+
+            let offline_fixed_multiplier = 0
+            let offline_points_in_logic_gen = 0
 
 
 
@@ -4893,8 +4922,8 @@
                 result[i] = "";
             }
 
-            result[Math.floor(pg * lastgoal)] = "Victory"
-            finalgoal = Math.floor(pg * lastgoal)
+            result[finalgoal] = "Victory"
+            result[lastgoal] = "Fun Fact"
 
             document.getElementById("finalgoal").innerText = finalgoal;
             document.getElementById("lastcheck").innerText = lastgoal;
@@ -4905,9 +4934,25 @@
                 // Obtain and remove the first element from itempool
                 const firstElement = itempool.shift();
 
-                let maxinLogic = diceSimulationStringsForJS2(cats, Math.floor(ndf / amDiceF), Math.floor(nrf / amRollsF), fixedmu, stepmu, di) + extrapointsinlogicgen
-                
+                let offline_categories = [];
+                const catCounts = {};
 
+                // Count occurrences of each cat
+                offline_categories_names.forEach(cat => {
+                    if (catCounts[cat]) {
+                        catCounts[cat]++;
+                    } else {
+                        catCounts[cat] = 1;
+                    }
+                });
+
+                // Log the count of each unique cat
+                for (const [cat, count] of Object.entries(catCounts)) {
+                    offline_categories.push(new Category(category_mappings[cat], count))
+                }
+
+                let maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice, offline_number_rolls, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
+                
                 const validKeys = Object.keys(result).filter(key => Number(key) <= maxinLogic && result[key] === "");
 
                 if (validKeys.length === 0) {
@@ -4922,158 +4967,76 @@
 
                 result[randomKey] = firstElement;
 
+                
 
-                switch (firstElement) {
-                    case "Dice":
-                        ndf += amDiceF;
-                        break;
-                    case "Roll":
-                        nrf += amRollsF;
-                        break;
-                    case "Dice Fragment":
-                        ndf += 1;
-                        break;
-                    case "Roll Fragment":
-                        nrf += 1;
-                        break;
-                    case "Score Multiplier":
-                        if (smt == 0) {
-                            fixedmu += 0.02;
-                        }
-                        if (smt == 1) {
-                            fixedmu += 0.1;
-                        }
-                        if (smt == 2) {
-                            stepmu += 0.01;
-                        }
-                        break;
-                    case "Extra Point":
-                    case "Bonus Point":
-                        //nothing changes for logic
-                        break;
-                    case "Encouragement":
-                        //nothing changes for logic
-                        break;
-                    case "Fun Fact":
-                        //nothing changes for logic
-                        break;
-                    case "Story Chapter":
-                        //nothing changes for logic
-                        break;
-                    case "Category Ones":
-                        cats.push(new Category("Ones", 1));
-                        break;
-                    case "Category Twos":
-                        cats.push(new Category("Twos", 1));
-                        break;
-                    case "Category Threes":
-                        cats.push(new Category("Threes", 1));
-                        break;
-                    case "Category Fours":
-                        cats.push(new Category("Fours", 1));
-                        break;
-                    case "Category Fives":
-                        cats.push(new Category("Fives", 1));
-                        break;
-                    case "Category Sixes":
-                        cats.push(new Category("Sixes", 1));
-                        break;
-                    case "Category Pair":
-                        cats.push(new Category("Pair", 1));
-                        break;
-                    case "Category Three of a Kind":
-                        cats.push(new Category("ThreeOfAKind", 1));
-                        break;
-                    case "Category Four of a Kind":
-                        cats.push(new Category("FourOfAKind", 1));
-                        break;
-                    case "Category Tiny Straight":
-                        cats.push(new Category("TinyStraight", 1));
-                        break;
-                    case "Category Small Straight":
-                        cats.push(new Category("SmallStraight", 1));
-                        break;
-                    case "Category Large Straight":
-                        cats.push(new Category("LargeStraight", 1));
-                        break;
-                    case "Category Full House":
-                        cats.push(new Category("FullHouse", 1));
-                        break;
-                    case "Category Yacht":
-                        cats.push(new Category("Yacht", 1));
-                        break;                       
+                if(getCategoryID(firstElement) >= 0){
+                    offline_categories_names.push(firstElement);
+                } else {
+                    switch (firstElement) {
+                        case "Dice":
+                            offline_number_dice += 1;
+                            break;
+                        case "Roll":
+                            offline_number_rolls += 1;
+                            break;
+                        case "Fixed Score Multiplier":
+                            offline_fixed_multiplier += 0.1;
+                        case "Extra Point":
 
-                    case "Category Distincts":
-                        cats.push(new Category("Distincts", 1));
-                        break;
-                    case "Category Two times Ones":
-                        cats.push(new Category("Twos", 1));
-                        break;
-                    case "Category Half of Sixes":
-                        cats.push(new Category("Threes", 1));
-                        break;
-                    case "Category Twos and Threes":
-                        cats.push(new Category("TwosAndThrees", 1));
-                        break;
-                    case "Category Sum of Odds":
-                        cats.push(new Category("SumOfOdds", 1));
-                        break;
-                    case "Category Sum of Evens":
-                        cats.push(new Category("SumOfEvens", 1));
-                        break;
-                    case "Category Double Threes and Fours":
-                        cats.push(new Category("DoubleThreesAndFours", 1));
-                        break;
-                    case "Category Quadruple Ones and Twos":
-                        cats.push(new Category("QuadrupleOnesAndTwos", 1));
-                        break;
-                    case "Category Micro Straight":
-                        cats.push(new Category("MicroStraight", 1));
-                        break;
-                    case "Category Three Odds":
-                        cats.push(new Category("ThreeOdds", 1));
-                        break;
-                    case "Category 1-2-1 Consecutive":
-                        cats.push(new Category("OneTwoOneConsecutive", 1));
-                        break;
-                    case "Category Three Distinct Dice":
-                        cats.push(new Category("ThreeDistinctDice", 1));
-                        break;
-                    case "Category Two Pair":
-                        cats.push(new Category("TwoPair", 1));
-                        break;
-                    case "Category 2-1-2 Consecutive":
-                        cats.push(new Category("TwoOneTwoConsecutive", 1));
-                        break;
-                    case "Category Five Distinct Dice":
-                        cats.push(new Category("FiveDistinctDice", 1));
-                        break;
-                    case "Category 4&5 Full House":
-                        cats.push(new Category("FourAndFiveFullHouse", 1));
-                        break;
-
-
-
-
-
-                    case "1 Extra Point":
-                    case "1 Point":
-                        extrapointsinlogicgen += 1
-                        break;
-                    case "10 Extra Points":
-                    case "10 Points":
-                        extrapointsinlogicgen += 10
-                        break;
-                    case "100 Extra Points":
-                    case "100 Point":
-                        extrapointsinlogicgen += 100
-                        break;
+                        case "Bonus Point":
+                            //nothing changes for logic
+                            break;
+                        case "Encouragement":
+                            //nothing changes for logic
+                            break;
+                        case "Fun Fact":
+                            //nothing changes for logic
+                            break;
+                        case "Story Chapter":
+                            //nothing changes for logic
+                            break;
+                        case "1 Extra Point":
+                        case "1 Point":
+                            offline_points_in_logic_gen += 1
+                            break;
+                        case "10 Extra Points":
+                        case "10 Points":
+                            offline_points_in_logic_gen += 10
+                            break;
+                        case "100 Extra Points":
+                        case "100 Point":
+                            offline_points_in_logic_gen += 100
+                            break;
+                    }
                 }
 
 
 
             }
 
+            let offline_categories = [];
+            const catCounts = {};
+
+            // Count occurrences of each cat
+            offline_categories_names.forEach(cat => {
+                if (catCounts[cat]) {
+                    catCounts[cat]++;
+                } else {
+                    catCounts[cat] = 1;
+                }
+            });
+
+            // Log the count of each unique cat
+            for (const [cat, count] of Object.entries(catCounts)) {
+                offline_categories.push(new Category(category_mappings[cat], count))
+            }
+
+           
+            let maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice, offline_number_rolls, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
+                
+            if(maxinLogic < 1000){
+                console.error("ERROR NOT 1000 POINTS IN ITEMPOOL, just", maxinLogic)
+            }
 
 
 
@@ -5085,7 +5048,7 @@
                 }
                 return filteredObj;
             }, {});
-
+            console.log(result)
 
 
 
@@ -5104,13 +5067,7 @@
 
             addToLog("Welcome to offline play. To save the game -> click save.")
 
-            if(whichcategories==0){
-                openCategories(["Dice", "Roll", "Category Choice", "Category Inverse Choice"])
-            }else if(whichcategories == 1){            
-                openCategories(["Dice", "Roll", "Category Double Threes and Fours", "Category Quadruple Ones and Twos"])
-            }else{
-                console.log("WROGN whichcategories, ahhh")
-            }
+            
 
             let offlinepr = getUrlParameter('offlineprogress')
             if (offlinepr != "") {
