@@ -428,6 +428,7 @@
 
         /* Custom dropdown style */
         .custom-dropdown {
+            align-items: center;
             position: relative;
             display: flex;
             cursor: pointer;
@@ -608,6 +609,70 @@
                 flex: 1 1 100%;
             }
         }
+
+        #cat-container {
+            display: none;
+        }
+
+        .CAT_settings {
+            border: 2px solid gray;
+            padding: 10px;
+            width: 40vw;
+            max-width: 600px;
+            min-width: 290px;
+            max-height: 90vh;
+            background: rgba(100, 100, 100, 0.9);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            overflow-y: auto;
+        }
+
+        .CAT_close-btn {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 50px;
+            background: none;
+            border: none;
+            color: white;
+        }
+
+        .CAT_header {
+            text-align: center;
+            margin-top: 0;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .CAT_expl-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-family: Arial, sans-serif;
+            color: white;
+            padding-bottom: 5px;
+            border-bottom: 1px dotted white;
+        }
+
+        .CAT_expl-label {
+            width: 35%;
+            text-align: right;
+            padding-right: 5px;
+        }
+
+        .CAT_expl-value {
+            width: 60%;
+            text-align: left;
+            padding-left: 5px;
+        }
+
+
+
     </style>
 </head>
 
@@ -833,92 +898,97 @@
                 <label>Score mult.:</label>
                 <label id="score-mult">?</label>
                 <br><br>
-                <button id="toggleSettings">Show/hide settings</button>
-                <div id="settings"
-                    style="border: 2px solid gray; padding: 5px; width: 160px; margin: 5px auto; margin-top: 20px;">
-
-                    <label>Dice size:</label>
-                    <button id="decreaseDiceSize">-</button>
-                    <!--<input type="number" id="dice-size" value="70" min="10" max="200">-->
-                    <button id="increaseDiceSize">+</button>
-                    <br><br>
-                    <button id="changeColors1">Randomize colors</button>  <br>
-                    <br>
-                    <input type="checkbox" id="toggleRandomStyleStartup" checked>
-                    <label for="toggleRandomStyleStartup">Random style on startup</label> <br><br>
-                    <!-- <button id="changeStyle">Change dice style</button>
-                    <br><br> -->
-                    <!-- Custom dropdown for selecting skin -->
-                    <!-- Custom dropdown for selecting skin -->
-                    <div class="custom-dropdown" id="skinSelect">
-                        <button id>Select dice style</button>
-                        <div class="dropdown-options" id="dropdownOptions"></div>
-                    </div>
-                    <br>
-                    <input type="checkbox" id="requireExactScore">
-                    <label for="requireExactScore">Need exact score (above 10)</label>
+                
+                
 
 
-                    <br><br>
-                    <div id="musicplayerdiv">
-                        <audio id="musicPlayer" preload="none">
-                            <!-- No src initially -->
-                            Your browser does not support the audio element.
-                        </audio>
-                        <audio id="boatSound">
-                            <source src="Sounds/boat.mp3" type="audio/mpeg">
-                            Your browser does not support the audio element.
-                        </audio>
-                        <audio id="newItemSound">
-                            <source src="Sounds/dicethrownewitem.mp3" type="audio/mpeg">
-                            Your browser does not support the audio element.
-                        </audio>
-                        <div id="customControls"
-                            style="border: 2px solid gray; padding: 5px; width: 150px; margin: 5px auto; ">
-                            <label>Music:</label><br>
-                            <button id="playpause"
-                                style="padding: 0; border: none; cursor: pointer; border-radius: 5px; margin: 0; font-size: 30px; background: none;"
-                                onclick="playPause()">▶️</button>
-                            <button
-                                style="padding: 0; border: none; cursor: pointer; border-radius: 5px; margin: 0; font-size: 30px; background: none;"
-                                onclick="nextTrack()">⏭️</button>
-                            <button id="repeatButton"
-                                style="padding: 0; border: none; cursor: pointer; border-radius: 5px; margin: 0; font-size: 30px; background: none;"
-                                onclick="toggleRepeat()">🔁</button>
-                            <br>
-                            <input type="range" id="volume" min="0" max="1" step="0.01" value=".5"
-                                onchange=changeAudioVolume()>
+
+
+                <button id="toggleSettings">Settings</button>   <button id="toggleCatHelp">Category help</button>
+
+                <div id="modal-container" style="display: none;">
+                    <div id="settings" style="border: 2px solid gray; padding: 10px; width: 300px; background: rgba(100, 100, 100, 0.9); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                        <button id="closeSettings" style="position: absolute; top: 5px; right: 10px; cursor: pointer; font-size: 70px; background: none; border: none; color: white;">×</button>
+                        <h2 style="text-align: center; margin-top: 0;">Settings</h2>
+                        
+                        <button id="changeColors1">Randomize colors</button>  <br><br>
+                        <label>Dice size:</label>
+                        <button id="decreaseDiceSize">-</button>
+                        <!--<input type="number" id="dice-size" value="70" min="10" max="200">-->
+                        <button id="increaseDiceSize">+</button>
+                        <br>
+                        <input type="checkbox" id="toggleRandomStyleStartup" checked>
+                        <label for="toggleRandomStyleStartup">Random dice style on startup</label> <br>
+                        <div class="custom-dropdown" id="skinSelect">
+                            <button id>Select dice style</button>
+                            <div class="dropdown-options" id="dropdownOptions"></div>
                         </div>
-                    </div>
+                        <br>
+                        <input type="checkbox" id="requireExactScore">
+                        <label for="requireExactScore">Gamemode: need exact score (>10)</label>
 
-                    <div id="soundeffectdiv">
-                        <div id="customControls"
-                            style="border: 2px solid gray; padding: 5px; width: 150px; margin: 5px auto; ">
-                            <input type="checkbox" id="enableSoundEffects" checked>
-                            <label for="enableSoundEffects">Enable sound effects</label> <br><br>
-                            <label>Sound effect:</label><br>
-                            <input type="range" id="soundEffectVolume" min="0" max="1" step="0.01" value="1">
+
+                        <br><br>
+                        <div id="musicplayerdiv">
+                            <audio id="musicPlayer" preload="none">
+                                <!-- No src initially -->
+                                Your browser does not support the audio element.
+                            </audio>
+                            <audio id="boatSound">
+                                <source src="Sounds/boat.mp3" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                            <audio id="newItemSound">
+                                <source src="Sounds/dicethrownewitem.mp3" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                            <div id="customControls"
+                                style="border: 2px solid gray; padding: 5px; width: 150px; margin: 5px auto; ">
+                                <label>Music:</label><br>
+                                <button id="playpause"
+                                    style="padding: 0; border: none; cursor: pointer; border-radius: 5px; margin: 0; font-size: 30px; background: none;"
+                                    onclick="playPause()">▶️</button>
+                                <button
+                                    style="padding: 0; border: none; cursor: pointer; border-radius: 5px; margin: 0; font-size: 30px; background: none;"
+                                    onclick="nextTrack()">⏭️</button>
+                                <button id="repeatButton"
+                                    style="padding: 0; border: none; cursor: pointer; border-radius: 5px; margin: 0; font-size: 30px; background: none;"
+                                    onclick="toggleRepeat()">🔁</button>
+                                <br>
+                                <input type="range" id="volume" min="0" max="1" step="0.01" value=".5"
+                                    onchange=changeAudioVolume()>
+                            </div>
                         </div>
+
+                        <div id="soundeffectdiv">
+                            <div id="customControls"
+                                style="border: 2px solid gray; padding: 5px; width: 150px; margin: 5px auto; ">
+                                <label>Sound effect:</label><br>
+                                <input type="checkbox" id="enableSoundEffects" checked>
+                                <label for="enableSoundEffects">Enabled</label> <br>
+                                <input type="range" id="soundEffectVolume" min="0" max="1" step="0.01" value="1">
+                            </div>
+                        </div>
+                        <br>
+                        <input type="checkbox" id="toggleAnimations" checked>
+                        <label for="toggleAnimations">Enable roll animation</label> <br>
+
+                        <input type="checkbox" id="toggleTimer">
+                        <label for="toggleTimer">Enable timer</label> <br>
+
+                        <input type="checkbox" id="showLinenumber">
+                        <label for="showLinenumber">Show line number in chat</label> <br>
+
+                        <input type="checkbox" id="showTimestamp" checked>
+                        <label for="showTimestamp">Show timestamps in chat</label> <br>
+
+                        <input type="checkbox" id="showItemClassification">
+                        <label for="showItemClassification">Show item classifiction as text</label> <br>
+
                     </div>
-                    <br>
-                    <input type="checkbox" id="toggleAnimations" checked>
-                    <label for="toggleAnimations">Enable roll animation</label> <br><br>
-
-                    <input type="checkbox" id="toggleTimer">
-                    <label for="toggleTimer">Enable timer</label> <br><br>
-
-                    <input type="checkbox" id="showLinenumber">
-                    <label for="showLinenumber">Show line number in chat</label> <br><br>
-
-                    <input type="checkbox" id="showTimestamp" checked>
-                    <label for="showTimestamp">Show timestamps in chat</label> <br><br>
-
-                    <input type="checkbox" id="showItemClassification">
-                    <label for="showItemClassification">Show item classifiction as text</label> <br><br>
-
-
-
                 </div>
+
+
 
             </div>
             <br>
@@ -1058,16 +1128,44 @@
                 <div id="timer" style="display: none;">00:00:00</div>
                 <br>
                 <button id="saveBtn" class="NS_category-button">Save (see chat)</button>
-                <br>
+                <!-- <br>
                 Difficulty testing: <br>
                 <input type="checkbox" id="disableItemGet">
                 <label for="disableItemGet">Disable score submit (for testing/debug) </label> 
                 <br>
-                Max score in logic Easy/Medium/Hard/Extreme: <span id="maxlogicalldif">?</span>
+                Max score in logic Easy/Medium/Hard/Extreme: <span id="maxlogicalldif">?</span> -->
             </div>
         </div>
     </div>
     <img id="boatImage" src="Images/boaty.png" alt="Boat Image">
+
+
+
+
+    <div id="cat-container">
+        <div id="settings" class="CAT_settings">
+            <button id="closeSettings2" class="CAT_close-btn">×</button>
+            <h2 class="CAT_header">Categories</h2>
+            
+            <div class="CAT_expl-row"><div id="catexplA1" class="CAT_expl-label"></div> <div id="catexplB1" class="CAT_expl-value"></div></div>
+            <div class="CAT_expl-row"><div id="catexplA2" class="CAT_expl-label"></div> <div id="catexplB2" class="CAT_expl-value"></div></div>
+            <div class="CAT_expl-row"><div id="catexplA3" class="CAT_expl-label"></div> <div id="catexplB3" class="CAT_expl-value"></div></div>
+            <div class="CAT_expl-row"><div id="catexplA4" class="CAT_expl-label"></div> <div id="catexplB4" class="CAT_expl-value"></div></div>
+            <div class="CAT_expl-row"><div id="catexplA5" class="CAT_expl-label"></div> <div id="catexplB5" class="CAT_expl-value"></div></div>
+            <div class="CAT_expl-row"><div id="catexplA6" class="CAT_expl-label"></div> <div id="catexplB6" class="CAT_expl-value"></div></div>
+            <div class="CAT_expl-row"><div id="catexplA7" class="CAT_expl-label"></div> <div id="catexplB7" class="CAT_expl-value"></div></div>
+            <div class="CAT_expl-row"><div id="catexplA8" class="CAT_expl-label"></div> <div id="catexplB8" class="CAT_expl-value"></div></div>
+            <div class="CAT_expl-row"><div id="catexplA9" class="CAT_expl-label"></div> <div id="catexplB9" class="CAT_expl-value"></div></div>
+            <div class="CAT_expl-row"><div id="catexplA10" class="CAT_expl-label"></div> <div id="catexplB10" class="CAT_expl-value"></div></div>
+            <div class="CAT_expl-row"><div id="catexplA11" class="CAT_expl-label"></div> <div id="catexplB11" class="CAT_expl-value"></div></div>
+            <div class="CAT_expl-row"><div id="catexplA12" class="CAT_expl-label"></div> <div id="catexplB12" class="CAT_expl-value"></div></div>
+            <div class="CAT_expl-row"><div id="catexplA13" class="CAT_expl-label"></div> <div id="catexplB13" class="CAT_expl-value"></div></div>
+            <div class="CAT_expl-row"><div id="catexplA14" class="CAT_expl-label"></div> <div id="catexplB14" class="CAT_expl-value"></div></div>
+            <div class="CAT_expl-row"><div id="catexplA15" class="CAT_expl-label"></div> <div id="catexplB15" class="CAT_expl-value"></div></div>
+            <div class="CAT_expl-row"><div id="catexplA16" class="CAT_expl-label"></div> <div id="catexplB16" class="CAT_expl-value"></div></div>
+        </div>
+    </div>
+
 
     <script>
         var boatImage = document.getElementById("boatImage");
@@ -1099,9 +1197,9 @@
                     var rgb = hexToRgb(hexColor);
 
                     // Increase brightness (lighten)
-                    var r = Math.min(rgb.r + Math.floor(-25 + 50 * Math.random()), 255); // Increase red component
-                    var g = Math.min(rgb.g + Math.floor(-25 + 50 * Math.random()), 255); // Increase green component
-                    var b = Math.min(rgb.b + Math.floor(-25 + 50 * Math.random()), 255); // Increase blue component
+                    var r = Math.max(0, Math.min(rgb.r + Math.floor(-25 + 50 * Math.random()), 255)); // Increase red component
+                    var g = Math.max(0, Math.min(rgb.g + Math.floor(-25 + 50 * Math.random()), 255)); // Increase green component
+                    var b = Math.max(0, Math.min(rgb.b + Math.floor(-25 + 50 * Math.random()), 255)); // Increase blue component
 
                     // Convert back to hex
                     var lighterColor = rgbToHex(r, g, b);
@@ -1197,6 +1295,7 @@
             document.querySelector('.right').style.backgroundColor = colors[3];
             const styleString = `.NS_category-box:hover { background-color: ${colors[4]} !important; }`;   
             document.head.appendChild(document.createElement('style')).innerHTML = styleString;  
+            console.log(colors)
         } 
         
 
@@ -1978,7 +2077,7 @@
                     break;
                 case 27:
                     text = "1-2-1 Consecutive (30)";
-                    title = "30 points if three dice are consecutive, the middle appearing twice (eg 3221)";
+                    title = "30 points if three dice are consecutive, the middle appearing twice (eg 3221) (any order)";
                     break;
                 case 28:
                     text = "Three Distinct Dice (20)";
@@ -1990,7 +2089,7 @@
                     break;
                 case 30:
                     text = "2-1-2 Consecutive (40)";
-                    title = "40 points if three dice are consecutive, the outside ones appearing twice (eg 11233)";
+                    title = "40 points if three dice are consecutive, the outside ones appearing twice (eg 11233) (any order)";
                     break;
                 case 31:
                     text = "Five Distinct Dice (25)";
@@ -2008,17 +2107,18 @@
 
             
             if(i > 16){
-                categoryIsAlt[i - 1] = true;
                 i -= 16;
+                categoryIsAlt[i - 1] = true;
             }            
 
-            const targetId = `catlab${i}`;
-            const targetElement = document.getElementById(targetId);
-            const targetId2 = `catbox${i}`;
-            const targetElement2 = document.getElementById(targetId2);
 
-            targetElement.textContent = text;
-            targetElement2.title = title;
+            document.getElementById(`catlab${i}`).textContent = text;
+            document.getElementById(`catbox${i}`).title = title;
+
+            document.getElementById(`catexplA${i}`).textContent = text;
+            document.getElementById(`catexplB${i}`).textContent = title;
+
+            
             
             let button = document.getElementById('category' + i);
             button.style.display = 'table-cell'; // or 'inline-block', depending on the button's initial display property
@@ -2570,21 +2670,37 @@
         document.getElementById('increaseDiceSize').addEventListener('click', increaseDiceSize);
 
 
-        // document.getElementById('changeStyle').addEventListener('click', changeStyle);
-        // document.getElementById('changeStyle').textContent = `Change dice style (${diceStyle + 1})`
-
-        function toggleSettings() {
-            var settingsDiv = document.getElementById("settings");
-            if (settingsDiv.style.display === "none") {
-                settingsDiv.style.display = "block"; // or "inline", "flex", etc. depending on your layout
+        // Function to toggle the modal visibility
+        function toggleSettingsModal() {
+            var modalContainer = document.getElementById("modal-container");
+            if (modalContainer.style.display === "none" || modalContainer.style.display === "") {
+                modalContainer.style.display = "block";
             } else {
-                settingsDiv.style.display = "none";
+                modalContainer.style.display = "none";
             }
         }
+        // Attach toggleSettingsModal to the toggleSettings button
+        document.getElementById('toggleSettings').addEventListener('click', toggleSettingsModal);
 
-        toggleSettings() //toggle once to hide them
+        // Attach toggleSettingsModal to the closeSettings (X) button
+        document.getElementById('closeSettings').addEventListener('click', toggleSettingsModal);
 
-        document.getElementById('toggleSettings').addEventListener('click', toggleSettings);
+
+        // Function to toggle the modal visibility
+        function toggleHelpCat() {
+            var modalContainer = document.getElementById("cat-container");
+            if (modalContainer.style.display === "none" || modalContainer.style.display === "") {
+                modalContainer.style.display = "block";
+            } else {
+                modalContainer.style.display = "none";
+            }
+        }
+        // Attach toggleSettingsModal to the toggleSettings button
+        document.getElementById('toggleCatHelp').addEventListener('click', toggleHelpCat);
+
+        // Attach toggleSettingsModal to the closeSettings (X) button
+        document.getElementById('closeSettings2').addEventListener('click', toggleHelpCat);
+
 
 
 
@@ -2695,10 +2811,10 @@
         function changeDiceSize(change) {
 
             diceSize += change * 10;
-            if (diceSize < 50) {
-                diceSize = 50;
-            } else if (diceSize > 200) {
-                diceSize = 200;
+            if (diceSize < 40) {
+                diceSize = 40;
+            } else if (diceSize > 300) {
+                diceSize = 300;
             }
 
             localStorage.setItem('settings_dicesize', diceSize.toString());
@@ -4220,9 +4336,9 @@
 
         function submitScore() {
             
-            if(document.getElementById("disableItemGet").checked){
-                return;
-            }
+            // if(document.getElementById("disableItemGet").checked){
+            //     return;
+            // }
             calculateTotalAndUpdate();
             var inputValue = parseInt(document.getElementById("total").innerText);
             
@@ -4272,7 +4388,7 @@
             document.getElementById("nextgoal").innerText = nextgoal;
             document.getElementById("highestsubmitted").innerText = highestsubmitted;
             document.getElementById("maxlogic").innerText = maxscoreinlogic
-            document.getElementById("maxlogicalldif").innerText = getMaxScoreInLogic(1) + "/" + getMaxScoreInLogic(2) + "/" + getMaxScoreInLogic(3) + "/" + getMaxScoreInLogic(4)
+            // document.getElementById("maxlogicalldif").innerText = getMaxScoreInLogic(1) + "/" + getMaxScoreInLogic(2) + "/" + getMaxScoreInLogic(3) + "/" + getMaxScoreInLogic(4)
         }
 
         function sendCheck(locid) {
