@@ -137,10 +137,18 @@
         <!-- Text field -->
         <input type="text" id="locationInput" placeholder="">
         <!-- Send button -->
-        <button id="locBtn">Send location</button>
+        <button id="locBtn">Send location</button> (you should delete this button later...)
         <br>
 
-        <button id="winBtn">Send win</button>
+        <button id="winBtn">Send win</button> (you should delete this button later....)
+
+        <br><br>
+        Here's a checklist for when you want to use this as a template:<br>
+        - The game in the code is probably "Yacht Dice". Make sure it is the correct game.<br>
+        - Update the code in updateSettings if you want to read something from slot data.<br>
+        - Update the code in receivedNewItems. This function gets called when items are received from the server. This specific function only gives the new items, so you won't see the same item appear multiple times.<br>
+        - Determine when you want to call the sendCheck option. Use the same location ids as in your apworld.<br>
+        - Determine when you want to call the sendWin option.
     </div>
 
     <script>
