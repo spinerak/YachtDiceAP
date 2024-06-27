@@ -1254,11 +1254,9 @@
                 <br>
                 <button id="resetBtn" class="NS_category-button">Reset</button>
                 <br>
-                <!-- Highest collected: <span id="highestsubmitted">0</span>
-                <br> -->
                 Next check: <span id="nextgoal">?</span> <span id="nextgoalitem">?</span>
                 <br>
-                Goal score: <span id="finalgoal">?</span>
+                Goal score: <span id="finalgoal">-</span>
                 <br>
                 Last check: <span id="lastcheck">?</span>
                 <br>
@@ -2285,6 +2283,7 @@
         var amRollsF = 6;
         var currentRolls = 0; // Current number of Rolls
         var difficulty = 1; // Difficulty (1 easy, 4 extreme)
+        var num_missions = 1;
         var scoremultipliertype = 0;
         var allowManualInput = 1; // default is yes
         var extrapointsinlogic = 0;
@@ -2301,6 +2300,9 @@
         var fixedScoreMult = 0
         var stepScoreMult = 0
         var turnNumber = 0
+
+        var current_mission = 1
+
 
 
         var missingLocations = []
@@ -2659,7 +2661,7 @@
 
         // Function to increase number of dice
         function increaseNumDice(inc) {
-            if (Math.floor(numDiceF / amDiceF) != Math.floor((numDiceF + inc) / amDiceF)) {
+            if (Math.floor(numDiceF / amDiceF) != Math.floor((numDiceF + inc) / amDiceF) && Math.floor((numDiceF + inc) / amDiceF) >= 1) {
                 addDice(1);
                 playNewItemSound();
             }
@@ -3508,7 +3510,6 @@
 
 
         var nextgoal = 4
-        var highestsubmitted = 0
         var finalgoal = 0
         var lastgoal = 0
         var maxscoreinlogic = -1
@@ -3748,12 +3749,17 @@
 
             let totalDist = { 0: 1 };
             for (let j = 0; j < categories.length; j++) {
-                const name = categories[j].name + '_' + Math.min(8, nbDice) + '_' + Math.min(8, nbRolls);
-                if (!(name in yacht_weights)) {
-                    throw new Error(`The name "${name}" is not in the yacht_weights list.`);
-                    console.log("Error thrown")
+                let dist = {0:100000}
+                if(nbDice >= 1 && nbRolls >= 1){
+                    const name = categories[j].name + '_' + Math.min(8, nbDice) + '_' + Math.min(8, nbRolls);
+                
+                    if (!(name in yacht_weights)) {
+                        throw new Error(`The name "${name}" is not in the yacht_weights list.`);
+                        console.log("Error thrown")
+                    }
+                    dist = { ...yacht_weights[name] };
                 }
-                const dist = { ...yacht_weights[name] };
+                
 
                 for (const key in dist) {
                     dist[key] /= 100000;
@@ -3779,9 +3785,9 @@
             }
 
             const flooredPercentiles = percReturn.map(perc => Math.floor(percentileDistribution(totalDist, perc)));
-            const max_score_result = Math.max(Math.floor(sum(flooredPercentiles) / percReturn.length), 5);
+            const max_score_result = Math.floor(sum(flooredPercentiles) / percReturn.length);
             
-            return max_score_result
+            return max_score_result;
         }
 
         function diceSimulationStringsForJS(categories, nbDice, nbRolls, fixscmu, stescmu, diff) {
@@ -3967,10 +3973,6 @@
                     addToLog("Connected to the server");
                     // You are now connected and authenticated to the server. You can add more code here if need be.
                     connectionOK();
-
-
-
-
 
                 })
                 .catch((error) => {
@@ -4246,17 +4248,32 @@
 
         function updateSettings(packet) {
             if (!offline) {
-                if(packet.slot_data.seed_name == 75883564719266679466){
-                    const checkbox = document.getElementById('requireExactScore');
-                    checkbox.checked = true;
-                    checkbox.disabled = true;
-                    addToLog("Note, this game requires hitting the exact next goal score!")
-                }
+                // if(packet.slot_data.seed_name == 75883564719266679466){
+                //     const checkbox = document.getElementById('requireExactScore');
+                //     checkbox.checked = true;
+                //     checkbox.disabled = true;
+                //     addToLog("Note, this game requires hitting the exact next goal score!")
+                // }
                 amDiceF = packet.slot_data.number_of_dice_fragments_per_dice;
                 amRollsF = packet.slot_data.number_of_roll_fragments_per_roll;
                 finalgoal = packet.slot_data.goal_score;
                 lastgoal = packet.slot_data.last_check_score;
                 difficulty = packet.slot_data.game_difficulty;
+                num_missions = 1;
+                if (packet.slot_data.number_of_missions){
+                    num_missions = packet.slot_data.number_of_missions;
+                    let m = getUrlParameter('m')
+                    if(m){
+                        current_mission = parseInt(m);
+                        console.log("Set mission to ",m);
+                        numDiceF -= (m-1) * amDiceF;
+                        numRollsF -= (m-1) * amRollsF;
+                    }
+                }
+
+
+                
+
                 scoremultipliertype = 0
                 if (packet.slot_data.score_multiplier_type) { //older versions
                     scoremultipliertype = packet.slot_data.score_multiplier_type;
@@ -4265,8 +4282,9 @@
                     allowManualInput = packet.slot_data.allow_manual_input;
                 }
                 maxscoreinlogic = getMaxScoreInLogic()
-
-                document.getElementById("finalgoal").innerText = finalgoal;
+                if(current_mission == num_missions){
+                    document.getElementById("finalgoal").innerText = finalgoal;
+                }
                 document.getElementById("lastcheck").innerText = lastgoal;
                 document.getElementById("maxlogic").innerText = maxscoreinlogic;
 
@@ -4380,9 +4398,19 @@
                     nextgoal = "-"
                     document.getElementById("nextgoalitem").innerText = "";
                 } else {
-                    const firstMissingLocId = packet.missing_locations[0];
-                    nextgoal = firstMissingLocId - 16871244500
-                    askWhatNextItemIs(firstMissingLocId)
+                    const min_number = 16871244500 + (current_mission-1) * 10000000
+                    
+                    const filteredLocations = packet.missing_locations.filter(loc => loc >= min_number);
+                    let firstMissingLocId;
+                    if (filteredLocations.length > 0) {
+                        firstMissingLocId = filteredLocations[0];
+                        nextgoal = firstMissingLocId - (current_mission-1) * 10000000 - 16871244500
+                        askWhatNextItemIs(firstMissingLocId)
+                    } else {
+                        nextgoal = "-"
+                        document.getElementById("nextgoalitem").innerText = "";
+                    }
+                    
                 }
 
                 if (!packet.checked_locations) {
@@ -4391,7 +4419,6 @@
                     // do nothing
                 } else {
                     const lastMissingLocId = packet.checked_locations[packet.checked_locations.length - 1];
-                    highestsubmitted = Math.max(highestsubmitted, lastMissingLocId - 16871244500)
 
                 }
             }
@@ -4420,7 +4447,6 @@
             if(document.getElementById("requireExactScore").checked && inputValue > 10 && nextgoal != inputValue){
                 return;
             }
-            highestsubmitted = Math.max(highestsubmitted, inputValue);
 
             if (nextgoal != '-' && !isNaN(inputValue)) {
                 var updated_first = false
@@ -4429,15 +4455,18 @@
 
 
                     for (let i = nextgoal; i <= inputValue; i++) {
-                        if (missingLocations.includes(i + 16871244500)) {
-                            sendCheck(i + 16871244500);
-                            missingLocations.splice(missingLocations.indexOf(i + 16871244500), 1);
+                        if (missingLocations.includes(i + (current_mission-1) * 10000000 + 16871244500)) {
+                            sendCheck(i + (current_mission-1) * 10000000 + 16871244500);
+                            missingLocations.splice(missingLocations.indexOf(i + (current_mission-1) * 10000000 + 16871244500), 1);
                         }
                     }
 
-                    if (missingLocations.length > 0) {
-                        nextgoal = missingLocations[0] - 16871244500;
-                        askWhatNextItemIs(missingLocations[0])
+                    const min_number = 16871244500 + (current_mission-1) * 10000000
+                    const filteredLocations = missingLocations.filter(loc => loc >= min_number);
+                    
+                    if (filteredLocations.length > 0) {
+                        nextgoal = filteredLocations[0] - (current_mission-1) * 10000000 - 16871244500;
+                        askWhatNextItemIs(filteredLocations[0])
                     } else {
                         nextgoal = "-"
                         document.getElementById("nextgoalitem").innerText = "";
@@ -4461,7 +4490,6 @@
 
         function updateHighscoreAndGoal() {
             document.getElementById("nextgoal").innerText = nextgoal;
-            // document.getElementById("highestsubmitted").innerText = highestsubmitted;
             document.getElementById("maxlogic").innerText = maxscoreinlogic
             document.getElementById("maxlogicalldif").innerText = getMaxScoreInLogic(1) + "/" + getMaxScoreInLogic(2) + "/" + getMaxScoreInLogic(3) + "/" + getMaxScoreInLogic(4)
         }
