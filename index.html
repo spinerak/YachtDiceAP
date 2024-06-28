@@ -2184,8 +2184,10 @@
             // Get the corresponding button element by ID
             var cat = getCategoryID(category)
             if (cat >= 0) {
-                makeVisible(getCategoryID(category));
-                playNewItemSound();
+                if(!allowed_categories.length || allowed_categories.includes(category)){
+                    makeVisible(getCategoryID(category));
+                    playNewItemSound();
+                }
             } else {
                 switch (category) {
                     case "Dice":
@@ -2284,6 +2286,7 @@
         var currentRolls = 0; // Current number of Rolls
         var difficulty = 1; // Difficulty (1 easy, 4 extreme)
         var num_missions = 1;
+        var allowed_categories = [];
         var scoremultipliertype = 0;
         var allowManualInput = 1; // default is yes
         var extrapointsinlogic = 0;
@@ -4269,6 +4272,8 @@
                         numDiceF -= (m-1) * amDiceF;
                         numRollsF -= (m-1) * amRollsF;
                     }
+                    allowed_categories = packet.slot_data.categories_per_mission[current_mission]
+                    console.log("Categories allowed:",allowed_categories)
                 }
 
 
@@ -4399,8 +4404,10 @@
                     document.getElementById("nextgoalitem").innerText = "";
                 } else {
                     const min_number = 16871244500 + (current_mission-1) * 10000000
+                    const max_number = 16871244500 + (current_mission-1) * 10000000 + 1000
                     
-                    const filteredLocations = packet.missing_locations.filter(loc => loc >= min_number);
+                    const filteredLocations = packet.missing_locations.filter(loc => loc >= min_number && loc <= max_number);
+
                     let firstMissingLocId;
                     if (filteredLocations.length > 0) {
                         firstMissingLocId = filteredLocations[0];
@@ -4462,7 +4469,9 @@
                     }
 
                     const min_number = 16871244500 + (current_mission-1) * 10000000
-                    const filteredLocations = missingLocations.filter(loc => loc >= min_number);
+                    const max_number = 16871244500 + (current_mission-1) * 10000000 + 1000
+                    
+                    const filteredLocations = packet.missing_locations.filter(loc => loc >= min_number && loc <= max_number);
                     
                     if (filteredLocations.length > 0) {
                         nextgoal = filteredLocations[0] - (current_mission-1) * 10000000 - 16871244500;
