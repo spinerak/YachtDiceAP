@@ -10,11 +10,13 @@
     <style>
         body {
             text-align: center;
-            background-color: #121212;
+            background-color: rgba(126, 36, 36, 1);
             /* Dark background color */
             color: #ffffff;
             /* Light text color */
             margin: 0;
+            background-size: cover;
+            transition: background-image 2s ease;
         }
 
         .container {
@@ -26,17 +28,21 @@
 
         .left {
             flex: 1;
+            background-color: rgba(0, 0, 0, 0.15);
             /* background-color: #5a1a1a; */
-            background-color: #5a1a1a;
+            /* background-color: #5a1a1a; */
             /* Darker background color */
             /* padding-right: 20px; */
         }
 
         .right {
             flex: 1;
-            background-color: #6a1a1a;
-            /* Darker background color */
-            /* padding: 20px; */
+            background-color: rgba(0, 0, 0, 0.25);	/* Use a flexbox layout */
+            display: flex;
+
+            /* flex-direction: row; */
+            align-items: center;
+            padding: auto;
         }
 
 
@@ -187,7 +193,7 @@
             border-radius: 5px;
             padding: 20px;
             width: 300px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -198,6 +204,10 @@
             margin-bottom: 20px;
             color: #ffffff;
             font-size: 30px;
+        }
+        .login-solo-options {
+            background-color: rgba(0, 0, 0, 0.35);
+            padding: 20px;
         }
 
         .login-label {
@@ -298,7 +308,7 @@
             padding-top: 10px;
             background-color: #444;
             border-radius: 100px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             font-family: Arial, sans-serif;
             color: #eee;
             text-align: left;
@@ -563,17 +573,18 @@
             resize: vertical;
             border: 1px solid #ccc;
             padding: 5px;
-            background-color: #333;
+            background-color: rgba(70, 70, 70, 0.5);
             color: #fff;
             border-color: #666;
             overflow-y: scroll; /* Add scrollbar when content exceeds height */
             text-align: left;
             font-family: Arial, sans-serif;
             word-break: break-word;
+            margin: auto;
         }
 
         .NS_table-container {
-            background-color: #732;
+            /* background-color: #732; */
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
@@ -590,7 +601,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #521;
+            background-color: rgba(0, 0, 0, 0.25);
             border-radius: 5px;
             padding: 0px 10px;
             flex: 1 1 calc(50% - 20px);
@@ -606,9 +617,6 @@
             background-color: #616161;
             color: #cacaca;
             cursor: not-allowed;
-        }
-        .NS_category-box:hover {
-            background-color: #622;
         }
         .NS_category-label {
             font-weight: bold;
@@ -633,6 +641,17 @@
             cursor: pointer;
             transition: background-color 1s;
             font-size: 2vh; /* Adjust the value as needed */
+        }
+        .NS_category-button-2 {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 0.2vh 10px;
+            margin: 2px 0px;
+            cursor: pointer;
+            transition: background-color 1s;
+            font-size: 3vh; /* Adjust the value as needed */
         }
         .NS_category-button:hover {
             background-color: #0056b3;
@@ -787,6 +806,22 @@
             }
         }
 
+        @keyframes pulsate {
+            0% {
+                background-color: #4b7bc2;
+            }
+            50% {
+                background-color: #be0f38;
+            }
+            100% {
+                background-color: #4b7bc2;
+            }
+        }
+
+        .pulsating {
+            animation: pulsate 2s infinite;
+        }
+
 
 
     </style>
@@ -800,6 +835,7 @@
         <div class="tutoroll_container">
             <div class="header-and-button">
                 <h1 class="tutoroll_header">Yacht Dice</h1>
+
                 <div class="button-and-text">
                     <!-- Music button -->
                     <div>
@@ -842,10 +878,10 @@
             </div>
             <div class="small-text">
                 Yacht Dice is made by Spineraks. <br>
-                Huge thanks to SporyTike for all the skins! <br>
                 This site/game is based on Yacht Dice, a public domain dice game. <br>
+                All skins are custom made or free to use non-commercially. <br>
+                Huge thanks to SporyTike and Miawoo for all the skins! <br>
                 The music is AI generated by Suno, non-commercial use. <br>
-                All skins are custom made or free to use. <br>
                 Steamboat Willie song is in public domain. Soundeffect by elevenlabs.io.<br>
                 Hanafuda styles by Sheldon Chen, non-financial profit. <br>
                 <span>Link to Archipelago: <a href="https://archipelago.gg" target="_blank"
@@ -856,6 +892,10 @@
 
 
     </div>
+
+    <script>
+   
+    </script>
 
 
     <script>
@@ -902,7 +942,7 @@
     </div>
 
     <div id="dropdownContainer" class="offlineoptions-container">
-        <div>
+        <div class = "login-solo-options">
             <h2 class="login-heading">Yacht Dice - solo play</h2>
             <div id="optionsselector">
 
@@ -969,7 +1009,7 @@
     <!-- Main page content -->
     <div class="container" id="mainContent">
         <div class="left">
-            <h1>Yacht Dice</h1>
+            <h1 class="tutoroll_header" style="color: white;">Yacht Dice</h1>
 
             <!-- Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=96878">Pixabay</a> -->
 
@@ -979,7 +1019,19 @@
             Click on a dice to lock.
 
             <br>
-            <br><button id="Roll-button" class="NS_category-button">Roll (3 remaining)</button><br><br>
+            <br><button id="Roll-button" class="NS_category-button-2">Roll (3 remaining)</button><br><br>
+
+            <script>
+                const rollButton = document.getElementById('Roll-button');
+
+                // Event listener for button click
+                rollButton.addEventListener('click', function() {
+                    rollButton.classList.remove('pulsating');
+                });
+
+                // Start pulsating initially
+                rollButton.classList.add('pulsating');
+            </script>
 
 
             <div class="info-and-settings-container">
@@ -998,7 +1050,8 @@
 
 
 
-                <button id="toggleSettings">Settings</button>   <button id="toggleCatHelp">Category help</button>  <button id="toggleAchievements" style="display: none;">Achievements</button>
+                <button id="toggleSettings">Settings</button>   <button id="toggleCatHelp">Category help</button>  <button id="toggleAchievements" style="display: none;">Achievements</button><br>
+                <div class="small-text" id = "changeBackgroundImgNotice"> </div>
 
 
                 <div id="cat-container" style="display: none;">
@@ -1031,7 +1084,22 @@
                         <button id="closeSettings" style="position: absolute; top: 5px; right: 10px; cursor: pointer; font-size: 70px; background: none; border: none; color: white;">×</button>
                         <h2 style="text-align: center; margin-top: 0;">Settings</h2>
                         
-                        <button id="changeColors1">Randomize colors</button>  <br><br>
+                        <h3>Choose your own background:</h3>
+                        Either upload an image or enter a url. Then press 'Change Background'.
+                        <input type="text" id="imageUrl" placeholder="Enter image URL here"> OR 
+                        <input type="file" id="imageFile" accept="image/*"> <br>
+                        By changing your background, you understand the following: <br>
+                        1) The background image you choose is your own alteration and is not part of Yacht Dice (for copyright reasons). <br>
+                        2) Don't share screenshots/videos of Yacht Dice with inappropriate images. <br>
+                        3) Don't overshare Yacht Dice screenshots with copyrighted content outside of the Yacht Dice thread/channel.<br>
+                        Your last image will be saved locally and will be used next time.<br>
+                        <button id="changeBackground">Change Background</button>  
+                        <button id="resetBackground"">Reset Background</button> <br>
+                        
+                        <hr><br>
+
+
+                        
                         <label>Dice size:</label>
                         <button id="decreaseDiceSize">-</button>
                         <!--<input type="number" id="dice-size" value="70" min="10" max="200">-->
@@ -1063,7 +1131,7 @@
                                 Your browser does not support the audio element.
                             </audio>
                             <div id="customControls"
-                                style="border: 2px solid gray; padding: 5px; width: 150px; margin: 5px auto; ">
+                                style="border: 2px solid gray; padding: 5px; width: 150px; margin: 5px; ">
                                 <label>Music:</label><br>
                                 <button id="playpause"
                                     style="padding: 0; border: none; cursor: pointer; border-radius: 5px; margin: 0; font-size: 30px; background: none;"
@@ -1082,7 +1150,7 @@
 
                         <div id="soundeffectdiv">
                             <div id="customControls"
-                                style="border: 2px solid gray; padding: 5px; width: 150px; margin: 5px auto; ">
+                                style="border: 2px solid gray; padding: 5px; width: 150px; margin: 5px; ">
                                 <label>Sound effect:</label><br>
                                 <input type="checkbox" id="enableSoundEffects" checked>
                                 <label for="enableSoundEffects">Enabled</label> <br>
@@ -1146,138 +1214,155 @@
 
         </div>
         <div class="right">
-            <div class="table-container">
-                <div class="NS_table-container">
-                    <div class="NS_boxes">
-                        <div class="NS_category-box" id="catbox1">
-                            <div id="catlab1" class="NS_category-label"></div>
-                            <div id="catmult1" class="NS_mult-label">×0</div>
-                            <button id="category1" class="NS_category-button">0</button>
+            <div>
+                <div class="table-container">
+                    <div class="NS_table-container">
+                        <div class="NS_boxes">
+                            <div class="NS_category-box" id="catbox1">
+                                <div id="catlab1" class="NS_category-label"></div>
+                                <div id="catmult1" class="NS_mult-label">×0</div>
+                                <button id="category1" class="NS_category-button">0</button>
+                            </div>
+                            <div class="NS_category-box" id="catbox2">
+                                <div id="catlab2" class="NS_category-label">Twos</div>
+                                <div id="catmult2" class="NS_mult-label">×0</div>
+                                <button id="category2" class="NS_category-button">0</button>
+                            </div>
+                            <div class="NS_category-box" id="catbox3">
+                                <div id="catlab3" class="NS_category-label">Threes</div>
+                                <div id="catmult3" class="NS_mult-label">×0</div>
+                                <button id="category3" class="NS_category-button">0</button>
+                            </div>
+                            <div class="NS_category-box" id="catbox4">
+                                <div id="catlab4" class="NS_category-label"></div>
+                                <div id="catmult4" class="NS_mult-label">×0</div>
+                                <button id="category4" class="NS_category-button">0</button>
+                            </div>
+                            <div class="NS_category-box" id="catbox5">
+                                <div id="catlab5" class="NS_category-label"></div>
+                                <div id="catmult5" class="NS_mult-label">×0</div>
+                                <button id="category5" class="NS_category-button">0</button>
+                            </div>
+                            <div class="NS_category-box" id="catbox6">
+                                <div id="catlab6" class="NS_category-label"></div>
+                                <div id="catmult6" class="NS_mult-label">×0</div>
+                                <button id="category6" class="NS_category-button">0</button>
+                            </div>
+                            <div class="NS_category-box" id="catbox7">
+                                <div id="catlab7" class="NS_category-label"></div>
+                                <div id="catmult7" class="NS_mult-label">×0</div>
+                                <button id="category7" class="NS_category-button">0</button>
+                            </div>
+                            <div class="NS_category-box" id="catbox8">
+                                <div id="catlab8" class="NS_category-label"></div>
+                                <div id="catmult8" class="NS_mult-label">×0</div>
+                                <button id="category8" class="NS_category-button">0</button>
+                            </div>
+                            <div class="NS_category-box" id="catbox9">
+                                <div id="catlab9" class="NS_category-label"></div>
+                                <div id="catmult9" class="NS_mult-label">×0</div>
+                                <button id="category9" class="NS_category-button">0</button>
+                            </div>
+                            <div class="NS_category-box" id="catbox10">
+                                <div id="catlab10" class="NS_category-label"></div>
+                                <div id="catmult10" class="NS_mult-label">×0</div>
+                                <button id="category10" class="NS_category-button">0</button>
+                            </div>
+                            <div class="NS_category-box" id="catbox11">
+                                <div id="catlab11" class="NS_category-label"></div>
+                                <div id="catmult11" class="NS_mult-label">×0</div>
+                                <button id="category11" class="NS_category-button">0</button>
+                            </div>
+                            <div class="NS_category-box" id="catbox12">
+                                <div id="catlab12" class="NS_category-label"></div>
+                                <div id="catmult12" class="NS_mult-label">×0</div>
+                                <button id="category12" class="NS_category-button">0</button>
+                            </div>
+                            <div class="NS_category-box" id="catbox13">
+                                <div id="catlab13" class="NS_category-label"></div>
+                                <div id="catmult13" class="NS_mult-label">×0</div>
+                                <button id="category13" class="NS_category-button">0</button>
+                            </div>
+                            <div class="NS_category-box" id="catbox14">
+                                <div id="catlab14" class="NS_category-label"></div>
+                                <div id="catmult14" class="NS_mult-label">×0</div>
+                                <button id="category14" class="NS_category-button">0</button>
+                            </div>
+                            <div class="NS_category-box" id="catbox15">
+                                <div id="catlab15" class="NS_category-label"></div>
+                                <div id="catmult15" class="NS_mult-label">×0</div>
+                                <button id="category15" class="NS_category-button">0</button>
+                            </div>
+                            <div class="NS_category-box" id="catbox16">
+                                <div id="catlab16" class="NS_category-label"></div>
+                                <div id="catmult16" class="NS_mult-label">×0</div>
+                                <button id="category16" class="NS_category-button">0</button>
+                            </div>
+                            
                         </div>
-                        <div class="NS_category-box" id="catbox2">
-                            <div id="catlab2" class="NS_category-label">Twos</div>
-                            <div id="catmult2" class="NS_mult-label">×0</div>
-                            <button id="category2" class="NS_category-button">0</button>
+                        <hr>
+                        <div class="NS_boxes">
+                            <div class="NS_category-box" title="Extra points are in logic and might be necessary">
+                                <div id="catlabextrapoints" class="NS_category-label">Extra points</div>
+                                <button id="catextrapoints" disabled class="NS_category-button" style="background-color: rgba(51, 51, 51, 0);">0</button>
+                            </div>
+                            <div class="NS_category-box" title="Bonus points make the game easier as they are out of logic">
+                                <div id="catlabbonuspoints" class="NS_category-label">Bonus points</div>
+                                <button id="catbonuspoints" disabled class="NS_category-button" style="background-color: rgba(51, 51, 51, 0);">0</button>
+                            </div>
                         </div>
-                        <div class="NS_category-box" id="catbox3">
-                            <div id="catlab3" class="NS_category-label">Threes</div>
-                            <div id="catmult3" class="NS_mult-label">×0</div>
-                            <button id="category3" class="NS_category-button">0</button>
+                        <hr>
+                        <hr>
+                        <div class="NS_boxes"></div>
+                            <div class="NS_category-box">
+                                <div class="NS_category-label" style="font-weight: bold;">Total</div>
+                                <button id="total" disabled class="NS_category-button"  style="background-color: rgba(51, 51, 51, 0); font-weight: bold; font-size: 100%;">0</span>
+                            </div>
                         </div>
-                        <div class="NS_category-box" id="catbox4">
-                            <div id="catlab4" class="NS_category-label"></div>
-                            <div id="catmult4" class="NS_mult-label">×0</div>
-                            <button id="category4" class="NS_category-button">0</button>
-                        </div>
-                        <div class="NS_category-box" id="catbox5">
-                            <div id="catlab5" class="NS_category-label"></div>
-                            <div id="catmult5" class="NS_mult-label">×0</div>
-                            <button id="category5" class="NS_category-button">0</button>
-                        </div>
-                        <div class="NS_category-box" id="catbox6">
-                            <div id="catlab6" class="NS_category-label"></div>
-                            <div id="catmult6" class="NS_mult-label">×0</div>
-                            <button id="category6" class="NS_category-button">0</button>
-                        </div>
-                        <div class="NS_category-box" id="catbox7">
-                            <div id="catlab7" class="NS_category-label"></div>
-                            <div id="catmult7" class="NS_mult-label">×0</div>
-                            <button id="category7" class="NS_category-button">0</button>
-                        </div>
-                        <div class="NS_category-box" id="catbox8">
-                            <div id="catlab8" class="NS_category-label"></div>
-                            <div id="catmult8" class="NS_mult-label">×0</div>
-                            <button id="category8" class="NS_category-button">0</button>
-                        </div>
-                        <div class="NS_category-box" id="catbox9">
-                            <div id="catlab9" class="NS_category-label"></div>
-                            <div id="catmult9" class="NS_mult-label">×0</div>
-                            <button id="category9" class="NS_category-button">0</button>
-                        </div>
-                        <div class="NS_category-box" id="catbox10">
-                            <div id="catlab10" class="NS_category-label"></div>
-                            <div id="catmult10" class="NS_mult-label">×0</div>
-                            <button id="category10" class="NS_category-button">0</button>
-                        </div>
-                        <div class="NS_category-box" id="catbox11">
-                            <div id="catlab11" class="NS_category-label"></div>
-                            <div id="catmult11" class="NS_mult-label">×0</div>
-                            <button id="category11" class="NS_category-button">0</button>
-                        </div>
-                        <div class="NS_category-box" id="catbox12">
-                            <div id="catlab12" class="NS_category-label"></div>
-                            <div id="catmult12" class="NS_mult-label">×0</div>
-                            <button id="category12" class="NS_category-button">0</button>
-                        </div>
-                        <div class="NS_category-box" id="catbox13">
-                            <div id="catlab13" class="NS_category-label"></div>
-                            <div id="catmult13" class="NS_mult-label">×0</div>
-                            <button id="category13" class="NS_category-button">0</button>
-                        </div>
-                        <div class="NS_category-box" id="catbox14">
-                            <div id="catlab14" class="NS_category-label"></div>
-                            <div id="catmult14" class="NS_mult-label">×0</div>
-                            <button id="category14" class="NS_category-button">0</button>
-                        </div>
-                        <div class="NS_category-box" id="catbox15">
-                            <div id="catlab15" class="NS_category-label"></div>
-                            <div id="catmult15" class="NS_mult-label">×0</div>
-                            <button id="category15" class="NS_category-button">0</button>
-                        </div>
-                        <div class="NS_category-box" id="catbox16">
-                            <div id="catlab16" class="NS_category-label"></div>
-                            <div id="catmult16" class="NS_mult-label">×0</div>
-                            <button id="category16" class="NS_category-button">0</button>
-                        </div>
-                        
                     </div>
-                    <hr>
-                    <div class="NS_boxes">
-                        <div class="NS_category-box" title="Extra points are in logic and might be necessary">
-                            <div id="catlabextrapoints" class="NS_category-label">Extra points</div>
-                            <button id="catextrapoints" disabled class="NS_category-button" style="background-color: rgba(51, 51, 51, 0);">0</button>
-                        </div>
-                        <div class="NS_category-box" title="Bonus points make the game easier as they are out of logic">
-                            <div id="catlabbonuspoints" class="NS_category-label">Bonus points</div>
-                            <button id="catbonuspoints" disabled class="NS_category-button" style="background-color: rgba(51, 51, 51, 0);">0</button>
-                        </div>
-                    </div>
-                    <hr>
-                    <hr>
-                    <div class="NS_boxes"></div>
-                        <div class="NS_category-box">
-                            <div class="NS_category-label" style="font-weight: bold;">Total</div>
-                            <button id="total" disabled class="NS_category-button"  style="background-color: rgba(51, 51, 51, 0); font-weight: bold; font-size: 100%;">0</span>
-                        </div>
-                    </div>
+                    <br>
+                    <button id="resetBtn" class="NS_category-button-2">Reset</button>
+                    <br>
+                    Next check: <span id="nextgoal">?</span> <span id="nextgoalitem">?</span>
+                    <br>
+                    Goal score: <span id="finalgoal">-</span>
+                    <br>
+                    Last check: <span id="lastcheck">?</span>
+                    <br>
+                    Max score in logic: <span id="maxlogic">?</span> (<span id="diffmode">?</span>)
+                    <br>
+                    <div id="timer" style="display: none;">00:00:00</div>
+                    <br>
+                    <button id="saveBtn" class="NS_category-button">Save (see chat)</button>
+                    <br>
+                    Difficulty testing: <br>
+                    <input type="checkbox" id="disableItemGet">
+                    <label for="disableItemGet">Disable score submit (for testing/debug) </label> 
+                    <br>
+                    Max score in logic Easy/Medium/Hard/Extreme: <span id="maxlogicalldif">?</span>
                 </div>
-                <br>
-                <button id="resetBtn" class="NS_category-button">Reset</button>
-                <br>
-                Next check: <span id="nextgoal">?</span> <span id="nextgoalitem">?</span>
-                <br>
-                Goal score: <span id="finalgoal">-</span>
-                <br>
-                Last check: <span id="lastcheck">?</span>
-                <br>
-                Max score in logic: <span id="maxlogic">?</span> (<span id="diffmode">?</span>)
-                <br>
-                <div id="timer" style="display: none;">00:00:00</div>
-                <br>
-                <button id="saveBtn" class="NS_category-button">Save (see chat)</button>
-                <br>
-                Difficulty testing: <br>
-                <input type="checkbox" id="disableItemGet">
-                <label for="disableItemGet">Disable score submit (for testing/debug) </label> 
-                <br>
-                Max score in logic Easy/Medium/Hard/Extreme: <span id="maxlogicalldif">?</span>
             </div>
         </div>
     </div>
     <img id="boatImage" src="Images/boaty.png" alt="Boat Image">
 
 
-
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var today = new Date();
+            var month = today.getMonth();
+            var day = today.getDate();
+            
+            if (month === 3 && day === 1) { // April is month 3 (0-indexed in JavaScript)
+                var headers = document.querySelectorAll('.tutoroll_header, h1');
+                headers.forEach(function(header) {
+                    if (header.textContent === "Yacht Dice") {
+                        header.textContent = "Gyacht Skibidice";
+                    }
+                });
+            }
+        });
+    </script>
 
 
 
@@ -1554,7 +1639,7 @@
             { id: 1, description: 'Score a Yacht', image: 'Achievement_pictures/a1.webp' },
             { id: 2, description: 'Win a Game', image: 'Achievement_pictures/a2.webp' },
             { id: 4, description: 'Reach 1000 points', image: 'Achievement_pictures/a4.webp' },
-            { id: 3, description: 'Randomize colors (in settings)', image: 'Achievement_pictures/a3.webp' },
+            { id: 3, description: 'Choose your own background', image: 'Achievement_pictures/a3.webp' },
             { id: 9999, description: 'More achievements soon maybe :)', image: 'Achievement_pictures/a9999.png' },
         ];
         function showAchievementDisplay(description, image) {
@@ -1699,6 +1784,42 @@
                     "Skins/Paper/6.webp"
                 ],
                 [
+                    "Skins/Looker/0.webp",
+                    "Skins/Looker/1.webp",
+                    "Skins/Looker/2.webp",
+                    "Skins/Looker/3.webp",
+                    "Skins/Looker/4.webp",
+                    "Skins/Looker/5.webp",
+                    "Skins/Looker/6.webp"
+                ],
+                [
+                    "Skins/APlogo2/0.svg",
+                    "Skins/APlogo2/1.svg",
+                    "Skins/APlogo2/2.svg",
+                    "Skins/APlogo2/3.svg",
+                    "Skins/APlogo2/4.svg",
+                    "Skins/APlogo2/5.svg",
+                    "Skins/APlogo2/6.svg"
+                ],
+                [
+                    "Skins/Hearts/0.svg",
+                    "Skins/Hearts/1.svg",
+                    "Skins/Hearts/2.svg",
+                    "Skins/Hearts/3.svg",
+                    "Skins/Hearts/4.svg",
+                    "Skins/Hearts/5.svg",
+                    "Skins/Hearts/6.svg"
+                ],
+                [
+                    "Skins/APlogo/0.png",
+                    "Skins/APlogo/1.png",
+                    "Skins/APlogo/2.png",
+                    "Skins/APlogo/3.png",
+                    "Skins/APlogo/4.png",
+                    "Skins/APlogo/5.png",
+                    "Skins/APlogo/6.png"
+                ],
+                [
                     "Skins/Hana/0.webp",
                     "Skins/Hana/1A.webp",
                     "Skins/Hana/2A.webp",
@@ -1769,15 +1890,6 @@
                     "Skins/Graph/4.png",
                     "Skins/Graph/5.png",
                     "Skins/Graph/6.png"
-                ],
-                [
-                    "Skins/APlogo/0.png",
-                    "Skins/APlogo/1.png",
-                    "Skins/APlogo/2.png",
-                    "Skins/APlogo/3.png",
-                    "Skins/APlogo/4.png",
-                    "Skins/APlogo/5.png",
-                    "Skins/APlogo/6.png"
                 ]
             ];
 
@@ -2544,7 +2656,7 @@
                 diceStyle = parseInt(storedIntegerString, 10); // Parse the string back to an integer
             }
         } else if(localStorage.getItem('settings_randomstyleonstartup') === 'true'){
-            diceStyle = Math.floor(Math.random() * 10)
+            diceStyle = Math.floor(Math.random() * 13)
         } else {
             localStorage.setItem('settings_randomstyleonstartup', checkbox_randstyle.checked);
         }
@@ -3052,7 +3164,7 @@
 
         // Listener function for category buttons
         function updateButtonValue(buttonId, score, catquan, needForNextGoal, needForFinalGoal, needForLastGoal) {
-            score = Math.floor(score * (1 + fixedScoreMult + turnNumber * stepScoreMult) * Math.pow(2,catquan-1));
+            score = Math.floor(score * (1 + fixedScoreMult + turnNumber * stepScoreMult).toFixed(2) * Math.pow(2,catquan-1));
             var requireExactScoreOK =  !document.getElementById("requireExactScore").checked || score == needForNextGoal
             var button = document.getElementById(buttonId);
             if (!button.disabled) { 
@@ -4977,6 +5089,7 @@
                 result[i] = "";
             }
 
+            result[1] = "Good RNG"
             result[finalgoal] = "Victory"
             result[lastgoal] = "Fun Fact"
 
@@ -5152,143 +5265,94 @@
         };
 
 
-        //randomize colors
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-        function changeColors(mode){
-            function generateColors(numColors, mode) {
-                var colors = [];
+        function changeBackground() {
+            const fileInput = document.getElementById('imageFile');
+            const urlInput = document.getElementById('imageUrl');
+            const file = fileInput.files[0];
+            const imageUrl = urlInput.value.trim();
 
-                function generateRandomDarkColor() {
-                    // Generate random RGB values in the range [0, 128)
-                    var r = Math.floor(Math.random() * 128);
-                    var g = Math.floor(Math.random() * 128);
-                    var b = Math.floor(Math.random() * 128);
-
-                    // Convert to hexadecimal and format
-                    var color = "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-                    return color;
+            if (imageUrl) {
+                if (isValidUrl(imageUrl)) {
+                    setBackground(imageUrl);
+                } else {
+                    alert('Invalid URL. Please enter a valid image URL.');
                 }
-
-                function generateSimilarColor(hexColor) {
-                    // Convert hex color to RGB
-                    var rgb = hexToRgb(hexColor);
-
-                    // Increase brightness (lighten)
-                    var r = Math.max(0, Math.min(rgb.r + Math.floor(-25 + 50 * Math.random()), 255)); // Increase red component
-                    var g = Math.max(0, Math.min(rgb.g + Math.floor(-25 + 50 * Math.random()), 255)); // Increase green component
-                    var b = Math.max(0, Math.min(rgb.b + Math.floor(-25 + 50 * Math.random()), 255)); // Increase blue component
-
-                    // Convert back to hex
-                    var lighterColor = rgbToHex(r, g, b);
-                    return lighterColor;
-                }
-
-                function generateLighterColor(hexColor) {
-                    // Convert hex color to RGB
-                    var rgb = hexToRgb(hexColor);
-
-                    // Increase brightness (lighten)
-                    var r = Math.min(rgb.r + Math.floor(50 * Math.random()), 255); // Increase red component
-                    var g = Math.min(rgb.g + Math.floor(50 * Math.random()), 255); // Increase green component
-                    var b = Math.min(rgb.b + Math.floor(50 * Math.random()), 255); // Increase blue component
-
-                    // Convert back to hex
-                    var lighterColor = rgbToHex(r, g, b);
-                    return lighterColor;
-                }
-
-                function generateDarkerColor(hexColor) {
-                    // Convert hex color to RGB
-                    var rgb = hexToRgb(hexColor);
-
-                    // Decrease brightness (darken)
-                    var r = Math.max(rgb.r - Math.floor(50 * Math.random()), 0); // Decrease red component
-                    var g = Math.max(rgb.g - Math.floor(50 * Math.random()), 0); // Decrease green component
-                    var b = Math.max(rgb.b - Math.floor(50 * Math.random()), 0); // Decrease blue component
-
-                    // Convert back to hex
-                    var darkerColor = rgbToHex(r, g, b);
-                    return darkerColor;
-                }
-
-                function hexToRgb(hex) {
-                    // Remove # if present
-                    hex = hex.replace(/^#/, '');
-
-                    // Convert to RGB
-                    var bigint = parseInt(hex, 16);
-                    var r = (bigint >> 16) & 255;
-                    var g = (bigint >> 8) & 255;
-                    var b = bigint & 255;
-
-                    return { r: r, g: g, b: b };
-                }
-
-                function rgbToHex(r, g, b) {
-                    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-                }
-
-                function componentToHex(c) {
-                    var hex = c.toString(16);
-                    return hex.length == 1 ? "0" + hex : hex;
-                }
-
-                if (mode === 1) {
-                    // Mode 1: Random hue (dark), then light and dark variations for each color entry
-                    var baseColor = generateRandomDarkColor();
-                    for (var i = 0; i < numColors; i++) {
-                        colors.push(generateSimilarColor(baseColor));
+            } else if (file) {
+                if (isValidFileType(file) && isValidFileSize(file)) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imageData = e.target.result;
+                        setBackground(imageData);
                     }
-                } else if (mode === 2) {
-                    // Mode 2: Random dark colors
-                    for (var i = 0; i < numColors; i++) {
-                        colors.push(generateRandomDarkColor());
-                    }
-                } else if (mode === 3) {
-                    // Mode 3: Two random dark colors, with light and dark variations for each color entry
-                    var color1 = generateRandomDarkColor();
-                    var color2 = generateRandomDarkColor();
-
-                    for (var i = 0; i < numColors; i++) {
-                        var randomColor = Math.random() < 0.5 ? color1 : color2;
-                        colors.push(generateSimilarColor(randomColor));
-                    }
+                    reader.readAsDataURL(file);
+                } else if (!isValidFileType(file)) {
+                    alert('Invalid file type. Please select an image file.');
+                } else if (!isValidFileSize(file)) {
+                    alert('File size exceeds the 10MB limit. Please select a smaller file.');
                 }
-
-                return colors;
             }
 
-            // Example usage:
-            var numColors = 5;
-            var colors = generateColors(numColors, mode);
-
-            document.querySelector('.NS_table-container').style.backgroundColor = colors[0];
-            document.querySelectorAll('.NS_category-box').forEach(function(box) {
-                box.style.backgroundColor = colors[1];
-            });
-
-            document.querySelector('.left').style.backgroundColor = colors[2];
-            document.querySelector('.right').style.backgroundColor = colors[3];
-            const styleString = `.NS_category-box:hover { background-color: ${colors[4]} !important; }`;   
-            document.head.appendChild(document.createElement('style')).innerHTML = styleString;  
-            console.log(colors)
-        } 
-        
-
-        document.getElementById('changeColors1').addEventListener('click', function() {
-            if(Math.random() < 0.333){
-                changeColors(1);
-            } else if(Math.random() < 0.5){
-                changeColors(2);
-            } else {
-                changeColors(3);
-            }
             addAchievement(3);
+        }
+
+        function setBackground(imageData) {
+            document.body.style.backgroundImage = `url('${sanitize(imageData)}')`;
+            localStorage.setItem('backgroundImage', imageData);
+            document.getElementById('changeBackgroundImgNotice').textContent = "The background is user-submitted and not part of Yacht Dice.";
+        }
+
+        function isValidUrl(url) {
+            try {
+                new URL(url);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function isValidFileType(file) {
+            const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            return validImageTypes.includes(file.type);
+        }
+
+        function isValidFileSize(file) {
+            return file.size <= MAX_FILE_SIZE;
+        }
+
+        function sanitize(input) {
+            const element = document.createElement('div');
+            element.innerText = input;
+            return element.innerHTML;
+        }
+
+        // Load background from localStorage on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedBackground = localStorage.getItem('backgroundImage');
+            if (savedBackground) {
+                setBackground(savedBackground);
+            }
         });
-    
 
+        window.onload = function() {
+            const savedImage = localStorage.getItem('backgroundImage');
+            if(savedImage){
+                setBackground(savedImage);
+            }
+        }
+        document.getElementById('changeBackground').addEventListener('click', function () {
+            changeBackground();
+        });
+        document.getElementById('resetBackground').addEventListener('click', function () {
+            resetBackground();
+        });
 
-
+        function resetBackground() {
+            document.body.style.backgroundImage = 'none';
+            localStorage.removeItem('backgroundImage');
+            document.getElementById('changeBackgroundImgNotice').textContent = ""
+        }
 
 
     </script>
