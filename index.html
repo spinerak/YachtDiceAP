@@ -4377,13 +4377,15 @@
                 num_missions = 1;
                 if (packet.slot_data.number_of_missions){
                     num_missions = packet.slot_data.number_of_missions;
-                    let diff_inc = packet.slot_data.mission_difficulty_increase;
+                    let mission_handicaps = packet.slot_data.mission_handicaps;
                     let m = getUrlParameter('m')
                     if(m){
                         current_mission = parseInt(m);
                         console.log("Set mission to ",m);
-                        numDiceF -= (m-1) * diff_inc * amDiceF;
-                        numRollsF -= (m-1) * diff_inc * amRollsF;
+                        numDiceF -= mission_handicaps[m-1].filter(item => item === "D").length * amDiceF;
+                        numRollsF -= mission_handicaps[m-1].filter(item => item === "R").length * amRollsF;
+                        gotExtraPoint(-mission_handicaps[m-1].filter(item => item === "P").length * 100, true);
+                        fixedScoreMult -= mission_handicaps[m-1].filter(item => item === "M").length * 0.5;
                     }
                     allowed_categories = packet.slot_data.categories_per_mission[current_mission-1]
                     console.log("Categories allowed:",allowed_categories)
