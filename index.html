@@ -1811,6 +1811,24 @@
                     "Skins/Hearts/6.svg"
                 ],
                 [
+                    "Skins/Digital/digital0.svg",
+                    "Skins/Digital/digital1.svg",
+                    "Skins/Digital/digital2.svg",
+                    "Skins/Digital/digital3.svg",
+                    "Skins/Digital/digital4.svg",
+                    "Skins/Digital/digital5.svg",
+                    "Skins/Digital/digital6.svg"
+                ],
+                [
+                    "Skins/Greenish/0.svg",
+                    "Skins/Greenish/1.svg",
+                    "Skins/Greenish/2.svg",
+                    "Skins/Greenish/3.svg",
+                    "Skins/Greenish/4.svg",
+                    "Skins/Greenish/5.svg",
+                    "Skins/Greenish/6.svg"
+                ],
+                [
                     "Skins/APlogo/0.png",
                     "Skins/APlogo/1.png",
                     "Skins/APlogo/2.png",
@@ -2656,7 +2674,7 @@
                 diceStyle = parseInt(storedIntegerString, 10); // Parse the string back to an integer
             }
         } else if(localStorage.getItem('settings_randomstyleonstartup') === 'true'){
-            diceStyle = Math.floor(Math.random() * 13)
+            diceStyle = Math.floor(Math.random() * 15)
         } else {
             localStorage.setItem('settings_randomstyleonstartup', checkbox_randstyle.checked);
         }
