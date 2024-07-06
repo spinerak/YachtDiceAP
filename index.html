@@ -4389,6 +4389,10 @@
                     }
                     allowed_categories = packet.slot_data.categories_per_mission[current_mission-1]
                     console.log("Categories allowed:",allowed_categories)
+                }else{
+                    if(packet.slot_data.allowed_categories){
+                        allowed_categories = packet.slot_data.allowed_categories;
+                    }
                 }
 
 
@@ -4437,41 +4441,45 @@
                 } else {
                     apworldversion = packet.slot_data.ap_world_version;
                     if (apworldversion == "1.0.1") {
-                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld 2.1.0 is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "1.1") {
-                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld 2.1.0 is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
+                    } else if (apworldversion == "2.1.0") {
+                        //up to date
                     } else if (apworldversion == "2.0.5") {
-                        //up to date
+                        addToLog("Apworld 2.1.0 is out! No noticable changes though :)", true);
+                        addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "2.0.6") {
-                        //up to date
+                        addToLog("Apworld 2.1.0 is out! No noticable changes though :)", true);
+                        addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "2.0.3") {
-                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld 2.1.0 is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "2.0.4") {
-                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld 2.1.0 is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "2.0.2") {
-                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld 2.1.0 is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "2.0.1") {
-                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld 2.1.0 is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "2.0") {
-                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld 2.1.0 is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "1.0") {
-                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld 2.1.0 is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "0.4") {
-                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld 2.1.0 is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else if (apworldversion == "0.3") {
-                        addToLog("Apworld 2.0.5 is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld 2.1.0 is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     } else {
-                        addToLog("Warning, apworld version does not match with website version.\nApworld: " + apworldversion + ", website: 2.0.5", true);
+                        addToLog("Warning, apworld version does not match with website version.\nApworld: " + apworldversion + ", website: 2.1.0", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     }
                 }
