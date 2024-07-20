@@ -20,6 +20,7 @@
             background-image: url('Images/Pattern.svg');
             background-repeat: repeat;
             background-size: auto; /* or cover/contain as needed */
+            font-family: Arial, sans-serif;
         }
 
         .container {
@@ -654,7 +655,7 @@
             padding: 0.2vh 10px;
             margin: 2px 0px;
             cursor: pointer;
-            transition: background-color 1s;
+            transition: background-color 2s;
             font-size: 2vh; /* Adjust the value as needed */
         }
         .NS_category-button-2 {
@@ -665,11 +666,8 @@
             padding: 0.2vh 10px;
             margin: 2px 0px;
             cursor: pointer;
-            transition: background-color 1s;
+            /* transition: background-color 1s; */
             font-size: 3vh; /* Adjust the value as needed */
-        }
-        .NS_category-button:hover {
-            background-color: #0056b3;
         }
         @media (max-width: 600px) {
             .NS_category-box {
@@ -957,7 +955,12 @@
                     <option value="Medium" selected>Medium</option>
                     <option value="Hard">Hard</option>
                     <option value="Extreme">Extreme</option>
-                </select>
+                </select> 
+                <br>
+                <label for="big_waves_mode_checkbox" id="big_waves_mode_checkbox_label">
+                    <input type="checkbox" id="big_waves_mode_checkbox" name="big_waves_mode_checkbox">
+                    [alpha] New "Big waves" mode; lose an item every 100 points.
+                </label>
                 <br><br>
             </div>
             <button id="playofflineafteroptions"">Let's roll!</button>
@@ -1055,7 +1058,9 @@
 
 
 
-                <button id="toggleSettings">Settings</button>   <button id="toggleCatHelp">Category help</button>  <button id="toggleAchievements" style="display: none;">Achievements</button><br>
+                <button class="NS_category-button" id="toggleSettings">Settings</button>   
+                <button class="NS_category-button" id="toggleCatHelp">Category help</button>  
+                <button class="NS_category-button" id="toggleAchievements" style="display: none;">Achievements</button><br>
                 <div class="small-text" id = "changeBackgroundImgNotice"> </div>
 
 
@@ -1213,7 +1218,7 @@
             <input type="text" id="messageInput" placeholder="">
 
             <!-- Send button -->
-            <button id="chatBtn">Send chat</button>
+            <button class="NS_category-button" id="chatBtn">Send chat</button>
 
 
 
@@ -1557,6 +1562,7 @@
         function playPause() {
             if (musicPlayer.paused) {
                 play();
+                // window.open("https://soundcloud.com/spineraks/albums", "_blank");
             } else {
                 pause();
             }
@@ -1832,6 +1838,24 @@
                     "Skins/Greenish/4.svg",
                     "Skins/Greenish/5.svg",
                     "Skins/Greenish/6.svg"
+                ],
+                [
+                    "Skins/Trip/0.webp",
+                    "Skins/Trip/1.webp",
+                    "Skins/Trip/2.webp",
+                    "Skins/Trip/3.webp",
+                    "Skins/Trip/4.webp",
+                    "Skins/Trip/5.webp",
+                    "Skins/Trip/6.webp"
+                ],
+                [
+                    "Skins/Shield/shield0.svg",
+                    "Skins/Shield/shield1.svg",
+                    "Skins/Shield/shield2.svg",
+                    "Skins/Shield/shield3.svg",
+                    "Skins/Shield/shield4.svg",
+                    "Skins/Shield/shield5.svg",
+                    "Skins/Shield/shield6.svg"
                 ],
                 [
                     "Skins/APlogo/0.png",
@@ -2648,19 +2672,21 @@
 
 
 
-
-
-        document.getElementById('resetBtn').addEventListener('click', function () {
+        function resetAll(){
             // Get the value inside the total td element
             for (let i = 1; i <= 16; i++) {
-                updateButtonValue("category" + i, 0, 0, 100, 1000);
-                document.getElementById("category" + i).disabled = false;
+                            updateButtonValue("category" + i, 0, 0, 100, 1000);
+                            document.getElementById("category" + i).disabled = false;
             }
             calculateTotalAndUpdate();
             nextTurn();
             turnNumber = 0;
             updateParButtons();
             canRoll = true;
+        }
+
+        document.getElementById('resetBtn').addEventListener('click', function () {
+            resetAll();
         });
 
 
@@ -2679,7 +2705,7 @@
                 diceStyle = parseInt(storedIntegerString, 10); // Parse the string back to an integer
             }
         } else if(localStorage.getItem('settings_randomstyleonstartup') === 'true'){
-            diceStyle = Math.floor(Math.random() * 15)
+            diceStyle = Math.floor(Math.random() * 17)
         } else {
             localStorage.setItem('settings_randomstyleonstartup', checkbox_randstyle.checked);
         }
@@ -2955,6 +2981,8 @@
         }
 
 
+        let keydownListeners = {}; // Object to keep track of keydown listeners for each dice
+
         function addDice() {
             let i = Math.floor(numDiceF / amDiceF);
 
@@ -2968,30 +2996,29 @@
             dice.setAttribute('style-value', diceStyle); // Set data-value attribute with rolled value
             dice.setAttribute('keep', false); // Set data-value attribute with rolled value
 
-            // let label = document.createElement("label");
-            // label.id = `keepL${i}`;
-            // label.classList.add("keep-label");
-            // label.innerText = "Roll"; // You can customize the label text here
-
-            // Function to handle click event and keyboard press
-            function handleKeepAction(diceId, ind) {
-                keepDice(diceId);
-            }
-
-            // Adding event listener to the dice container
-            diceContainer.addEventListener('click', function () {
-                handleKeepAction(`dice${i}`, i);
-            });
-
-            // Adding event listener to the document for keyboard press
-            document.addEventListener('keydown', function (event) {
+            function handleKeydown(event) {
                 // Check if the pressed key corresponds to the value of i
                 if (document.activeElement !== document.getElementById("messageInput")) {
                     if (event.key === String(i + 1)) {
                         handleKeepAction(`dice${i}`, i);
                     }
                 }
+            }
+
+            // Function to handle click event and keyboard press
+            function handleKeepAction(diceId, ind) {
+                keepDice(diceId);
+            }
+
+            // Add event listener to the dice container
+            diceContainer.addEventListener('click', function () {
+                handleKeepAction(`dice${i}`, i);
             });
+
+            // Add event listener to the document for keyboard press
+            document.addEventListener('keydown', handleKeydown);
+            // Store the event listener function for later removal
+            keydownListeners[i] = handleKeydown;
 
             let rollSound = document.createElement("audio");
             rollSound.src = "Sounds/rollsound.mp3"; // Set the source of the roll sound
@@ -3004,7 +3031,25 @@
             diceContainers.push(diceContainer);
 
             refreshDice(i);
+        }
 
+        function removeDice() {
+            numDiceF -= amDiceF;
+            if (diceContainers.length > 0) {
+                // Get the last dice container
+                let lastDiceContainer = diceContainers.pop();
+                let diceId = lastDiceContainer.querySelector(".dice").id;
+                let diceIndex = parseInt(diceId.replace("dice", ""), 10);
+
+                // Remove it from the DOM
+                lastDiceContainer.parentNode.removeChild(lastDiceContainer);
+
+                // Remove the associated keydown event listener
+                if (keydownListeners[diceIndex]) {
+                    document.removeEventListener('keydown', keydownListeners[diceIndex]);
+                    delete keydownListeners[diceIndex];
+                }
+            }
         }
 
 
@@ -4629,7 +4674,8 @@
                 }
 
                 if (offline) {
-                    sendCheck(inputValue)
+                    console.log("Calling sendCheck from submitScore", parseInt(document.getElementById("total").innerText))
+                    sendCheckOffline()
                     nextgoal = Math.min(...Object.keys(missingLocations).map(Number))
                     document.getElementById("nextgoalitem").innerText = "(" + missingLocations[nextgoal] +")";
                 }
@@ -4649,6 +4695,39 @@
             document.getElementById("maxlogicalldif").innerText = getMaxScoreInLogic(1) + "/" + getMaxScoreInLogic(2) + "/" + getMaxScoreInLogic(3) + "/" + getMaxScoreInLogic(4)
         }
 
+        let big_waves = false
+        let gotHandicaps = []
+
+        function sendCheckOffline(){
+            if (offline) {
+                for (let i = 1; i <= parseInt(document.getElementById("total").innerText); i++) {
+                    if(big_waves && i % 100 == 0 && !gotHandicaps.includes(i)){
+                        if(i % 200 == 0){
+                            numRollsF -= amRollsF
+                            addToLog("Oh no! A big wave hit the yacht and you lost a roll and reset your scores....")
+                        }else{
+                            removeDice()
+                            addToLog("Oh no! A big wave hit the yacht and you lost a dice and reset your scores....")
+                        }
+                        resetAll();
+                        console.log("Reset on ", i)
+                    }
+                    if (missingLocations.hasOwnProperty(i)) {
+                        const value = missingLocations[i]; // Get the value associated with the key
+                        delete missingLocations[i]; // Remove the key from missingLocations
+                        openCategory(value, i); // Call the function openCategories with the value
+                    }
+                    if(big_waves && i % 100 == 0 && !gotHandicaps.includes(i)){
+                        gotHandicaps.push(i)
+                        console.log("Break on ", i)
+                        break;
+                    }
+                }
+                maxscoreinlogic = getMaxScoreInLogic();
+                updateHighscoreAndGoal();
+            }
+        }
+
         function sendCheck(locid) {
             if (!offline) {
                 // Assuming client is already defined elsewhere
@@ -4656,15 +4735,7 @@
                 client.locations.check(locid);
             }
             if (offline) {
-                for (let i = 1; i <= locid; i++) {
-                    if (missingLocations.hasOwnProperty(i)) {
-                        const value = missingLocations[i]; // Get the value associated with the key
-                        delete missingLocations[i]; // Remove the key from missingLocations
-                        openCategory(value, i); // Call the function openCategories with the value
-                    }
-                }
-                maxscoreinlogic = getMaxScoreInLogic();
-                updateHighscoreAndGoal();
+                addToLog("Can't use this function offline! Please report thanks!", true)
             }
 
         }
@@ -4850,6 +4921,9 @@
 
         // Show the login screen when the "Login" button is clicked
         document.getElementById("playofflineafteroptions").addEventListener("click", function () {
+            this.textContent = "Generating..."; // Change the button text
+            this.disabled = true; // Disable the button
+
             offline = true;
             document.getElementById("dropdownContainer").style.display = "none";
             document.getElementById("mainContent").style.display = "flex";
@@ -4964,8 +5038,8 @@
 
             let offline_available_catgories = []
 
-            prng() < 0.7 ? offline_available_catgories.push("Category Choice") : offline_available_catgories.push("Category Double Threes and Fours");
-            prng() < 0.7 ? offline_available_catgories.push("Category Inverse Choice") : offline_available_catgories.push("Category Quadruple Ones and Twos");
+            prng() < 0.9 ? offline_available_catgories.push("Category Choice") : offline_available_catgories.push("Category Double Threes and Fours");
+            prng() < 0.9 ? offline_available_catgories.push("Category Inverse Choice") : offline_available_catgories.push("Category Quadruple Ones and Twos");
             prng() < 0.7 ? offline_available_catgories.push("Category Ones") : offline_available_catgories.push("Category Distincts");
             prng() < 0.7 ? offline_available_catgories.push("Category Twos") : offline_available_catgories.push("Category Two times Ones");
             prng() < 0.7 ? offline_available_catgories.push("Category Threes") : offline_available_catgories.push("Category Half of Sixes");
@@ -4986,13 +5060,6 @@
             // Initialize an empty array for the item pool
             let itempool = [];
 
-            // Calculate and add items based on conditions
-            itempool = itempool.concat(Array(4).fill("Dice"));
-            itempool = itempool.concat(Array(2).fill("Roll"));
-
-            for(let i = 2; i < 16; i++){
-                itempool.push(offline_available_catgories[i])
-            }
 
             let cats = offline_available_catgories
 
@@ -5002,7 +5069,23 @@
             let mult = 0
             let points = 0
 
+            let dice_debuff = 0
+            let rolls_debuff = 0
 
+            big_waves = document.getElementById('big_waves_mode_checkbox').checked;
+            if (big_waves) {
+                dice_debuff = 5
+                rolls_debuff = 4
+            }
+
+            
+            // Calculate and add items based on conditions
+            itempool = itempool.concat(Array(4 + dice_debuff).fill("Dice"));
+            itempool = itempool.concat(Array(2 + rolls_debuff).fill("Roll"));
+
+            for(let i = 2; i < 16; i++){
+                itempool.push(offline_available_catgories[i])
+            }
             
             let cats_for_logic = []
             do{
@@ -5162,8 +5245,39 @@
                     offline_categories.push(new Category(name, amount));
                 }
 
+
                 let maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice, offline_number_rolls, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
-                
+                if(big_waves){
+                    if(maxinLogic > 100) {
+                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 1, offline_number_rolls, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
+                    }
+                    if(maxinLogic > 200) {
+                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 1, offline_number_rolls - 1, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
+                    }
+                    if(maxinLogic > 300) {
+                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 2, offline_number_rolls - 1, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
+                    }
+                    if(maxinLogic > 400) {
+                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 2, offline_number_rolls - 2, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
+                    }
+                    if(maxinLogic > 500) {
+                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 3, offline_number_rolls - 2, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
+                    }
+                    if(maxinLogic > 600) {
+                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 3, offline_number_rolls - 3, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
+                    }
+                    if(maxinLogic > 700) {
+                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 4, offline_number_rolls - 3, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
+                    }
+                    if(maxinLogic > 800) {
+                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 4, offline_number_rolls - 4, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
+                    }
+                    if(maxinLogic > 900) {
+                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 5, offline_number_rolls - 4, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
+                    }
+                }
+
+
                 const validKeys = Object.keys(result).filter(key => Number(key) <= maxinLogic && result[key] === "");
 
                 if (validKeys.length === 0) {
@@ -5225,6 +5339,7 @@
 
             }
 
+
             let offline_categories = [];
             const catCounts = {};
 
@@ -5282,7 +5397,9 @@
 
             let offlinepr = getUrlParameter('offlineprogress')
             if (offlinepr != "") {
-                sendCheck(parseInt(offlinepr))
+                document.getElementById("total").textContent = parseInt(offlinepr)
+                sendCheckOffline()
+                resetAll();
             }
 
             maxscoreinlogic = getMaxScoreInLogic();
