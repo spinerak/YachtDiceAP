@@ -1723,6 +1723,15 @@
                     "Skins/GraphSVG/6D.svg"
                 ],
                 [
+                    "Skins/GraphSVG/0.svg",
+                    "Skins/GraphSVG/1.svg",
+                    "Skins/GraphSVG/2.svg",
+                    "Skins/GraphSVG/3.svg",
+                    "Skins/GraphSVG/4.svg",
+                    "Skins/GraphSVG/5.svg",
+                    "Skins/GraphSVG/6.svg"
+                ],
+                [
                     "Skins/Crystal/0.png",
                     "Skins/Crystal/1.png",
                     "Skins/Crystal/2.png",
@@ -1865,6 +1874,15 @@
                     "Skins/Shield/shield4.svg",
                     "Skins/Shield/shield5.svg",
                     "Skins/Shield/shield6.svg"
+                ],
+                [
+                    "Skins/Kingship/KH0.svg",
+                    "Skins/Kingship/KH1.svg",
+                    "Skins/Kingship/KH2.svg",
+                    "Skins/Kingship/KH3.svg",
+                    "Skins/Kingship/KH4.svg",
+                    "Skins/Kingship/KH5.svg",
+                    "Skins/Kingship/KH6.svg"
                 ],
                 [
                     "Skins/APlogo/0.png",
@@ -2714,7 +2732,7 @@
                 diceStyle = parseInt(storedIntegerString, 10); // Parse the string back to an integer
             }
         } else if(localStorage.getItem('settings_randomstyleonstartup') === 'true'){
-            diceStyle = Math.floor(Math.random() * 17)
+            diceStyle = Math.floor(Math.random() * 20)
         } else {
             localStorage.setItem('settings_randomstyleonstartup', checkbox_randstyle.checked);
         }
