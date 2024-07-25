@@ -15,6 +15,8 @@
             color: #ffffff;
             /* Light text color */
             margin: 0;
+            padding: 0;
+            overflow-y: auto;
             transition: background-image 2s ease;
 
             background-image: url('Images/Pattern.svg');
@@ -303,15 +305,13 @@
 
         .tutoroll_page {
             justify-content: center;
-            /* Center content horizontally */
             align-items: center;
-            /* Center content vertically */
-            height: 100vh;
-            /* Set height to 100% of viewport height */
+            min-height: 100vh; /* Minimum height to cover the viewport */
             display: flex;
-            /* Enable flexbox layout */
             margin: 0;
+            overflow: auto; /* Ensure it can scroll if content overflows */
         }
+
 
         .tutoroll_container {
             align-items: center;
