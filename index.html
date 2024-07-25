@@ -1128,10 +1128,6 @@
 
                         <br><br>
                         <div id="musicplayerdiv">
-                            <audio id="musicPlayer" preload="none">
-                                <!-- No src initially -->
-                                Your browser does not support the audio element.
-                            </audio>
                             <audio id="boatSound">
                                 <source src="Sounds/boat.mp3" type="audio/mpeg">
                                 Your browser does not support the audio element.
@@ -1515,16 +1511,12 @@
         var canRoll = true;
 
 
-        var musicPlayer = document.getElementById('musicPlayer');
-        var volumeMusicSlider = document.getElementById('volume');
         var volumeSoundEffectSlider = document.getElementById('soundEffectVolume');
 
         if (localStorage.getItem('settings_musicvolume') !== null) {
             // Retrieve the integer from local storage
             const storedIntegerString = localStorage.getItem('settings_musicvolume');
             const storedInteger = parseFloat(storedIntegerString); // Parse the string back to an integer
-            volumeMusicSlider.value = storedInteger
-            musicPlayer.volume = storedInteger
         }
 
         if (localStorage.getItem('settings_soundeffectvolume') !== null) {
@@ -1556,63 +1548,11 @@
             // Add more tracks here as needed
         ];
 
-        //musicPlayer.src = tracks[0];
-
 
         function playPause() {
-            // if (musicPlayer.paused) {
-                // play();
             window.open("https://soundcloud.com/spineraks/albums", "_blank");
-            // } else {
-            //     pause();
-            // }
         }
 
-        function play() {
-            if(musicPlayer.src == ""){
-                musicPlayer.src = tracks[0]
-            }
-            var playPromise = musicPlayer.play();
-
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                    playpause.textContent = '⏸️'; // Repeat one symbol
-                })
-                    .catch(error => {
-                        console.error('Auto-play was prevented:', error);
-                    });
-            }
-        }
-
-        function pause() {
-            musicPlayer.pause();
-            playpause.textContent = '▶️'; // Repeat one symbol
-        }
-
-        function nextTrack() {
-            if (!isRepeatOn) {
-                currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
-            }
-            musicPlayer.src = tracks[currentTrackIndex];
-
-            play();
-        }
-
-        function changeAudioVolume() {
-            musicPlayer.volume = volumeMusicSlider.value;
-            localStorage.setItem('settings_musicvolume', volumeMusicSlider.value.toString());
-        }
-
-
-
-
-
-
-
-        musicPlayer.addEventListener('ended', function () {
-            // Automatically play the next track
-            nextTrack();
-        });
 
         var isRepeatOn = false; // Initially repeat is off
 
@@ -1629,14 +1569,6 @@
             }
         }
 
-        // // Add this event listener to reset the repeat button if nextTrack() is clicked
-        // musicPlayer.addEventListener('ended', function() {
-        //     if (!isRepeatOn) {
-        //         toggleRepeat(); // Reset repeat button state
-        //     }
-        // });
-
-        // here is the shuffle button if I ever want to add it 🔀
 
     </script>
 
@@ -4560,12 +4492,10 @@
                 } else {
                     apworldversion = packet.slot_data.ap_world_version;
                     if (apworldversion == newest_version) {
+                        //recent
+                    } else{
                         addToLog("Apworld " + newest_version+" is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
-                    } else if(apworldversion == "2.1.0"){
-                        // being tested
-                    } else{
-                        // recent version
                     }
                 }
             }
