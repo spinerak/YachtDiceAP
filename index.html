@@ -3190,7 +3190,7 @@
         }
 
         // Listener function for category buttons
-        function updateButtonValue(buttonId, score, catquan, needForNextGoal, needForFinalGoal, needForLastGoal) {
+        function updateButtonValue(buttonId, score, catquan, needForNextGoal, needForFinalGoal, needForLastGoal, needForNextWave) {
             score = Math.floor(score * (1 + fixedScoreMult + turnNumber * stepScoreMult).toFixed(2) * Math.pow(2,catquan-1));
             var requireExactScoreOK =  !document.getElementById("requireExactScore").checked || score == needForNextGoal
             var button = document.getElementById(buttonId);
@@ -3199,14 +3199,18 @@
                 if(!requireExactScoreOK){ // you need the exact score but you didn't get it
                     button.style.backgroundColor = "";
                 }else{
-                    if (score >= needForLastGoal) {
-                        button.style.backgroundColor = "#FF2700";
-                    } else if (score >= needForFinalGoal && needForNextGoal <= needForFinalGoal) {
-                        button.style.backgroundColor = "#FFD700";
-                    } else if (score >= needForNextGoal) {
-                        button.style.backgroundColor = "#4CAF50";
+                    if(score >= needForNextWave && needForNextGoal > needForNextWave && needForFinalGoal > needForNextWave && needForLastGoal > needForNextWave){
+                        button.style.backgroundColor = "#000000";
                     } else {
-                        button.style.backgroundColor = "";
+                        if (score >= needForLastGoal) {
+                            button.style.backgroundColor = "#FF2700";
+                        } else if (score >= needForFinalGoal && needForNextGoal <= needForFinalGoal) {
+                            button.style.backgroundColor = "#FFD700";
+                        } else if (score >= needForNextGoal) {
+                            button.style.backgroundColor = "#4CAF50";
+                        } else {
+                            button.style.backgroundColor = "";
+                        }
                     }
                 }
             } else {
@@ -3238,105 +3242,117 @@
             var nextgoal_minus_total = nextgoal - total
             var finalscore_minus_total = finalgoal - total
             var lastscore_minus_total = lastgoal - total
+            var nextwave_minus_total = 10000000000
+            if (big_waves) {
+                let next_wave = 10000000000;
+                if (gotHandicaps.length === 0) {
+                    next_wave = 100;
+                } else {
+                    next_wave = gotHandicaps[gotHandicaps.length - 1] + 100;
+                }
+                nextwave_minus_total = next_wave - total
+                console.log(" NEXT WAVE ", nextwave_minus_total)
+            }
+
 
 
             // Update button values based on scores
             if(!categoryIsAlt[0]){
-                updateButtonValue("category1", scores.ones, gotCategories[0], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category1", scores.ones, gotCategories[0], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if(!categoryIsAlt[1]){
-                updateButtonValue("category2", scores.twos, gotCategories[1], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category2", scores.twos, gotCategories[1], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if(!categoryIsAlt[2]){
-                updateButtonValue("category3", scores.threes, gotCategories[2], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category3", scores.threes, gotCategories[2], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if(!categoryIsAlt[3]){
-                updateButtonValue("category4", scores.fours, gotCategories[3], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category4", scores.fours, gotCategories[3], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if(!categoryIsAlt[4]){
-                updateButtonValue("category5", scores.fives, gotCategories[4], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category5", scores.fives, gotCategories[4], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if(!categoryIsAlt[5]){
-                updateButtonValue("category6", scores.sixes, gotCategories[5], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category6", scores.sixes, gotCategories[5], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if(!categoryIsAlt[6]){
-                updateButtonValue("category7", scores.choice, gotCategories[6], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category7", scores.choice, gotCategories[6], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if(!categoryIsAlt[7]){
-                updateButtonValue("category8", scores.inverseChoice, gotCategories[7], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category8", scores.inverseChoice, gotCategories[7], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if(!categoryIsAlt[8]){
-                updateButtonValue("category9", scores.pair, gotCategories[8], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category9", scores.pair, gotCategories[8], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if(!categoryIsAlt[9]){
-                updateButtonValue("category10", scores.threeOfAKind, gotCategories[9], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category10", scores.threeOfAKind, gotCategories[9], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if(!categoryIsAlt[10]){
-                updateButtonValue("category11", scores.fourOfAKind, gotCategories[10], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category11", scores.fourOfAKind, gotCategories[10], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if(!categoryIsAlt[11]){
-                updateButtonValue("category12", scores.tinyStraight, gotCategories[11], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category12", scores.tinyStraight, gotCategories[11], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if(!categoryIsAlt[12]){
-                updateButtonValue("category13", scores.smallStraight, gotCategories[12], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category13", scores.smallStraight, gotCategories[12], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if(!categoryIsAlt[13]){
-                updateButtonValue("category14", scores.largeStraight, gotCategories[13], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category14", scores.largeStraight, gotCategories[13], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if(!categoryIsAlt[14]){
-                updateButtonValue("category15", scores.fullHouse, gotCategories[14], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category15", scores.fullHouse, gotCategories[14], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if(!categoryIsAlt[15]){
-                updateButtonValue("category16", scores.yacht, gotCategories[15], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category16", scores.yacht, gotCategories[15], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
 
             if (categoryIsAlt[0]) {
-                updateButtonValue("category1", scores.distincts, gotCategories[0], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category1", scores.distincts, gotCategories[0], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if (categoryIsAlt[1]) {
-                updateButtonValue("category2", scores.twoTimesOnes, gotCategories[1], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category2", scores.twoTimesOnes, gotCategories[1], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if (categoryIsAlt[2]) {
-                updateButtonValue("category3", scores.halfOfSixes, gotCategories[2], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category3", scores.halfOfSixes, gotCategories[2], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if (categoryIsAlt[3]) {
-                updateButtonValue("category4", scores.twosAndThrees, gotCategories[3], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category4", scores.twosAndThrees, gotCategories[3], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if (categoryIsAlt[4]) {
-                updateButtonValue("category5", scores.sumOfOdds, gotCategories[4], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category5", scores.sumOfOdds, gotCategories[4], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if (categoryIsAlt[5]) {
-                updateButtonValue("category6", scores.sumOfEvens, gotCategories[5], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category6", scores.sumOfEvens, gotCategories[5], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if (categoryIsAlt[6]) {
-                updateButtonValue("category7", scores.doubleThreesAndFours, gotCategories[6], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category7", scores.doubleThreesAndFours, gotCategories[6], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if (categoryIsAlt[7]) {
-                updateButtonValue("category8", scores.quadrupleOnesAndTwos, gotCategories[7], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category8", scores.quadrupleOnesAndTwos, gotCategories[7], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if (categoryIsAlt[8]) {
-                updateButtonValue("category9", scores.microStraight, gotCategories[8], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category9", scores.microStraight, gotCategories[8], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if (categoryIsAlt[9]) {
-                updateButtonValue("category10", scores.threeOdds, gotCategories[9], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category10", scores.threeOdds, gotCategories[9], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if (categoryIsAlt[10]) {
-                updateButtonValue("category11", scores.oneTwoOneConsecutive, gotCategories[10], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category11", scores.oneTwoOneConsecutive, gotCategories[10], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if (categoryIsAlt[11]) {
-                updateButtonValue("category12", scores.threeDistinctDice, gotCategories[11], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category12", scores.threeDistinctDice, gotCategories[11], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if (categoryIsAlt[12]) {
-                updateButtonValue("category13", scores.twoPair, gotCategories[12], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category13", scores.twoPair, gotCategories[12], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if (categoryIsAlt[13]){
-                updateButtonValue("category14", scores.twoOneTwoConsecutive, gotCategories[13], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category14", scores.twoOneTwoConsecutive, gotCategories[13], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if (categoryIsAlt[14]){
-                updateButtonValue("category15", scores.fiveDistinctDice, gotCategories[14], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category15", scores.fiveDistinctDice, gotCategories[14], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
             if (categoryIsAlt[15]){
-                updateButtonValue("category16", scores.FourAndFiveFullHouse, gotCategories[15], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total);
+                updateButtonValue("category16", scores.FourAndFiveFullHouse, gotCategories[15], nextgoal_minus_total, finalscore_minus_total, lastscore_minus_total, nextwave_minus_total);
             }
 
 
@@ -4124,6 +4140,23 @@
             if (!offline) {
                 if (packet.missing_locations) {
                     missingLocations = packet.missing_locations;
+
+                    if(big_waves){
+                        let firstloc = missingLocations[0] - 16871244500
+                        for(let i = 100; i < 1000; i += 100){
+                            if(firstloc > i){
+                                if(i % 200 == 0){
+                                    numRollsF -= amRollsF
+                                    addToLog("Oh no! A big wave hit the yacht and you lost a roll and reset your scores....")
+                                }else{
+                                    removeDice()
+                                    addToLog("Oh no! A big wave hit the yacht and you lost a dice and reset your scores....")
+                                }
+                                gotHandicaps.push(i)
+                            }
+                        }
+                    }
+
                 }
             }
         }
@@ -4424,6 +4457,7 @@
                 finalgoal = packet.slot_data.goal_score;
                 lastgoal = packet.slot_data.last_check_score;
                 difficulty = packet.slot_data.game_difficulty;
+                big_waves = packet.slot_data.big_waves_game_mode == 1;
                 num_missions = 1;
                 if (packet.slot_data.number_of_missions){
                     num_missions = packet.slot_data.number_of_missions;
@@ -4597,12 +4631,27 @@
                 var updated_first = false
 
                 if (!offline) {
-
-
-                    for (let i = nextgoal; i <= inputValue; i++) {
+                    for (let i = nextgoal; i <= parseInt(document.getElementById("total").innerText); i++) {
+                        if(big_waves && i % 100 == 0 && !gotHandicaps.includes(i)){
+                            if(i % 200 == 0){
+                                numRollsF -= amRollsF
+                                addToLog("Oh no! A big wave hit the yacht and you lost a roll and reset your scores....")
+                            }else{
+                                removeDice()
+                                addToLog("Oh no! A big wave hit the yacht and you lost a dice and reset your scores....")
+                            }
+                            resetAll();
+                            console.log("Reset on ", i)
+                        }
                         if (missingLocations.includes(i + (current_mission-1) * 10000000 + 16871244500)) {
                             sendCheck(i + (current_mission-1) * 10000000 + 16871244500);
                             missingLocations.splice(missingLocations.indexOf(i + (current_mission-1) * 10000000 + 16871244500), 1);
+                        }
+                        
+                        if(big_waves && i % 100 == 0 && !gotHandicaps.includes(i)){
+                            gotHandicaps.push(i)
+                            console.log("Break on ", i)
+                            break;
                         }
                     }
 
