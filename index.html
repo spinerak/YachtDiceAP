@@ -1061,6 +1061,10 @@
                 <button class="NS_category-button" id="toggleSettings">Settings</button>   
                 <button class="NS_category-button" id="toggleCatHelp">Category help</button>  
                 <button class="NS_category-button" id="toggleAchievements" style="display: none;">Achievements</button><br>
+                
+                <!-- <button class="NS_category-button" id="loseDice">Minus Dice</button>   
+                <button class="NS_category-button" id="loseRoll">Minus Roll</button>   <br> -->
+                
                 <div class="small-text" id = "changeBackgroundImgNotice"> </div>
 
 
@@ -2892,6 +2896,17 @@
 
         document.getElementById('toggleAchievements').addEventListener('click', toggleAchievements);
         document.getElementById('closeSettings3').addEventListener('click', toggleAchievements);
+        
+        const loseDiceElement = document.getElementById('loseDice');
+        if (loseDiceElement) {
+            loseDiceElement.addEventListener('click', removeDice);
+        }
+
+        const loseRollElement = document.getElementById('loseRoll');
+        if (loseRollElement) {
+            loseRollElement.addEventListener('click', removeRoll);
+        }
+
 
 
 
@@ -3009,6 +3024,14 @@
                     delete keydownListeners[diceIndex];
                 }
             }
+            resetAll()
+            updateHighscoreAndGoal()
+        }
+
+        function removeRoll(){
+            numRollsF -= amRollsF
+            resetAll()
+            updateHighscoreAndGoal()
         }
 
 
@@ -4529,7 +4552,9 @@
                     console.log("AP WORLD VERSION", apworldversion)
                     if (apworldversion == newest_version) {
                         //recent
-                    } else{
+                    } else if(apworldversion == "2.1.1-test"){
+                        addToLog("Ayy thanks for testing!")
+                    } else {
                         addToLog("Apworld " + newest_version+" is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     }
