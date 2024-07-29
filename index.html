@@ -2586,7 +2586,7 @@
                 
                 if(allowManualInput == 2){
                     addToLog("Manual entry is not allowed in this multiworld.")
-                    return;
+                    document.getElementById("diceValues").disabled = true;
                 }
                 document.getElementById("diceValues").style.display = "inline-block";
                 document.getElementById("diceValues").style.textAlign = "center";
@@ -4168,14 +4168,16 @@
                         let firstloc = missingLocations[0] - 16871244500
                         for(let i = 100; i < 1000; i += 100){
                             if(firstloc > i){
-                                if(i % 200 == 0){
-                                    numRollsF -= amRollsF
-                                    addToLog("Oh no! A big wave hit the yacht and you lost a roll and reset your scores....")
-                                }else{
-                                    removeDice()
-                                    addToLog("Oh no! A big wave hit the yacht and you lost a dice and reset your scores....")
+                                if(!gotHandicaps.includes(i)){
+                                    if(i % 200 == 0){
+                                        numRollsF -= amRollsF
+                                        addToLog("Oh no! A big wave hit the yacht and you lost a roll and reset your scores....")
+                                    }else{
+                                        removeDice()
+                                        addToLog("Oh no! A big wave hit the yacht and you lost a dice and reset your scores....")
+                                    }
+                                    gotHandicaps.push(i)
                                 }
-                                gotHandicaps.push(i)
                             }
                         }
                     }
@@ -4185,6 +4187,10 @@
         }
 
         function connectToServer(firsttime = true) {
+            console.log("Connection to server, firsttime=",firsttime)
+            if(firsttime){
+                document.getElementById('diceValues').value = ""
+            }
             disconnectedtimer = clearTimeoutFull(disconnectedtimer);
             reconnecttimer = clearTimeoutFull(reconnecttimer);
             client = new Client();
@@ -4219,11 +4225,11 @@
             // Set up event listeners
             const connectedListener = (packet) => {
                 console.log("Connected to server: ", packet);
-
                 updateSettings(packet);
                 updateRequiresValue(packet);
                 updateHighscoreAndGoal();
                 updateMissingLocations(packet);
+                submitScore();
             };
 
             const roomupdateListener = (packet) => {
@@ -4649,6 +4655,8 @@
             }
             calculateTotalAndUpdate();
             var inputValue = parseInt(document.getElementById("total").innerText);
+
+            console.log("Submitting score", inputValue)
             
             if(document.getElementById("requireExactScore").checked && inputValue > 10 && nextgoal != inputValue){
                 return;
@@ -4665,6 +4673,7 @@
                                 addToLog("Oh no! A big wave hit the yacht and you lost a roll and reset your scores....")
                             }else{
                                 removeDice()
+                                console.log("REMOVE ",i,gotHandicaps)
                                 addToLog("Oh no! A big wave hit the yacht and you lost a dice and reset your scores....")
                             }
                             resetAll();
@@ -4677,7 +4686,7 @@
                         
                         if(big_waves && i % 100 == 0 && !gotHandicaps.includes(i)){
                             gotHandicaps.push(i)
-                            console.log("Break on ", i)
+                            console.log("Break on ", i, gotHandicaps)
                             break;
                         }
                     }
