@@ -1382,9 +1382,9 @@
                     <br>
                     <button id="saveBtn" class="NS_category-button">Save (see chat)</button>
                     <br>
-                    Difficulty testing: <br>
+                    <!-- Difficulty testing: <br>
                     <input type="checkbox" id="disableItemGet">
-                    <label for="disableItemGet">Disable score submit (for testing/debug) </label> 
+                    <label for="disableItemGet">Disable score submit (for testing/debug) </label>  -->
                     <br>
                     Max score in logic Easy/Medium/Hard/Extreme: <span id="maxlogicalldif">?</span>
                 </div>
@@ -3735,7 +3735,6 @@
         var nextgoal = 4
         var finalgoal = 0
         var lastgoal = 0
-        var maxscoreinlogic = -1
 
 
 
@@ -4288,7 +4287,6 @@
                 updateRequiresValue(packet);
                 console.log("ReceivedItems packet: ", packet);
                 newItems(packet);
-                maxscoreinlogic = getMaxScoreInLogic();
                 updateHighscoreAndGoal();
             };
 
@@ -4563,12 +4561,11 @@
                 if (packet.slot_data.allow_manual_input){
                     allowManualInput = packet.slot_data.allow_manual_input;
                 }
-                maxscoreinlogic = getMaxScoreInLogic()
+                updateHighscoreAndGoal();
                 if(current_mission == num_missions){
                     document.getElementById("finalgoal").innerText = finalgoal;
                 }
                 document.getElementById("lastcheck").innerText = lastgoal;
-                document.getElementById("maxlogic").innerText = maxscoreinlogic;
 
                 let dt = 'Unknown'
                 switch(difficulty){
@@ -4616,11 +4613,10 @@
                 lastgoal = 1000;
                 difficulty = 2;
                 scoremultipliertype = 0;
-                maxscoreinlogic = getMaxScoreInLogic()
+                updateHighscoreAndGoal();
 
                 document.getElementById("finalgoal").innerText = finalgoal;
                 document.getElementById("lastcheck").innerText = lastgoal;
-                document.getElementById("maxlogic").innerText = maxscoreinlogic;
 
                 whichstory = Math.floor(Math.random() * story.length) + 1
 
@@ -4693,9 +4689,9 @@
 
         function submitScore() {
             
-            if(document.getElementById("disableItemGet").checked){
-                return;
-            }
+            // if(document.getElementById("disableItemGet").checked){
+            //     return;
+            // }
             calculateTotalAndUpdate();
             var inputValue = parseInt(document.getElementById("total").innerText);
 
@@ -4764,10 +4760,26 @@
 
         }
 
+        let timeoutMaxInLogic; // Variable to hold the timeout ID
+
+        function calculateMaxInLogic(){
+            // Clear any existing timeout
+            document.getElementById("maxlogic").innerText = "?"
+            document.getElementById("maxlogicalldif").innerText = "?/?/?/?"
+            clearTimeout(timeoutMaxInLogic);
+
+            // Set a new timeout with 1 second delay
+            timeoutMaxInLogic = setTimeout(() => {
+                // This code will execute after 1 second
+                document.getElementById("maxlogic").innerText = getMaxScoreInLogic();
+                document.getElementById("maxlogicalldif").innerText = getMaxScoreInLogic(1) + "/" + getMaxScoreInLogic(2) + "/" + getMaxScoreInLogic(3) + "/" + getMaxScoreInLogic(4)
+            }, 1000); // 1000 milliseconds = 1 second
+        }
+
+
         function updateHighscoreAndGoal() {
             document.getElementById("nextgoal").innerText = nextgoal;
-            document.getElementById("maxlogic").innerText = maxscoreinlogic
-            document.getElementById("maxlogicalldif").innerText = getMaxScoreInLogic(1) + "/" + getMaxScoreInLogic(2) + "/" + getMaxScoreInLogic(3) + "/" + getMaxScoreInLogic(4)
+            calculateMaxInLogic();
         }
 
         let big_waves = false
@@ -4798,7 +4810,6 @@
                         break;
                     }
                 }
-                maxscoreinlogic = getMaxScoreInLogic();
                 updateHighscoreAndGoal();
             }
         }
@@ -5477,7 +5488,6 @@
                 resetAll();
             }
 
-            maxscoreinlogic = getMaxScoreInLogic();
             updateRequiresValue(null)
             updateHighscoreAndGoal();
             updateParButtons();
