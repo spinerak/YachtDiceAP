@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2048 Yacht Dice Event</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #80d0ff;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #2b2b2b;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+}
+
+.countdown {
+    font-size: 1.5em;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+a {
+    color: #80d0ff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.dashboard_container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .dashboard_gauges {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 40px;
+        }
+        .dashboard_gauge {
+            flex: 1;
+            padding: 0 10px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .dashboard_gauge img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .dashboard_section {
+            margin-bottom: 40px;
+        }
+        .dashboard_section img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .dashboard_section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .dashboard_changed {
+            margin: 0px;
+        }
+        .dashboard_changed img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            height: auto;
+            /* border: 1px solid #ddd; */
+            /* border-radius: 8px; */
+        }
+
+        
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>2048 Yacht Dice Event</h1>
+        <div class="countdown">
+            <span id="countdown">Welcome!</span>
+        </div>
+
+        <div class="link1" style="font-size: 2em; color: red; text-align: center;">
+            <a href="https://yacht-dice-ap.netlify.app/?p=AP&hostname=archipelago.gg&port=59603&name=Player" id="game-link" style="font-size: 1em; color: green; text-decoration: underline;">Link to game</a>
+            <div style="font-size: 0.5em; color: white; margin-top: 0.2em;">(port already filled in, random player (you can change this yourself))</div>
+        </div>
+        
+        <script>
+            // Select the link element by ID
+            const gameLink = document.getElementById('game-link');
+        
+            // Function to generate a random number and update the link's href
+            function updateLink(event) {
+                const randomNumber = Math.floor(Math.random() * 2048) + 1;
+                const baseLink = "https://yacht-dice-ap.netlify.app/?p=AP&hostname=archipelago.gg&port=59603&name=Player";
+                
+                // Update the href with the new random number
+                gameLink.href = `${baseLink}${randomNumber}`;
+            }
+        
+            // Add an event listener to update the link on mousedown
+            gameLink.addEventListener('mousedown', updateLink);
+        </script>
+        
+        
+
+        <br>
+            <!--  -->
+        
+        <div class="link2" style="font-size: 2em; color: rgb(125, 177, 125); text-align: center;">
+            <a href="https://archipelago.gg/room/fHr5TfTeT621SITPZ1SGdQ" style="font-size: 20px; color: white; text-decoration: underline;">Link to multiworld (if server is down)</a>
+        </div>
+
+        <br><br>
+        
+        <div style="font-size: 1em; color: rgb(98, 98, 173); text-align: center;">
+            Click on player name to play as that player! Super fast!
+            <br>
+            <img src="2048pictures/clickPlayerName.png" />
+        </div>
+
+
+        <div class="dashboard_container">
+            <div style="text-align: center;">
+                <h1>Dashboard Overview</h1>
+                <p style="font-size: x-small; margin-top: -20px;">(manually updated a couple of times a day)</p>
+              </div>
+              
+            <!-- Time Series Graph -->
+            <div class="dashboard_changed">
+                <img src="2048pictures/last_update.png" alt="Last update">
+            </div>
+
+            
+            <!-- Gauges for Checks and Goals -->
+            <div class="dashboard_gauges">
+                <div class="dashboard_gauge">
+                    <h2>Checks Gauge</h2>
+                    <img src="2048pictures/checks_gauge.png" alt="Checks Gauge">
+                </div>
+                <div class="dashboard_gauge">
+                    <h2>Goals Gauge</h2>
+                    <img src="2048pictures/goals_gauge.png" alt="Goals Gauge">
+                </div>
+            </div>
+            
+            <!-- Histogram of Max Scores -->
+            <div class="dashboard_section">
+                <h2>Histogram of Max Scores</h2>
+                <img src="2048pictures/max_scores_histogram.png" alt="Max Scores Histogram">
+            </div>
+            
+            <!-- Time Series Graph -->
+            <div class="dashboard_section">
+                <h2>Time Series Graph</h2>
+                <img src="2048pictures/time_series_plot.png" alt="Time Series Graph">
+            </div>
+
+             <!-- Time Series Graph -->
+             <div class="dashboard_section">
+                <h2>Time Series Graph</h2>
+                <img src="2048pictures/time_histogram.png" alt="Time Series Graph">
+            </div>
+
+           
+        </div>
+
+
+
+        <p>
+            I have created a game with 2048 Yacht Dice worlds, with random options of course. I wonder if we can beat them all <span style="font-size: 1.2em;">🙂</span>
+        </p>
+        <!-- <p>
+            Link to multiworld: <t:1724436000>
+        </p> -->
+        <p>Here's the rules:</p>
+        <ul>
+            <li>You can pick any of the worlds at any time. Just open the link and pick a world you like. You can also switch however many times you like. Example: if you find a Dice for Player281, feel free to switch to that player. Note that you might be playing the same slot as someone else, that's fine too.</li>
+            <li>You cannot reserve a world for yourself.</li>
+            <li>No manual play, to keep it completely fair.</li>
+        </ul>
+        <p>
+            For more info, check the Archipelago discord server.
+        </p>
+    </div>
+
+    <script>
+        // Countdown script
+        function countdown() {
+            var countDownDate = new Date(Date.UTC(2024, 7, 23, 18, 0, 0)).getTime();
+            var now = new Date().getTime();
+            if(countDownDate < now){
+                var distance = - countDownDate + now;
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("countdown").innerHTML = "Event duration: " + days + "d " + hours + "h "
+                + minutes + "m " + seconds + "s ";
+            }else{
+                var distance = countDownDate - now;
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("countdown").innerHTML = "Starts in: " +days + "d " + hours + "h "
+                + minutes + "m " + seconds + "s ";
+            }
+                
+        }
+
+        setInterval(countdown, 1000);
+    </script>
+
+</body>
+</html>

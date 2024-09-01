@@ -890,7 +890,7 @@
                     <li>Lock: Click dice or press number keys.</li>
                     <li>You can roll multiple times.</li>
                     <li>Select categories to score.</li>
-                    <li>Try again by clicking reset.</li>
+                    <li>Press reset (or delete key) and try again.</li>
                 </ul>
             </div>
 
@@ -905,11 +905,50 @@
             <br><br>
             <div class="tutocenter">
                 <button id="letsrollsolo" class="roll-button">Solo play</button> 
-                <button id="letsroll" class="roll-button" style="background-color: #3667B1; color: #ffffff">Archipelago</button> 
+                <button id="letsroll" class="roll-button" style="background-color: #3667B1; color: #ffffff">Archipelago
+                    <span class="tooltip" style="background-color: rgba(255, 120, 0, 0.5);"><span id="countdown"></span>
+                    <br>    <a href="2048yachtdice.html" onclick="event.stopPropagation();">More info</a>
+                </span>
+
+                    <script>
+                        // Set the target date and time
+                        const targetDate = new Date(Date.UTC(2024, 7, 23, 18, 0, 0)).getTime();
+
+                        // Function to calculate and display the countdown
+                        function updateCountdown() {
+                            const now = new Date().getTime();
+
+                            // Calculate the time remaining
+                            const timeRemaining = targetDate - now;
+
+                            // Calculate days, hours, minutes, and seconds
+                            const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+                            const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+                            // Display the result in the element with id="countdown"
+                            document.getElementById("countdown").innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+                            // If the countdown is over, stop the timer and display a message
+                            if (timeRemaining < 0) {
+                                // clearInterval(countdownTimer);
+                                document.getElementById("countdown").innerHTML = "2048 Yacht Dice event going right now!";
+                            }
+                        }
+
+                        // Update the countdown immediately when the page loads
+                        updateCountdown();
+
+                        // Then update the countdown every second
+                        const countdownTimer = setInterval(updateCountdown, 1000);
+                    </script>
+
+                </button> 
 
                 <button id="playButton" class="roll-button" onclick="playPause()" style="background-color: #40B778; color: white;">
                     &#9835;
-                    <!-- <span class="tooltip">New EP titled "Roll The Dice" is out!</span> -->
+                    
                 </button>
                 
 
@@ -1047,6 +1086,8 @@
         document.getElementById('hostname').value = getUrlParameter('hostname') || localStorage.getItem("hostname") || 'archipelago.gg';
         document.getElementById('port').value = parseInt(getUrlParameter('port')) || parseInt(localStorage.getItem("port")) || 38281;
         document.getElementById('name').value = getUrlParameter('name') || localStorage.getItem("name") || 'Player1';
+
+
     </script>
 
 
@@ -1054,7 +1095,7 @@
     <!-- Main page content -->
     <div class="container" id="mainContent">
         <div class="left">
-            <h1 class="tutoroll_header" style="color: white;">Yacht Dice 🛥</h1>
+            <h1 class="tutoroll_header" style="color: white;">🎲 Yacht Dice 🛥</h1>
 
             <!-- Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=96878">Pixabay</a> -->
 
@@ -1087,8 +1128,17 @@
                 <label id="max-Rolls">?</label>
                 <br>
                 <label>Score mult.:</label>
-                <label id="score-mult">?</label>
+                <label id="score-mult">?</label><label id="score-mult2"></label><label id="score-mult3"></label>
                 <br><br>
+                <button id="other-world" class="NS_category-button" disabled>Go to random world</button>
+                <button id="PW3" class="NS_category-button" disabled>Go to world with many points</button>
+                <button id="PW4" class="NS_category-button" disabled>Go to world with many multipliers</button>
+                <button id="PW5" class="NS_category-button" disabled>Go to world with many categories</button>
+                <button id="PW6" class="NS_category-button" disabled>Go to world with many dice</button>
+                <button id="PW7" class="NS_category-button" disabled>Go to world with many rolls</button>
+                <button id="PW8" class="NS_category-button" disabled>Go to world with many everything</button>
+                <br>
+                <br>
                 
                 
 
@@ -1362,7 +1412,7 @@
                         <hr>
                         <div class="NS_boxes"></div>
                             <div class="NS_category-box">
-                                <div class="NS_category-label" style="font-weight: bold;">Total</div>
+                                <div class="NS_category-label" id="total-label" style="font-weight: bold;">Total</div>
                                 <button id="total" disabled class="NS_category-button"  style="background-color: rgba(51, 51, 51, 0); font-weight: bold; font-size: 100%;">0</span>
                             </div>
                         </div>
@@ -1376,7 +1426,9 @@
                     <br>
                     Last check: <span id="lastcheck">?</span>
                     <br>
-                    Max score in logic: <span id="maxlogic">?</span> (<span id="diffmode">?</span>)
+                    <div id="logicContainer">
+                        Max score in logic: <span id="maxlogic">?</span> (<span id="diffmode">?</span>)
+                    </div>
                     <br>
                     <div id="timer" style="display: none;">00:00:00</div>
                     <br>
@@ -1416,11 +1468,17 @@
 
     <script>
         var boatImage = document.getElementById("boatImage");
-        if (Math.random() < 0.3) {
-            boatImage.src = "Images/boat.png";
+        let r = Math.random();
+        if(r < 0.02){
+            boatImage.src = "Images/JaxFlint.png";
+        }else if (r < 0.03){
+            boatImage.src = "Images/boaty_down.png";
+        }else if (r < 0.13){
+            boatImage.src = "Images/boaty_back.png";
         } else {
-            boatImage.src = "Images/boaty.png";
+                boatImage.src = "Images/boaty.png";
         }
+        
     </script>
 
 
@@ -1505,12 +1563,16 @@
         });
 
         
-        function playNewItemSound(){
+        function playNewItemSound() {
             const checkbox_sx = document.getElementById('enableSoundEffects');
-            if(checkbox_sx.checked){
-                newItemSound.play();
+            if (checkbox_sx.checked) {
+                newItemSound.play().catch(function(error) {
+                    // Handle the error here (e.g., log it or show a warning message)
+                    console.log("Could not play sound because user hasn't interacted with the website yet");
+                });
             }
         }
+
 
 
 
@@ -1621,10 +1683,10 @@
         //achievements
         let achievements = JSON.parse(localStorage.getItem('achievements')) || [];
         const achievementConditions = [
-            { id: 1, description: 'Score a Yacht', image: 'Achievement_pictures/a1.webp' },
-            { id: 2, description: 'Win a Game', image: 'Achievement_pictures/a2.webp' },
-            { id: 4, description: 'Reach 1000 points', image: 'Achievement_pictures/a4.webp' },
-            { id: 3, description: 'Choose your own background', image: 'Achievement_pictures/a3.webp' },
+            { id: 1, description: 'Score a Yacht', image: 'Achievement_pictures/a1.png' },
+            { id: 2, description: 'Win a Game', image: 'Achievement_pictures/a2.png' },
+            { id: 4, description: 'Reach 1000 points', image: 'Achievement_pictures/a4.png' },
+            { id: 3, description: 'Choose your own background', image: 'Achievement_pictures/a3.png' },
             { id: 9999, description: 'More achievements soon maybe :)', image: 'Achievement_pictures/a9999.png' },
         ];
         function showAchievementDisplay(description, image) {
@@ -2489,6 +2551,8 @@
             var numDiceLabel = document.getElementById("num-dice");
             var numRollsLabel = document.getElementById("max-Rolls");
             var scoreMultiplierLabel = document.getElementById("score-mult");
+            var scoreMultiplierLabel2 = document.getElementById("score-mult2");
+            var scoreMultiplierLabel3 = document.getElementById("score-mult3");
 
             // Set text content for each label
             if (amDiceF > 1) {
@@ -2504,7 +2568,10 @@
             }
 
             if(stepScoreMult > 0){
-                scoreMultiplierLabel.textContent = (1 + fixedScoreMult + turnNumber * stepScoreMult).toFixed(2) + " (" + (1+fixedScoreMult).toFixed(2) + " + " + turnNumber+"×"+stepScoreMult.toFixed(2)+")";
+                scoreMultiplierLabel.textContent = (1 + fixedScoreMult + turnNumber * stepScoreMult).toFixed(2) + " (" + (1+fixedScoreMult).toFixed(2) + " + ";
+                scoreMultiplierLabel2.textContent =  turnNumber+"×"+stepScoreMult.toFixed(2);
+                scoreMultiplierLabel2.style.backgroundColor = "rgb(255,69,0,"+Math.max(0,Math.min(1,stepScoreMult*7))+")";
+                scoreMultiplierLabel3.textContent = ")";
             }else{
                 scoreMultiplierLabel.textContent = (1 + fixedScoreMult + turnNumber * stepScoreMult).toFixed(2);
             }
@@ -2820,6 +2887,16 @@
             if (document.activeElement !== document.getElementById("messageInput")) {
                 if (event.keyCode === 82 || event.key === 'r') { // Check if spacebar is pressed
                     handleRollAction(); // Call the function to handle roll action
+                }
+            }
+        });
+
+        // Adding event listener to the spacebar key press and r key
+        document.addEventListener('keydown', function (event) {
+            // Check if the focused element is not the messageInput text box
+            if (document.activeElement !== document.getElementById("messageInput")) {
+                if (event.key === 'Delete') { // Check if spacebar is pressed
+                    resetAll(); // Call the function to handle roll action
                 }
             }
         });
@@ -4228,6 +4305,10 @@
             }
         }
 
+        
+        var lastScoutedLocation = -1
+        var lastScoutedItem = "?"
+
         function connectToServer(firsttime = true) {
             console.log("Connection to server, firsttime=",firsttime)
             if(firsttime){
@@ -4272,6 +4353,171 @@
                 updateHighscoreAndGoal();
                 updateMissingLocations(packet);
                 submitScore();
+
+
+                if(yacht2048){
+                    // Function to generate a random number and redirect to the updated link
+
+                    // Add an event listener to the button to trigger the redirection on click
+                    document.getElementById('other-world').addEventListener('click', redirectToGame);
+                    document.getElementById('PW3').addEventListener('click', redirect3);
+                    document.getElementById('PW4').addEventListener('click', redirect4);
+                    document.getElementById('PW5').addEventListener('click', redirect5);
+                    document.getElementById('PW6').addEventListener('click', redirect6);
+                    document.getElementById('PW7').addEventListener('click', redirect7);
+                    document.getElementById('PW8').addEventListener('click', redirect8);
+
+
+                    // Enable the button after 2 seconds
+                    setTimeout(() => {
+                        document.getElementById('other-world').disabled = false;
+                        document.getElementById('PW3').disabled = false;
+                        document.getElementById('PW4').disabled = false;
+                        document.getElementById('PW5').disabled = false;
+                        document.getElementById('PW6').disabled = false;
+                        document.getElementById('PW7').disabled = false;
+                        document.getElementById('PW8').disabled = false;
+                    }, 2000);
+
+                    // Function to redirect to a random promising world
+                    function redirectToGame() {
+                        fetch('2048pictures/random_worlds.txt')
+                            .then(response => response.text())
+                            .then(data => {
+                                const promisingWorlds = data.split('\n').map(Number).filter(Boolean); // Parse the file into an array of numbers
+                                const randomIndex = Math.floor(Math.random() * promisingWorlds.length);
+                                const chosenWorld = promisingWorlds[randomIndex];
+                                const baseLink = "https://yacht-dice-ap.netlify.app/?p=AP&go=y&hostname=archipelago.gg&port=59603&name=Player";
+                                
+                                // Construct the full URL
+                                const fullLink = `${baseLink}${chosenWorld}`;
+                                
+                                // Redirect to the generated URL
+                                window.location.href = fullLink;
+                            })
+                            .catch(error => console.error('Error fetching or parsing the good_worlds.txt file:', error));
+                    }
+
+                    // Function to redirect to a random promising world
+                    function redirect3() {
+                        fetch('2048pictures/S3.txt')
+                            .then(response => response.text())
+                            .then(data => {
+                                const promisingWorlds = data.split('\n').map(Number).filter(Boolean); // Parse the file into an array of numbers
+                                const randomIndex = Math.floor(Math.random() * promisingWorlds.length);
+                                const chosenWorld = promisingWorlds[randomIndex];
+                                const baseLink = "https://yacht-dice-ap.netlify.app/?p=AP&go=y&hostname=archipelago.gg&port=59603&name=Player";
+                                
+                                // Construct the full URL
+                                const fullLink = `${baseLink}${chosenWorld}`;
+                                
+                                // Redirect to the generated URL
+                                window.location.href = fullLink;
+                            })
+                            .catch(error => console.error('Error fetching or parsing the good_worlds.txt file:', error));
+                    }
+                    // Function to redirect to a random promising world
+                    function redirect4() {
+                        fetch('2048pictures/S4.txt')
+                            .then(response => response.text())
+                            .then(data => {
+                                const promisingWorlds = data.split('\n').map(Number).filter(Boolean); // Parse the file into an array of numbers
+                                const randomIndex = Math.floor(Math.random() * promisingWorlds.length);
+                                const chosenWorld = promisingWorlds[randomIndex];
+                                const baseLink = "https://yacht-dice-ap.netlify.app/?p=AP&go=y&hostname=archipelago.gg&port=59603&name=Player";
+                                
+                                // Construct the full URL
+                                const fullLink = `${baseLink}${chosenWorld}`;
+                                
+                                // Redirect to the generated URL
+                                window.location.href = fullLink;
+                            })
+                            .catch(error => console.error('Error fetching or parsing the good_worlds.txt file:', error));
+                    }
+                    // Function to redirect to a random promising world
+                    function redirect5() {
+                        fetch('2048pictures/S5.txt')
+                            .then(response => response.text())
+                            .then(data => {
+                                const promisingWorlds = data.split('\n').map(Number).filter(Boolean); // Parse the file into an array of numbers
+                                const randomIndex = Math.floor(Math.random() * promisingWorlds.length);
+                                const chosenWorld = promisingWorlds[randomIndex];
+                                const baseLink = "https://yacht-dice-ap.netlify.app/?p=AP&go=y&hostname=archipelago.gg&port=59603&name=Player";
+                                
+                                // Construct the full URL
+                                const fullLink = `${baseLink}${chosenWorld}`;
+                                
+                                // Redirect to the generated URL
+                                window.location.href = fullLink;
+                            })
+                            .catch(error => console.error('Error fetching or parsing the good_worlds.txt file:', error));
+                    }
+                    // Function to redirect to a random promising world
+                    function redirect6() {
+                        fetch('2048pictures/S6.txt')
+                            .then(response => response.text())
+                            .then(data => {
+                                const promisingWorlds = data.split('\n').map(Number).filter(Boolean); // Parse the file into an array of numbers
+                                const randomIndex = Math.floor(Math.random() * promisingWorlds.length);
+                                const chosenWorld = promisingWorlds[randomIndex];
+                                const baseLink = "https://yacht-dice-ap.netlify.app/?p=AP&go=y&hostname=archipelago.gg&port=59603&name=Player";
+                                
+                                // Construct the full URL
+                                const fullLink = `${baseLink}${chosenWorld}`;
+                                
+                                // Redirect to the generated URL
+                                window.location.href = fullLink;
+                            })
+                            .catch(error => console.error('Error fetching or parsing the good_worlds.txt file:', error));
+                    }
+                    // Function to redirect to a random promising world
+                    function redirect7() {
+                        fetch('2048pictures/S7.txt')
+                            .then(response => response.text())
+                            .then(data => {
+                                const promisingWorlds = data.split('\n').map(Number).filter(Boolean); // Parse the file into an array of numbers
+                                const randomIndex = Math.floor(Math.random() * promisingWorlds.length);
+                                const chosenWorld = promisingWorlds[randomIndex];
+                                const baseLink = "https://yacht-dice-ap.netlify.app/?p=AP&go=y&hostname=archipelago.gg&port=59603&name=Player";
+                                
+                                // Construct the full URL
+                                const fullLink = `${baseLink}${chosenWorld}`;
+                                
+                                // Redirect to the generated URL
+                                window.location.href = fullLink;
+                            })
+                            .catch(error => console.error('Error fetching or parsing the good_worlds.txt file:', error));
+                    }
+                    // Function to redirect to a random promising world
+                    function redirect8() {
+                        fetch('2048pictures/S8.txt')
+                            .then(response => response.text())
+                            .then(data => {
+                                const promisingWorlds = data.split('\n').map(Number).filter(Boolean); // Parse the file into an array of numbers
+                                const randomIndex = Math.floor(Math.random() * promisingWorlds.length);
+                                const chosenWorld = promisingWorlds[randomIndex];
+                                const baseLink = "https://yacht-dice-ap.netlify.app/?p=AP&go=y&hostname=archipelago.gg&port=59603&name=Player";
+                                
+                                // Construct the full URL
+                                const fullLink = `${baseLink}${chosenWorld}`;
+                                
+                                // Redirect to the generated URL
+                                window.location.href = fullLink;
+                            })
+                            .catch(error => console.error('Error fetching or parsing the good_worlds.txt file:', error));
+                    }
+                }else{
+                    document.getElementById('other-world').style.visibility = 'hidden';
+                    document.getElementById('PW3').style.visibility = 'hidden';
+                    document.getElementById('PW4').style.visibility = 'hidden';
+                    document.getElementById('PW5').style.visibility = 'hidden';
+                    document.getElementById('PW6').style.visibility = 'hidden';
+                    document.getElementById('PW7').style.visibility = 'hidden';
+                    document.getElementById('PW8').style.visibility = 'hidden';
+
+                }
+
+
             };
 
             const roomupdateListener = (packet) => {
@@ -4364,11 +4610,35 @@
                         }
                     }
                     span.textContent = text;
+
+
+
+                    if (yacht2048 && text.startsWith("Player")) {
+                        // Add a click event listener to the span
+                        span.addEventListener('click', function() {
+                            // Form the URL dynamically
+                            // Get the full URL of the current page
+                            const fullUrl = window.location.href;
+
+                            // Create a new URL object
+                            const url = new URL(fullUrl);
+
+                            // Get the base URL without query parameters
+                            const baseUrl = `${url.protocol}//${url.hostname}${url.port ? ':' + url.port : ''}${url.pathname}`;
+
+                            const url_full = baseUrl+"?p=AP&go=y&hostname="+connectionInfo.hostname+"&port="+connectionInfo.port+"&name="+text;
+                            window.location.href = url_full;
+                        });
+
+                        // Optionally, change the cursor to pointer to indicate it's clickable
+                        span.style.cursor = 'pointer';
+                    }
                     addSpanToLog(span);
                     //showtext += text
                 }
                 addBRToLog();
             };
+
 
             //Function that gets called when a location is scouted
             const locationHintListener = (packet) => {
@@ -4380,7 +4650,9 @@
                 let gamet = client.players.game(Number(p)) //get game name
                 let playerAlias = client.players.alias(Number(p));
 
-                document.getElementById("nextgoalitem").innerText = "(" + itt + " from "+gamet + " for "+playerAlias + ")";
+                lastScoutedItem = "(" + itt + " from "+gamet + " for "+playerAlias + ")"
+
+                document.getElementById("nextgoalitem").innerText = lastScoutedItem;
             };
 
             // client.removeListener(SERVER_PACKET_TYPE.CONNECTED, connectedListener);
@@ -4512,16 +4784,14 @@
 
 
 
-
+        let yacht2048 = false;
 
         function updateSettings(packet) {
             if (!offline) {
-                // if(packet.slot_data.seed_name == 75883564719266679466){
-                //     const checkbox = document.getElementById('requireExactScore');
-                //     checkbox.checked = true;
-                //     checkbox.disabled = true;
-                //     addToLog("Note, this game requires hitting the exact next goal score!")
-                // }
+                if(packet.slot_data.seed_name == "09941142102135073886"){
+                    addToLog("Welcome to the 2048 Yacht Dice event. You can click on player names to immediately go to that player!")
+                    yacht2048 = true;
+                }
                 amDiceF = packet.slot_data.number_of_dice_fragments_per_dice;
                 amRollsF = packet.slot_data.number_of_roll_fragments_per_roll;
                 finalgoal = packet.slot_data.goal_score;
@@ -4627,15 +4897,21 @@
         let timeoutId; // Variable to hold the timeout ID
 
         function askWhatNextItemIs(firstMissingLocId) {
-            // Clear any existing timeout
-            document.getElementById("nextgoalitem").innerText = "(?)";
-            clearTimeout(timeoutId);
+            if(lastScoutedLocation == firstMissingLocId){
+                document.getElementById("nextgoalitem").innerText = lastScoutedItem;
+            }else{
+                lastScoutedLocation = firstMissingLocId
+                lastScoutedItem = "?"
+                // Clear any existing timeout
+                document.getElementById("nextgoalitem").innerText = "(?)";
+                clearTimeout(timeoutId);
 
-            // Set a new timeout with 1 second delay
-            timeoutId = setTimeout(() => {
-                // This code will execute after 1 second
-                client.locations.scout(CREATE_AS_HINT_MODE.NO_HINT, firstMissingLocId);
-            }, 1000); // 1000 milliseconds = 1 second
+                // Set a new timeout with 1 second delay
+                timeoutId = setTimeout(() => {
+                    // This code will execute after 1 second
+                    client.locations.scout(CREATE_AS_HINT_MODE.NO_HINT, firstMissingLocId);
+                }, 1000); // 1000 milliseconds = 1 second
+            }
         }
 
         function updateRequiresValue(packet) {
@@ -4695,9 +4971,25 @@
             calculateTotalAndUpdate();
             var inputValue = parseInt(document.getElementById("total").innerText);
 
-            console.log("Submitting score", inputValue)
+            console.log("Checking (not submitting yet) score up to", inputValue, document.getElementById("total").innerText,  nextgoal, missingLocations)
             
+            let element = document.getElementById('total-label');
+            if(document.getElementById("requireExactScore").checked){
+                // Get the element by its ID
+                let element = document.getElementById('total-label');
+
+                // Change the text content
+                element.textContent = 'Total (you need EXACTLY next check)';
+
+                // Change the background color to yellow
+                element.style.backgroundColor = 'red';
+            }else{
+                element.textContent = 'Total';
+                element.style.backgroundColor = '';
+            }
+
             if(document.getElementById("requireExactScore").checked && inputValue > 10 && nextgoal != inputValue){
+                console.log("You're using exact score logic, too bad you didn't get the correct score...")
                 return;
             }
 
@@ -4719,8 +5011,11 @@
                             console.log("Reset on ", i)
                         }
                         if (missingLocations.includes(i + (current_mission-1) * 10000000 + 16871244500)) {
+                            console.log("Submitting score",i)
                             sendCheck(i + (current_mission-1) * 10000000 + 16871244500);
                             missingLocations.splice(missingLocations.indexOf(i + (current_mission-1) * 10000000 + 16871244500), 1);
+                        } else {
+                            console.log("NOT Submitting score",i)
                         }
                         
                         if(big_waves && i % 100 == 0 && !gotHandicaps.includes(i)){
@@ -4756,7 +5051,7 @@
                     // sendWin()
                 }
             }
-            updateHighscoreAndGoal();
+            // updateHighscoreAndGoal();
 
         }
 
@@ -4770,8 +5065,18 @@
 
             // Set a new timeout with 1 second delay
             timeoutMaxInLogic = setTimeout(() => {
+                let scoreinlogic = getMaxScoreInLogic()
                 // This code will execute after 1 second
-                document.getElementById("maxlogic").innerText = getMaxScoreInLogic();
+                document.getElementById("maxlogic").innerText = scoreinlogic;
+                if(yacht2048){
+                    if(scoreinlogic >= nextgoal){
+                        let how_close = Math.max(0,Math.min(1 - nextgoal / scoreinlogic + 0.1, 1))
+                        document.getElementById("logicContainer").style.backgroundColor = "rgba(0, 238, 0, "+how_close+")"; //1 last arg is super green
+                    }else{
+                        let orange_s = Math.max(0,Math.min(150-(nextgoal / scoreinlogic - 1) * 250, 255))
+                        document.getElementById("logicContainer").style.backgroundColor = "rgba(238, "+orange_s+", 0, 0.4)";
+                    }
+                }
                 document.getElementById("maxlogicalldif").innerText = getMaxScoreInLogic(1) + "/" + getMaxScoreInLogic(2) + "/" + getMaxScoreInLogic(3) + "/" + getMaxScoreInLogic(4)
             }, 1000); // 1000 milliseconds = 1 second
         }
@@ -4954,10 +5259,7 @@
         ]
 
 
-
-
-        // Show the login screen when the "Login" button is clicked
-        document.getElementById("loginbutton").addEventListener("click", function () {
+        function pressed_login(){
             localStorage.setItem("hostname", document.getElementById("hostname").value);
             localStorage.setItem("port", document.getElementById("port").value);
             localStorage.setItem("name", document.getElementById("name").value);
@@ -4971,10 +5273,18 @@
             }
 
             login();
+        }
 
-        });
 
+
+
+
+        // Show the login screen when the "Login" button is clicked
+        document.getElementById("loginbutton").addEventListener("click", pressed_login);
+        
         let offline = false;
+
+
 
         document.getElementById("letsrollsolo").addEventListener("click", function () {
             document.getElementById("tutorollpage").style.display = "none";
@@ -5601,8 +5911,10 @@
             }
         }
 
-
-
+        if(getUrlParameter('go') == 'y'){
+            console.log("GO")
+            pressed_login();
+        }
     </script>
 
 </body>
