@@ -3802,7 +3802,7 @@
         }
 
 
-        var nextgoal = 4
+        var nextgoal = -1
         var finalgoal = 0
         var lastgoal = 0
 
@@ -4283,7 +4283,7 @@
                 updateSettings(null);
                 updateRequiresValue(null);
                 updateHighscoreAndGoal();
-                updateMissingLocations(null);
+                // updateMissingLocations(null);
             }
 
         }
@@ -4547,7 +4547,7 @@
 
             const receiveditemsListener = (packet) => {
                 connectionOK();
-                updateMissingLocations(packet);
+                // updateMissingLocations(packet);
                 updateRequiresValue(packet);
                 console.log("ReceivedItems packet: ", packet);
                 newItems(packet); //update highscore and goal in here, when new items.
@@ -4780,6 +4780,11 @@
                     const fromPlayerName = client.players.name(fromPlayerID);
                     //addToLog("Received " + itemName + " from "+ fromPlayerName);
                     items.push(itemName); // Add the item name to the 'items' array
+
+                    if (missingLocations.includes(item.location)) {
+                        missingLocations.splice(missingLocations.indexOf(item.location), 1);
+                    }
+
                     updateHighscoreAndGoal();
 
                 }
@@ -4913,17 +4918,19 @@
             if(lastScoutedLocation == firstMissingLocId){
                 document.getElementById("nextgoalitem").innerText = lastScoutedItem;
             }else{
-                lastScoutedLocation = firstMissingLocId
-                lastScoutedItem = "?"
-                // Clear any existing timeout
-                document.getElementById("nextgoalitem").innerText = "(?)";
-                clearTimeout(timeoutId);
+                if(firstMissingLocId > lastScoutedLocation){
+                    lastScoutedLocation = firstMissingLocId
+                    lastScoutedItem = "?"
+                    // Clear any existing timeout
+                    document.getElementById("nextgoalitem").innerText = "(?)";
+                    clearTimeout(timeoutId);
 
-                // Set a new timeout with 1 second delay
-                timeoutId = setTimeout(() => {
-                    // This code will execute after 1 second
-                    client.locations.scout(CREATE_AS_HINT_MODE.NO_HINT, firstMissingLocId);
-                }, 1000); // 1000 milliseconds = 1 second
+                    // Set a new timeout with 1 second delay
+                    timeoutId = setTimeout(() => {
+                        // This code will execute after 1 second
+                        client.locations.scout(CREATE_AS_HINT_MODE.NO_HINT, firstMissingLocId);
+                    }, 2000); // 1000 milliseconds = 1 second
+                }
             }
         }
 
@@ -4935,6 +4942,7 @@
                 } else if (packet.missing_locations.length === 0) {
                     nextgoal = "-"
                     document.getElementById("nextgoalitem").innerText = "";
+                    clearTimeout(timeoutId);
                     updateHighscoreAndGoal()
                 } else {
                     const min_number = 16871244500 + (current_mission-1) * 10000000
@@ -4951,6 +4959,7 @@
                     } else {
                         nextgoal = "-"
                         document.getElementById("nextgoalitem").innerText = "";
+                        clearTimeout(timeoutId);
                     }
                     updateHighscoreAndGoal()
                     
@@ -4961,6 +4970,12 @@
                 } else if (packet.checked_locations.length === 0) {
                     // do nothing
                 } else {
+                    for (let item of packet.checked_locations) {
+                        if (missingLocations.includes(item.location)) {
+                            missingLocations.splice(missingLocations.indexOf(item.location), 1);
+                        }
+                    }
+
                     updateHighscoreAndGoal()
                 }
             }
@@ -5028,8 +5043,6 @@
                             console.log("Submitting score",i)
                             sendCheck(i + (current_mission-1) * 10000000 + 16871244500);
                             missingLocations.splice(missingLocations.indexOf(i + (current_mission-1) * 10000000 + 16871244500), 1);
-                        } else {
-                            console.log("NOT Submitting score",i)
                         }
                         
                         if(big_waves && i % 100 == 0 && !gotHandicaps.includes(i)){
@@ -5046,11 +5059,11 @@
                     
                     if (filteredLocations.length > 0 && nextgoal != "-") {
                         nextgoal = Math.max(nextgoal, filteredLocations[0] - (current_mission-1) * 10000000 - 16871244500);
-                        console.log("NOW WERE SETTING IT HERE",nextgoal)
                         askWhatNextItemIs(filteredLocations[0])
                     } else {
                         nextgoal = "-"
                         document.getElementById("nextgoalitem").innerText = "";
+                        clearTimeout(timeoutId);
                     }
                 }
 
