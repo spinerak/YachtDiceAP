@@ -906,9 +906,10 @@
             <div class="tutocenter">
                 <button id="letsrollsolo" class="roll-button">Solo play</button> 
                 <button id="letsroll" class="roll-button" style="background-color: #3667B1; color: #ffffff">Archipelago
-                    <span class="tooltip" style="background-color: rgba(255, 120, 0, 0.5);"><span id="countdown"></span>
-                    <br>    <a href="2048yachtdice.html" onclick="event.stopPropagation();">More info</a>
-                </span>
+                    <span class="tooltip" style="background-color: rgba(255, 120, 0, 0.5);">
+                        <span id="countdown"></span>
+                        <br>    <a href="2048yachtdice.html" onclick="event.stopPropagation();">More info</a>
+                    </span>
 
                     <script>
                         // Set the target date and time
@@ -1914,6 +1915,24 @@
                     "Skins/Kingship/KH6.svg"
                 ],
                 [
+                    "Skins/Lingo/0.webp",
+                    "Skins/Lingo/1.webp",
+                    "Skins/Lingo/2.webp",
+                    "Skins/Lingo/3.webp",
+                    "Skins/Lingo/4.webp",
+                    "Skins/Lingo/5.webp",
+                    "Skins/Lingo/6.webp"
+                ],
+                [
+                    "Skins/MS46/0.webp",
+                    "Skins/MS46/1.webp",
+                    "Skins/MS46/2.webp",
+                    "Skins/MS46/3.webp",
+                    "Skins/MS46/4.webp",
+                    "Skins/MS46/5.webp",
+                    "Skins/MS46/6.webp"
+                ],
+                [
                     "Skins/APlogo/0.png",
                     "Skins/APlogo/1.png",
                     "Skins/APlogo/2.png",
@@ -2472,6 +2491,11 @@
                         break;
                 }
                 if (category.substring(0, 7) === "Victory") {
+                    if(lastindex == 0){
+                        const img = document.getElementById('boatImage');
+                        img.style.maxWidth = '20%';  // Correct property name in camelCase
+                        img.style.maxHeight = '20%'; // Correct property name in camelCase
+                    }
                     sendWin();
                     if (offline) {
                         addToLog("You beat the game, congrats!")
@@ -2767,7 +2791,7 @@
                 diceStyle = parseInt(storedIntegerString, 10); // Parse the string back to an integer
             }
         } else if(localStorage.getItem('settings_randomstyleonstartup') === 'true'){
-            diceStyle = Math.floor(Math.random() * 20)
+            diceStyle = Math.floor(Math.random() * 22)
         } else {
             localStorage.setItem('settings_randomstyleonstartup', checkbox_randstyle.checked);
         }
@@ -4284,6 +4308,15 @@
                 updateRequiresValue(null);
                 updateHighscoreAndGoal();
                 // updateMissingLocations(null);
+
+                document.getElementById('other-world').style.display = 'none';
+                document.getElementById('PW3').style.display = 'none';
+                document.getElementById('PW4').style.display = 'none';
+                document.getElementById('PW5').style.display = 'none';
+                document.getElementById('PW6').style.display = 'none';
+                document.getElementById('PW7').style.display = 'none';
+                document.getElementById('PW8').style.display = 'none';
+                document.getElementById('logiccompare').style.display = 'none';
             }
 
         }
@@ -4295,7 +4328,25 @@
         function updateMissingLocations(packet) {
             if (!offline) {
                 if (packet.missing_locations) {
+                    console.log("Missing locations:", missingLocations)
+
+                    console.log("---")
+                    console.log("received missing locations here, in this packet:", packet)
+                    console.log("missing locations:", packet.missing_locations)
+                    console.log("first element:", packet.missing_locations[0])
+                    let snapshot = JSON.parse(JSON.stringify(packet));
+                    console.log("Snapshot of packet:", snapshot);
+                    console.log("---")
+
+
+
+
+
+
+
+
                     missingLocations = packet.missing_locations;
+                    console.log("Missing locations:", missingLocations)
 
                     if(big_waves){
                         let firstloc = missingLocations[0] - 16871244500
@@ -4362,10 +4413,11 @@
             // Set up event listeners
             const connectedListener = (packet) => {
                 console.log("Connected to server: ", packet);
+                console.log(packet.missing_locations)
+                updateMissingLocations(packet);
                 updateSettings(packet);
                 updateRequiresValue(packet);
                 updateHighscoreAndGoal();
-                updateMissingLocations(packet);
                 submitScore();
 
 
@@ -4780,19 +4832,22 @@
                     const fromPlayerName = client.players.name(fromPlayerID);
                     //addToLog("Received " + itemName + " from "+ fromPlayerName);
                     items.push(itemName); // Add the item name to the 'items' array
+                    
 
-                    if (missingLocations.includes(item.location)) {
-                        missingLocations.splice(missingLocations.indexOf(item.location), 1);
-                    }
+                    // if (missingLocations.includes(item.location)) {
+                    //     missingLocations.splice(missingLocations.indexOf(item.location), 1);
+                    // }
+
 
                     updateHighscoreAndGoal();
 
                 }
+                console.log("missing locations afters receiving items: ",missingLocations)
+                openCategories(items)
                 lastindex = packet.index + packet.items.length;
                 // if (items.length > 0) {
                 //     addToLog("Received items: " + items);
                 // }
-                openCategories(items)
 
             } else {
                 console.log("No items received in this update...");
@@ -4941,6 +4996,7 @@
                     // do nothing
                 } else if (packet.missing_locations.length === 0) {
                     nextgoal = "-"
+                    console.log("Set nextgoal to -, because in updateRequiresValue, packet.missing_locations is empty")
                     document.getElementById("nextgoalitem").innerText = "";
                     clearTimeout(timeoutId);
                     updateHighscoreAndGoal()
@@ -4955,15 +5011,16 @@
                         firstMissingLocId = filteredLocations[0];
                         nextgoal = Math.max(nextgoal, firstMissingLocId - (current_mission-1) * 10000000 - 16871244500)
                         askWhatNextItemIs(firstMissingLocId)
-                        console.log("SETTINGS NEXT GOAL HERE",nextgoal)
                     } else {
                         nextgoal = "-"
+                        console.log("Set nextgoal to -, because filteredLocations is empty, or nextgoal was already -. Should not happen without big waves?")
                         document.getElementById("nextgoalitem").innerText = "";
                         clearTimeout(timeoutId);
                     }
                     updateHighscoreAndGoal()
                     
                 }
+
 
                 if (!packet.checked_locations) {
                     // do nothing
@@ -4975,6 +5032,7 @@
                             missingLocations.splice(missingLocations.indexOf(item.location), 1);
                         }
                     }
+                    console.log("new missing locations:", missingLocations)
 
                     updateHighscoreAndGoal()
                 }
@@ -5062,6 +5120,7 @@
                         askWhatNextItemIs(filteredLocations[0])
                     } else {
                         nextgoal = "-"
+                        console.log("Setting nextgoal to - because filtered locations is empty (or nextgoal was already -)")
                         document.getElementById("nextgoalitem").innerText = "";
                         clearTimeout(timeoutId);
                     }
@@ -5119,6 +5178,22 @@
 
 
         function updateHighscoreAndGoal() {
+            const min_number = 16871244500 + (current_mission-1) * 10000000
+            const max_number = 16871244500 + (current_mission-1) * 10000000 + 1000
+            
+            const filteredLocations = missingLocations.filter(loc => loc >= min_number && loc <= max_number);
+            console.log("Missing locations:",missingLocations)
+            
+            if (filteredLocations.length > 0 && nextgoal != "-") {
+                nextgoal = Math.max(nextgoal, filteredLocations[0] - (current_mission-1) * 10000000 - 16871244500);
+                askWhatNextItemIs(filteredLocations[0])
+            } else {
+                nextgoal = "-"
+                console.log("Setting nextgoal to - because filtered locations is empty (or nextgoal was already -)")
+                document.getElementById("nextgoalitem").innerText = "";
+                clearTimeout(timeoutId);
+            }
+
             document.getElementById("nextgoal").innerText = nextgoal;
             calculateMaxInLogic();
         }
