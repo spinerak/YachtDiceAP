@@ -1301,6 +1301,8 @@
 
             <!-- Send button -->
             <button class="NS_category-button" id="chatBtn">Send chat</button>
+            <input type="checkbox" id="only_relevant_messages" style="margin-left: 20px;">
+            <label for="only_relevant_messages">Only messages about me</label>
 
 
 
@@ -1470,7 +1472,7 @@
         }else if (r < 0.13){
             boatImage.src = "Images/boaty_back.png";
         } else {
-                boatImage.src = "Images/boaty.png";
+            boatImage.src = "Images/boaty.png";
         }
         
     </script>
@@ -2353,7 +2355,7 @@
                     break;
                 case 28:
                     text = "Three Distinct Dice (20)";
-                    title = "30 points if there are three distinct dice values";
+                    title = "20 points if there are three distinct dice values";
                     break;
                 case 29:
                     text = "Two Pair (30)";
@@ -2491,7 +2493,7 @@
                         break;
                 }
                 if (category.substring(0, 7) === "Victory") {
-                    if(lastindex == 0){
+                    if(lastindex == 0 && !offline){
                         const img = document.getElementById('boatImage');
                         img.style.maxWidth = '20%';  // Correct property name in camelCase
                         img.style.maxHeight = '20%'; // Correct property name in camelCase
@@ -4267,11 +4269,14 @@
             CREATE_AS_HINT_MODE,
             CLIENT_STATUS,
             CONNECTION_STATUS,
-            CLIENT_PACKET_TYPE
+            CLIENT_PACKET_TYPE,
+            SetOperationsBuilder 
         } from "https://unpkg.com/archipelago.js@1.0.0/dist/archipelago.js";
 
         let disconnectedtimer = null;
         let reconnecttimer = null;
+        var disconnecttimeout = 10;
+        var dontconnectagain = false;
 
         let connectionInfo = null
 
@@ -4328,22 +4333,6 @@
         function updateMissingLocations(packet) {
             if (!offline) {
                 if (packet.missing_locations) {
-                    console.log("Missing locations:", missingLocations)
-
-                    console.log("---")
-                    console.log("received missing locations here, in this packet:", packet)
-                    console.log("missing locations:", packet.missing_locations)
-                    console.log("first element:", packet.missing_locations[0])
-                    let snapshot = JSON.parse(JSON.stringify(packet));
-                    console.log("Snapshot of packet:", snapshot);
-                    console.log("---")
-
-
-
-
-
-
-
 
                     missingLocations = packet.missing_locations;
                     console.log("Missing locations:", missingLocations)
@@ -4388,18 +4377,20 @@
                     addToLog("Connected to the server");
                     // You are now connected and authenticated to the server. You can add more code here if need be.
                     connectionOK();
-
                 })
                 .catch((error) => {
                     console.log("Failed to connect", error)
-                    if (firsttime || !connectedonce) {
+                    if (firsttime || !connectedonce || error[0] == "InvalidSlot" || error[0] == "InvalidGame" || dontconnectagain) {
                         addToLog("Failed to connect. To try again: refresh the page.\n\nHere are some input examples:\nHostname: archipelago.gg   or   localhost\nPort: 38281\n\nYou might need to refresh online server by reopening the archipelago.gg page.\nYou can also check the console for what the error message is (F12).");
+                        dontconnectagain = true;
                     } else {
-                        addToLog("Failed to connect. Did the server shutdown? Try reopening the archipelago site. Check if the port (" + connectionInfo.port + ") is correct. Incorrect port? Type '/changeport xxxxx' with xxxxx the correct port. Going to reconnect in 10 seconds....")
+                        disconnecttimeout = disconnecttimeout + 1;
+                        addToLog("Failed to connect. Did the server shutdown? Try reopening the archipelago site. Check if the port (" + connectionInfo.port + ") is correct. Incorrect port? Type '/changeport xxxxx' with xxxxx the correct port. Going to reconnect in "+disconnecttimeout+" seconds....")
+                        
                         disconnectedtimer = clearTimeoutFull(disconnectedtimer);
                         reconnecttimer = setTimeout(function () {
                             connectionReconnect();
-                        }, 10000);
+                        }, disconnecttimeout * 1000);
                     }
                 });
 
@@ -4413,6 +4404,7 @@
             // Set up event listeners
             const connectedListener = (packet) => {
                 console.log("Connected to server: ", packet);
+                nextgoal = 0;
                 console.log(packet.missing_locations)
                 updateMissingLocations(packet);
                 updateSettings(packet);
@@ -4611,9 +4603,12 @@
                 //set a timer to check connection after 1.5 hrs.
                 // If there's an existing timer, clear it
                 connectionOK();
+                console.log("JSON", packet)
 
                 const data = packet.data
                 let showtext = ""
+
+                let is_relevant = false;
 
                 addStartLineToLog()
                 for (let i = 0; i < data.length; i++) {
@@ -4628,6 +4623,7 @@
                             span.style.fontWeight = "bold";
                             if(client.players.name(Number(text)) == connectionInfo.name){
                                 span.style.color = "rgb(199, 9, 199)"
+                                is_relevant = true
                             }else{
                                 span.style.color = "rgb(213, 213, 180)"
                             }
@@ -4641,16 +4637,40 @@
                         if (type == 'item_id') {
                             span.style.fontWeight = "bold";
                             text = client.items.name(client.players.game(Number(data[i].player)), Number(text))
-
+                            if (data[i].flags == 7) {
+                                span.style.color = "rgb(128, 255, 128)";
+                                span.title = "Item class: progression, useful, trap"
+                                if (document.getElementById("showItemClassification").checked) {
+                                    text += "?!@" //trap!
+                                }
+                            }
+                            if (data[i].flags == 6) {
+                                span.style.color = "rgb(200, 200, 20)";
+                                span.title = "Item class: useful, trap"
+                                if (document.getElementById("showItemClassification").checked) {
+                                    text += "@#!" //trap!
+                                }
+                            }
+                            if (data[i].flags == 5) {
+                                span.style.color = "rgb(255, 172, 28)";
+                                span.title = "Item class: progression, trap"
+                                if (document.getElementById("showItemClassification").checked) {
+                                    text += "!?!" //trap!
+                                }
+                            }
                             if (data[i].flags == 4) {
                                 span.style.color = "rgb(211, 113, 102)";
                                 span.title = "Item class: trap"
                                 if (document.getElementById("showItemClassification").checked) {
-                                    text += "?!?" //trap!
+                                    text += "@#!" //trap!
                                 }
                             }
                             if (data[i].flags == 3) {
-                                text += "" //???
+                                span.style.color = "rgb(255, 223, 0)"
+                                span.title = "Item class: progression, useful"
+                                if (document.getElementById("showItemClassification").checked) {
+                                    text += "!!!"
+                                }
                             }
                             if (data[i].flags == 2) {
                                 span.style.color = "rgb(98, 122, 198)"
@@ -4678,8 +4698,8 @@
                             text = client.locations.name(client.players.game(Number(data[i].player)), Number(text))
                         }
                     }
-                    span.textContent = text;
 
+                    span.textContent = text;
 
 
                     if (yacht2048 && text.startsWith("Player")) {
@@ -4702,10 +4722,13 @@
                         // Optionally, change the cursor to pointer to indicate it's clickable
                         span.style.cursor = 'pointer';
                     }
+                    
                     addSpanToLog(span);
                     //showtext += text
                 }
-                addBRToLog();
+                if(!document.getElementById('only_relevant_messages').checked || is_relevant){
+                    addBRToLog();
+                }
             };
 
 
@@ -4792,7 +4815,7 @@
 
 
         function checkConnection() {
-            if (offline || !connectedonce) {
+            if (offline || !connectedonce || dontconnectagain) {
                 return;
             }
             if (disconnectedtimer || reconnecttimer) {
@@ -4860,6 +4883,29 @@
         let yacht2048 = false;
 
         function updateSettings(packet) {
+
+            // console.log("______________")
+            // // Listener for Get responses.
+            // client.addListener("Retrieved", (packet) => {
+            //     console.log(packet)
+            //     for (const key in packet.keys) {
+            //         if (key.startsWith("_read_client_status_")) {
+            //             const hasVictory = packet.keys[key] === 30; // 30 === GOAL
+            //             const slot = /.+_(\d+)/.exec(key)[1]; // Just a regex to pull slot # out of key.
+            //             console.log(`Slot #${slot} ${hasVictory ? "has" : "has not"} completed their goal.`);
+            //         }
+            //     }
+            // });
+
+            // client.send({
+            //     cmd: "Get",
+            //     keys: [
+            //         "_read_client_status_0_2",
+            //         // ... and so on for all the slots needed.
+            //     ],
+            // });
+            // console.log("______________")
+
             if (!offline) {
                 if(packet.slot_data.seed_name == "09941142102135073886"){
                     addToLog("Welcome to the 2048 Yacht Dice event. You can click on player names to immediately go to that player!")
@@ -5181,17 +5227,19 @@
             const min_number = 16871244500 + (current_mission-1) * 10000000
             const max_number = 16871244500 + (current_mission-1) * 10000000 + 1000
             
-            const filteredLocations = missingLocations.filter(loc => loc >= min_number && loc <= max_number);
-            console.log("Missing locations:",missingLocations)
-            
-            if (filteredLocations.length > 0 && nextgoal != "-") {
-                nextgoal = Math.max(nextgoal, filteredLocations[0] - (current_mission-1) * 10000000 - 16871244500);
-                askWhatNextItemIs(filteredLocations[0])
-            } else {
-                nextgoal = "-"
-                console.log("Setting nextgoal to - because filtered locations is empty (or nextgoal was already -)")
-                document.getElementById("nextgoalitem").innerText = "";
-                clearTimeout(timeoutId);
+            if(!offline){
+                const filteredLocations = missingLocations.filter(loc => loc >= min_number && loc <= max_number);
+                console.log("Missing locations:",missingLocations)
+                
+                if (filteredLocations.length > 0 && nextgoal != "-") {
+                    nextgoal = Math.max(nextgoal, filteredLocations[0] - (current_mission-1) * 10000000 - 16871244500);
+                    askWhatNextItemIs(filteredLocations[0])
+                } else {
+                    nextgoal = "-"
+                    console.log("Setting nextgoal to - because filtered locations is empty (or nextgoal was already -)")
+                    document.getElementById("nextgoalitem").innerText = "";
+                    clearTimeout(timeoutId);
+                }
             }
 
             document.getElementById("nextgoal").innerText = nextgoal;
