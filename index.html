@@ -897,7 +897,7 @@
             <div class="tutoroll_tip">
                 <h3>Latest features</h3>
                 <ul class="tutoroll_list">
-                    <li>Such a pretty logo by Miawoo 🤩</li>
+                    <li>Yacht Dice will soon be supported! :D</li>
                 </ul>
             </div>
 
@@ -906,44 +906,7 @@
             <div class="tutocenter">
                 <button id="letsrollsolo" class="roll-button">Solo play</button> 
                 <button id="letsroll" class="roll-button" style="background-color: #3667B1; color: #ffffff">Archipelago
-                    <span class="tooltip" style="background-color: rgba(255, 120, 0, 0.5);">
-                        <span id="countdown"></span>
-                        <br>    <a href="2048yachtdice.html" onclick="event.stopPropagation();">More info</a>
-                    </span>
 
-                    <script>
-                        // Set the target date and time
-                        const targetDate = new Date(Date.UTC(2024, 7, 23, 18, 0, 0)).getTime();
-
-                        // Function to calculate and display the countdown
-                        function updateCountdown() {
-                            const now = new Date().getTime();
-
-                            // Calculate the time remaining
-                            const timeRemaining = targetDate - now;
-
-                            // Calculate days, hours, minutes, and seconds
-                            const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
-                            const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-                            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-
-                            // Display the result in the element with id="countdown"
-                            document.getElementById("countdown").innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-
-                            // If the countdown is over, stop the timer and display a message
-                            if (timeRemaining < 0) {
-                                // clearInterval(countdownTimer);
-                                document.getElementById("countdown").innerHTML = "2048 Yacht Dice event going right now!";
-                            }
-                        }
-
-                        // Update the countdown immediately when the page loads
-                        updateCountdown();
-
-                        // Then update the countdown every second
-                        const countdownTimer = setInterval(updateCountdown, 1000);
-                    </script>
 
                 </button> 
 
@@ -1431,10 +1394,6 @@
                     <button id="saveBtn" class="NS_category-button">Save (see chat)</button>
                     <br>
                     Max score in logic Easy/Medium/Hard/Extreme: <span id="maxlogicalldif">?</span>
-                    <div id="logiccompare" style="font-style: italic;">
-                    <br>
-                    I will soon change the logic. Do these new numbers make sense?:<br> <span id="maxlogicalldif2">?</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -2499,10 +2458,6 @@
                         img.style.maxHeight = '20%'; // Correct property name in camelCase
                     }
                     sendWin();
-                    if (offline) {
-                        addToLog("You beat the game, congrats!")
-                    }
-                    addAchievement(2);
                 }
             }
         }
@@ -3831,6 +3786,7 @@
         var nextgoal = -1
         var finalgoal = 0
         var lastgoal = 0
+        var hasgoaled = false
 
 
 
@@ -4321,7 +4277,6 @@
                 document.getElementById('PW6').style.display = 'none';
                 document.getElementById('PW7').style.display = 'none';
                 document.getElementById('PW8').style.display = 'none';
-                document.getElementById('logiccompare').style.display = 'none';
             }
 
         }
@@ -4404,6 +4359,14 @@
             // Set up event listeners
             const connectedListener = (packet) => {
                 console.log("Connected to server: ", packet);
+                client.send({
+                    cmd: "Get",
+                    keys: [
+                        "_read_client_status_"+packet.team+"_"+packet.slot
+                        // ... and so on for all the slots needed.
+                    ],
+                });
+
                 nextgoal = 0;
                 console.log(packet.missing_locations)
                 updateMissingLocations(packet);
@@ -4572,7 +4535,6 @@
                     document.getElementById('PW6').style.display = 'none';
                     document.getElementById('PW7').style.display = 'none';
                     document.getElementById('PW8').style.display = 'none';
-                    document.getElementById('logiccompare').style.display = 'none';
                     
 
                 }
@@ -4751,7 +4713,21 @@
             client.addListener(SERVER_PACKET_TYPE.ROOM_UPDATE, roomupdateListener);
             client.addListener("ReceivedItems", receiveditemsListener);
             client.addListener(SERVER_PACKET_TYPE.PRINT_JSON, jsonListener);
-            client.addListener("LocationInfo", locationHintListener);
+            client.addListener("LocationInfo", locationHintListener);// Listener for Get responses.
+
+            client.addListener("Retrieved", (packet) => {
+                console.log("RETRIEVED PACKET", packet)
+                for (const key in packet.keys) {
+                    if (key.startsWith("_read_client_status_")) {
+                        const hasVictory = packet.keys[key] === 30; // 30 === GOAL
+                        if(hasVictory){
+                            sendWin()
+                        }else{
+                            updateHighscoreAndGoal()
+                        }
+                    }
+                }
+            });
 
         }
 
@@ -4883,34 +4859,11 @@
         let yacht2048 = false;
 
         function updateSettings(packet) {
-
-            // console.log("______________")
-            // // Listener for Get responses.
-            // client.addListener("Retrieved", (packet) => {
-            //     console.log(packet)
-            //     for (const key in packet.keys) {
-            //         if (key.startsWith("_read_client_status_")) {
-            //             const hasVictory = packet.keys[key] === 30; // 30 === GOAL
-            //             const slot = /.+_(\d+)/.exec(key)[1]; // Just a regex to pull slot # out of key.
-            //             console.log(`Slot #${slot} ${hasVictory ? "has" : "has not"} completed their goal.`);
-            //         }
-            //     }
-            // });
-
-            // client.send({
-            //     cmd: "Get",
-            //     keys: [
-            //         "_read_client_status_0_2",
-            //         // ... and so on for all the slots needed.
-            //     ],
-            // });
-            // console.log("______________")
-
             if (!offline) {
-                if(packet.slot_data.seed_name == "09941142102135073886"){
-                    addToLog("Welcome to the 2048 Yacht Dice event. You can click on player names to immediately go to that player!")
-                    yacht2048 = true;
-                }
+                // if(packet.slot_data.seed_name == "09941142102135073886"){
+                //     addToLog("Welcome to the 2048 Yacht Dice event. You can click on player names to immediately go to that player!")
+                //     yacht2048 = true;
+                // }
                 amDiceF = packet.slot_data.number_of_dice_fragments_per_dice;
                 amRollsF = packet.slot_data.number_of_roll_fragments_per_roll;
                 finalgoal = packet.slot_data.goal_score;
@@ -4979,16 +4932,14 @@
                 if (whichstory == -1) {
                     whichstory = Math.floor(Math.random() * story.length) + 1
                 }
-                let newest_version = "2.1.1"
+                let newest_version = "2.1.2"
                 if (!packet.slot_data.ap_world_version) {
                     addToLog("Warning, apworld version is not provided in the packet, so it's generated with a very old version, not even 0.3. Please update your apworld. Website version: " + newest_version, true);
                     addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                 } else {
                     console.log("AP WORLD VERSION", apworldversion)
-                    if (apworldversion == newest_version || apworldversion == "2.1.2") {
+                    if (apworldversion == newest_version || apworldversion == "2.1.3") {
                         //recent
-                    } else if(apworldversion == "2.1.1-test"){
-                        addToLog("Ayy thanks for testing!")
                     } else {
                         addToLog("Apworld " + newest_version+" is out! But you can play your version here as well :)", true);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
@@ -5041,9 +4992,14 @@
                 if (!packet.missing_locations) {
                     // do nothing
                 } else if (packet.missing_locations.length === 0) {
-                    nextgoal = "-"
-                    console.log("Set nextgoal to -, because in updateRequiresValue, packet.missing_locations is empty")
-                    document.getElementById("nextgoalitem").innerText = "";
+                    if(!hasgoaled){
+                        nextgoal = finalgoal
+                        document.getElementById("nextgoalitem").innerText = "(Victory!!)";
+                    }else{
+                        nextgoal = "-"
+                        console.log("Set nextgoal to -, because in updateRequiresValue, packet.missing_locations is empty")
+                        document.getElementById("nextgoalitem").innerText = "";
+                    }
                     clearTimeout(timeoutId);
                     updateHighscoreAndGoal()
                 } else {
@@ -5053,10 +5009,16 @@
                     const filteredLocations = packet.missing_locations.filter(loc => loc >= min_number && loc <= max_number);
 
                     let firstMissingLocId;
-                    if (filteredLocations.length > 0 && nextgoal != "-") {
+                    if ((filteredLocations.length > 0 || !hasgoaled) && nextgoal != "-") {
+                        filteredLocations.push(17871244500);
                         firstMissingLocId = filteredLocations[0];
                         nextgoal = Math.max(nextgoal, firstMissingLocId - (current_mission-1) * 10000000 - 16871244500)
-                        askWhatNextItemIs(firstMissingLocId)
+                        if(nextgoal > finalgoal && !hasgoaled){
+                            nextgoal = finalgoal
+                            document.getElementById("nextgoalitem").innerText = "(Victory!!)";
+                        }else{
+                            askWhatNextItemIs(filteredLocations[0])
+                        }
                     } else {
                         nextgoal = "-"
                         console.log("Set nextgoal to -, because filteredLocations is empty, or nextgoal was already -. Should not happen without big waves?")
@@ -5161,10 +5123,17 @@
                     
                     const filteredLocations = missingLocations.filter(loc => loc >= min_number && loc <= max_number);
                     
-                    if (filteredLocations.length > 0 && nextgoal != "-") {
+                    if ((filteredLocations.length > 0 || !hasgoaled) && nextgoal != "-") {
+                        filteredLocations.push(17871244500);
                         nextgoal = Math.max(nextgoal, filteredLocations[0] - (current_mission-1) * 10000000 - 16871244500);
-                        askWhatNextItemIs(filteredLocations[0])
+                        if(nextgoal > finalgoal && !hasgoaled){
+                            nextgoal = finalgoal
+                            document.getElementById("nextgoalitem").innerText = "(Victory!!)";
+                        }else{
+                            askWhatNextItemIs(filteredLocations[0])
+                        }
                     } else {
+                        console.log("nextgoal is ",nextgoal)
                         nextgoal = "-"
                         console.log("Setting nextgoal to - because filtered locations is empty (or nextgoal was already -)")
                         document.getElementById("nextgoalitem").innerText = "";
@@ -5181,8 +5150,9 @@
                 }
 
                 if (inputValue >= finalgoal) {
-                    // console.log("Win! But win is now initiated by receiving a Victory item.")
-                    // sendWin()
+                    console.log("Win! Sending win because "+finalgoal+" is achieved!")
+                    sendWin()
+                    addAchievement(2);
                 }
             }
             
@@ -5197,7 +5167,6 @@
             // Clear any existing timeout
             document.getElementById("maxlogic").innerText = "?"
             document.getElementById("maxlogicalldif").innerText = "?/?/?/?"
-            document.getElementById("maxlogicalldif2").innerText = "?/?/?/?"
             
             clearTimeout(timeoutMaxInLogic);
 
@@ -5216,9 +5185,6 @@
                     }
                 }
                 document.getElementById("maxlogicalldif").innerText = getMaxScoreInLogic(1) + "/" + getMaxScoreInLogic(2) + "/" + getMaxScoreInLogic(3) + "/" + getMaxScoreInLogic(4)
-                if(yacht2048){
-                    document.getElementById("maxlogicalldif2").innerText = getMaxScoreInLogicTwoOneTwo(1) + "/" + getMaxScoreInLogicTwoOneTwo(2) + "/" + getMaxScoreInLogicTwoOneTwo(3) + "/" + getMaxScoreInLogicTwoOneTwo(4)
-                }
             }, 1000); // 1000 milliseconds = 1 second
         }
 
@@ -5231,9 +5197,15 @@
                 const filteredLocations = missingLocations.filter(loc => loc >= min_number && loc <= max_number);
                 console.log("Missing locations:",missingLocations)
                 
-                if (filteredLocations.length > 0 && nextgoal != "-") {
+                if ((filteredLocations.length > 0 || !hasgoaled) && nextgoal != "-") {
+                    filteredLocations.push(17871244500);
                     nextgoal = Math.max(nextgoal, filteredLocations[0] - (current_mission-1) * 10000000 - 16871244500);
-                    askWhatNextItemIs(filteredLocations[0])
+                    if(nextgoal > finalgoal && !hasgoaled){
+                        nextgoal = finalgoal
+                        document.getElementById("nextgoalitem").innerText = "(Victory!!)";
+                    }else{
+                        askWhatNextItemIs(filteredLocations[0])
+                    }
                 } else {
                     nextgoal = "-"
                     console.log("Setting nextgoal to - because filtered locations is empty (or nextgoal was already -)")
@@ -5291,6 +5263,13 @@
         }
 
         function sendWin() {
+            if(hasgoaled){
+                return;
+            }
+            hasgoaled = true;
+            if (offline) {
+                addToLog("You beat the game, congrats!")
+            }
             client.updateStatus(30);
             addToLog("WIN! Congratulations!!")
             console.log("WIN! Congratulations!!")
@@ -5313,7 +5292,7 @@
                     boatSound.play(); // Play the audio
                 }, 2000); // Wait for 2 seconds (after water image appears and vibration starts)
             }
-
+            updateHighscoreAndGoal()
         }
 
         var encs = ["You've got this!", "Keep going, you're closer than you think.", "Every small step counts.", "Believe in yourself like never before.", "You're making progress, even if it's not always visible.", "Challenges make you stronger.", "Embrace the journey, every twist and turn.", "You're capable of amazing things.", "Trust your instincts, they've brought you this far.", "Your resilience is your superpower.", "Take a deep breath, you can handle this.", "Your effort will pay off.", "Focus on progress, not perfection.", "Keep your head up, brighter days are ahead.", "Your determination is inspiring.", "You're unstoppable when you set your mind to it.", "Keep pushing forward, even when it's tough.", "You're braver than you believe.", "Celebrate every achievement, no matter how small.", "You've overcome challenges before, you can do it again.", "Your potential knows no bounds.", "Stay positive, even in the face of adversity.", "You're capable of greatness.", "Trust in your abilities.", "Keep dreaming big dreams.", "You're on the right track, don't doubt yourself.", "Your perseverance is admirable.", "Stay focused, you're getting there.", "Your hard work will pay off in the end.", "Keep your eyes on the prize.", "You have the power to create your own success.", "Believe in the power of possibility.", "Your determination will lead you to success.", "Don't give up, you're closer than you think.", "Keep your chin up, better days are coming.", "You're stronger than you know.", "Your courage will carry you through.", "Trust the process, it's leading you somewhere great.", "Keep believing in yourself, even when others don't.", "You're capable of turning setbacks into comebacks.", "Keep shining your light, the world needs it.", "Your persistence will pay off.", "Stay committed to your goals.", "You're destined for greatness.", "Keep moving forward, one step at a time.", "Your determination will overcome any obstacle.", "Stay true to yourself and your dreams.", "You're making a difference with every effort.", "Keep your spirits high, good things are on the horizon.", "Your strength lies in your resilience.", "Believe in the power of your dreams.", "You're capable of achieving anything you set your mind to.", "Keep pushing through, you're almost there.", "Your courage inspires those around you.", "Stay patient, great things take time.", "You're stronger than you think you are.", "Keep believing in yourself, even when it's hard.", "Your determination will lead to success.", "Keep chasing your dreams, they're within reach.", "You're on the path to greatness.", "Your persistence will pay off in the end.", "Keep your focus on the positive.", "You have the strength to overcome any challenge.", "Stay resilient, you're capable of weathering any storm.", "Your journey is unique and beautiful.", "Keep going, your efforts are worthwhile.", "Believe in your abilities, they'll take you far.", "Stay motivated, you're doing great.", "You're making progress every day.", "Keep your head held high, you're doing amazing.", "Your determination is inspiring others.", "Keep believing in yourself, even when it's hard.", "You're capable of achieving anything you set your mind to.", "Stay focused on your goals, they're within reach.", "You're stronger than you think you are.", "Keep pushing forward, you're almost there.", "Your hard work will pay off in the end.", "Keep your eyes on the prize, it's worth it.", "Believe in yourself, you're capable of greatness.", "Stay resilient, you've got this.", "Your journey is unfolding perfectly.", "Keep moving forward, one step at a time.", "You're braver than you believe, stronger than you seem.", "Keep your faith in yourself, it's your greatest asset.", "Your perseverance will lead to success.", "Keep your spirits high, good things are coming.", "You're making progress, even if it's slow.", "Stay positive, even when things get tough.", "You're on the right path, trust the process.", "Keep believing in yourself, even when others doubt you.", "Your dreams are within reach, keep reaching.", "Stay committed to your goals, you'll get there.", "You're capable of overcoming any obstacle.", "Keep pushing through, you're stronger than you know.", "Your determination will see you through.", "Keep your head up, brighter days are ahead.", "You're an inspiration to those around you.", "Stay true to yourself and your dreams.", "Keep your focus on what matters most.", "You've come so far, don't give up now."];
