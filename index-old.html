@@ -956,10 +956,10 @@
     </script>
 
     <div class="error-message" id="error-message-container">
-        Your using wrong version, this one is used for old versions but you are using a recent one..<br>
+        Your using the wrong version of the site, this one is used for old versions but you are using a recent one..<br>
         Please move to this version: <br>
         <a href="index.html" id="link-in-error-message" style="text-decoration: underline; color: inherit;">Link</a>
-        <br>
+        <br> <br>
         <img style="max-width: 10%; max-height: 10%;" src="Images/yachty.png" alt="Boat Image">
     </div>
 
@@ -4984,7 +4984,7 @@
                     if (apworldversion == newest_version || apworldversion == "2.1.3") {
                         //recent
                     } else {
-                        addToLog("Apworld " + newest_version+" is out! But you can play your version here as well :)", true);
+                        addToLog("Apworld " + newest_version+" is out! But you can play your version here as well :)", false);
                         addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                     }
                 }
