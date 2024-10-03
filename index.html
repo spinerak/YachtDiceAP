@@ -1444,7 +1444,9 @@
     <script>
         var boatImage = document.getElementById("boatImage");
         let r = Math.random();
-        if(r < 0.02){
+        if(r < 0.001953125){
+            boatImage.src = "Images/boat.png";
+        }else if(r < 0.021953125){
             boatImage.src = "Images/JaxFlint.png";
         }else if (r < 0.03){
             boatImage.src = "Images/boaty_down.png";
