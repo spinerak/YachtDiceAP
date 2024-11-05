@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Generator</title>
+</head>
+<body>
+    <style>
+body {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    color: #ffffff;
+}
+
+label {
+    color: #b0b0b0;
+}
+
+input[type="text"],
+input[type="number"] {
+    background-color: #333333;
+    color: #ffffff;
+    border: 1px solid #444444;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #6200ea;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #3700b3;
+}
+
+#linkContainer a {
+    color: #bb86fc;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#linkContainer a:hover {
+    color: #ffffff;
+}
+
+
+    </style>
+    <h1>Link Generator</h1>
+    
+    <form id="linkForm">
+        <label for="hostname">Hostname:</label>
+        <input type="text" id="hostname" name="hostname"><br><br>
+        
+        <label for="port">Port:</label>
+        <input type="text" id="port" name="port"><br><br>
+        
+        <label for="prefix">Prefix:</label>
+        <input type="text" id="prefix" name="prefix"><br><br>
+        
+        <label for="start_number">Start Number:</label>
+        <input type="number" id="start_number" name="start_number"><br><br>
+        
+        <label for="end_number">End Number:</label>
+        <input type="number" id="end_number" name="end_number"><br><br>
+        
+        <button type="button" onclick="generateLink()">Make link to random slot</button>
+    </form>
+    
+    <div id="linkContainer"></div>
+    
+    <script>
+        document.getElementById('hostname').value = getUrlParameter('hostname');
+        document.getElementById('port').value = getUrlParameter('port');
+        document.getElementById('prefix').value = getUrlParameter('prefix');
+        document.getElementById('start_number').value = getUrlParameter('start_number');
+        document.getElementById('end_number').value = getUrlParameter('end_number');
+        function generateLink() {
+            // Get values from the form
+            const hostname = document.getElementById("hostname").value;
+            const port = document.getElementById("port").value;
+            const prefix = document.getElementById("prefix").value;
+            const startNumber = parseInt(document.getElementById("start_number").value, 10);
+            const endNumber = parseInt(document.getElementById("end_number").value, 10);
+            
+            // Generate a random number between startNumber and endNumber
+            const randomNumber = Math.floor(Math.random() * (endNumber - startNumber + 1)) + startNumber;
+            
+            // Create the link text
+            const linkText = `https://yacht-dice-ap.netlify.app/?p=AP&go=y&hostname=${hostname}&port=${port}&name=${prefix}${randomNumber}`;
+            
+            // Clear previous link, if any
+            const linkContainer = document.getElementById("linkContainer");
+            linkContainer.innerHTML = '';
+            
+            // Create a clickable link element
+            const link = document.createElement("a");
+            link.href = `${linkText}`;
+            link.textContent = linkText;
+            link.target = "_blank"; // Opens the link in a new tab
+            
+            // Add the link to the page
+            linkContainer.appendChild(link);
+        }
+
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        };
+    </script>
+</body>
+</html>
