@@ -315,7 +315,6 @@
 
             connected = true;
             document.getElementById('startButton').innerText = 'Connected! Loading and gathering...';
-            client.storage.prepare("YADI_A", 0).replace(1).commit() // Activate Archipelago storage.
 
             let slot_data = {};
             let fetchPromises = client.players.teams[0]
@@ -379,7 +378,7 @@
                     addRow(
                         slot_number,
                         p.name, 
-                        `client2.0.html?p=AP&go=y&hostname=${hostname}&port=${port}&name=${p.name}`, 
+                        `/?db=y&p=AP&go=y&hostname=${hostname}&port=${port}&name=${p.name}`, 
                         logic, 
                         results['YADI_N'+slot_number], 
                         results['YADI_N'+slot_number] == "-" ? -1000 : logic - results['YADI_N'+slot_number],
