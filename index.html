@@ -988,15 +988,13 @@
 
             <br>
             <div>
-                <label for="hostname" class="login-label">Hostname:</label>
-                <input type="text" id="hostname" name="hostname" class="login-input" value="archipelago.gg">
-                <label for="port" class="login-label">Port:</label>
-                <input type="text" id="port" name="port" class="login-input" value="38281">
-                <label for="name" class="login-label">Player Name:</label>
+                <label for="hostport" class="login-label">Host and Port</label>
+                <input type="text" id="hostport" name="hostport" class="login-input" value="archipelago.gg:38281" placeholder="Example: archipelago.gg:38281">
+                <label for="name" class="login-label">Player Name</label>
                 <input type="text" id="name" name="name" class="login-input"
-                    value="This browser is probably not supported...">
-                <label for="name" class="login-label">Password:</label>
-                <input type="password" id="password" name="password" class="login-input" value="">
+                    value="This browser is probably not supported..." placeholder="Example: Yachty">
+                <label for="name" class="login-label">Password</label>
+                <input type="password" id="password" name="password" class="login-input" value="" placeholder="Leave blank if no password">
                 <input type="submit" value="Login" id="loginbutton" class="login-submit">
             </div>
 
@@ -1067,9 +1065,18 @@
 
         // Set values from URL parameters or use default values
 
-        document.getElementById('hostname').value = getUrlParameter('hostname') || localStorage.getItem("hostname") || 'archipelago.gg';
-        document.getElementById('port').value = parseInt(getUrlParameter('port')) || parseInt(localStorage.getItem("port")) || 38281;
-        document.getElementById('name').value = getUrlParameter('name') || localStorage.getItem("name") || 'Player1';
+        let hostport = getUrlParameter('hostport');
+        
+        if(!getUrlParameter('hostport')){
+            hostport = getUrlParameter('hostname') + ":" + getUrlParameter('port');
+            if(hostport == ":"){
+                hostport = "";
+            }
+        }
+        
+        document.getElementById('hostport').value = hostport || localStorage.getItem("hostport");
+
+        document.getElementById('name').value = getUrlParameter('name') || localStorage.getItem("name");
 
 
     </script>
@@ -4088,8 +4095,7 @@
 
 
                 connectionInfo = {
-                    hostname: localStorage.getItem("hostname") || "archipelago.gg", // Default hostname
-                    port: parseInt(localStorage.getItem("port")) || 38281, // Default port
+                    hostport: localStorage.getItem("hostport") || "archipelago.gg:38281", // Default hostname
                     game: "Yacht Dice", // Replace with the game name for this player.
                     name: localStorage.getItem("name") || "Player1", // Default player name
                     password: document.getElementById("password").value,
@@ -4176,9 +4182,10 @@
             }
             disconnectedtimer = clearTimeoutFull(disconnectedtimer);
             reconnecttimer = clearTimeoutFull(reconnecttimer);
+            console.log(connectionInfo)
             client = new Client();
             client
-                .login(connectionInfo.hostname+":"+connectionInfo.port, connectionInfo.name, connectionInfo.game, {password: connectionInfo.password})
+                .login(connectionInfo.hostport, connectionInfo.name, connectionInfo.game, {password: connectionInfo.password})
                 .then(() => {
                     addToLog("Connected to the server");
                     // You are now connected and authenticated to the server. You can add more code here if need be.
@@ -4188,7 +4195,7 @@
                     console.log("Failed to connect", error)
                     addToLog("Failed to connect. "+error)
                     if (firsttime || !connectedonce || error[0] == "InvalidSlot" || error[0] == "InvalidGame" || dontconnectagain) {
-                        addToLog("To try again: refresh the page. Here are some input examples: Hostname: archipelago.gg or localhost   Port: 38281   You might need to refresh online server by reopening the archipelago.gg page.");
+                        addToLog("To try again: refresh the page. Here are some input examples: Hostport: archipelago.gg:54321 or localhost:38281   You might need to refresh online server by reopening the archipelago.gg page.");
                         dontconnectagain = true;
                     } else {
                         disconnecttimeout = disconnecttimeout + 1;
@@ -4298,6 +4305,22 @@
                 
 
                 const messageElement = document.createElement("div");
+
+                if (document.getElementById("showTimestamp").checked || document.getElementById("showLinenumber").checked) {
+                    const nodeElement = document.createElement("span");
+
+                    if (document.getElementById("showTimestamp").checked) {
+                        nodeElement.innerText  += "[" + new Date().toLocaleTimeString('en-US', { hour12: false }) + "] ";
+                    }
+                    if (document.getElementById("showLinenumber").checked) {
+                        nodeElement.innerText  += "[" + messageCount + "] ";
+                    }
+
+                    messageElement.appendChild(nodeElement);
+                }
+                
+
+
                 let is_relevant = false;
                 let contains_player = false;
 
@@ -4353,21 +4376,21 @@
                         default:
                             break;
                     }
-
                     messageElement.appendChild(nodeElement);
                 }
-                var logTextarea = document.getElementById("log");
 
-                var isScrolledToBottom = logTextarea.scrollHeight - logTextarea.clientHeight <= logTextarea.scrollTop + 1;
-                logTextarea.appendChild(messageElement);
+                if(!document.getElementById('only_relevant_messages').checked || !contains_player || is_relevant){
+                    var logTextarea = document.getElementById("log");
 
-                // currentFrag.appendChild(document.createElement("br"));
-                // logTextarea.appendChild(currentFrag);
+                    var isScrolledToBottom = logTextarea.scrollHeight - logTextarea.clientHeight <= logTextarea.scrollTop + 1;
+                    logTextarea.appendChild(messageElement);
+                    messageCount += 1;
+                    
+                    cleanLog();
 
-                cleanLog();
-
-                if (isScrolledToBottom) {
-                    logTextarea.scrollTop = logTextarea.scrollHeight - logTextarea.clientHeight;
+                    if (isScrolledToBottom) {
+                        logTextarea.scrollTop = logTextarea.scrollHeight - logTextarea.clientHeight;
+                    }
                 }
             }
 
@@ -4540,7 +4563,11 @@
 
                     let link = document.getElementById('link-in-error-message');
 
-                    link.href += "?p=AP&hostname="+connectionInfo.hostname+"&port="+connectionInfo.port+"&name="+connectionInfo.name;
+                    const str = connectionInfo.hostport;
+                    const parts = str.split(":");
+                    
+
+                    link.href += "?p=AP&hostname="+parts[0]+"&port="+parts[1]+"&name="+connectionInfo.name;
                     client.socket.disconnect();;
                     dontconnectagain = true;
                     return;
@@ -4565,7 +4592,12 @@
 
                     let link = document.getElementById('link-in-error-message');
                     link.href = "client1.0-old.html"
-                    link.href += "?p=AP&hostname="+connectionInfo.hostname+"&port="+connectionInfo.port+"&name="+connectionInfo.name;
+
+                    const str = connectionInfo.hostport;
+                    const parts = str.split(":");
+
+                    link.href += "?p=AP&hostname="+parts[0]+"&port="+parts[1]+"&name="+connectionInfo.name;
+                    
                     client.socket.disconnect();;
                     dontconnectagain = true;
                     return;
@@ -5120,8 +5152,8 @@
 
 
         function pressed_login(){
-            localStorage.setItem("hostname", document.getElementById("hostname").value);
-            localStorage.setItem("port", document.getElementById("port").value);
+            console.log("PRESSE LOGIN")
+            localStorage.setItem("hostport", document.getElementById("hostport").value);
             localStorage.setItem("name", document.getElementById("name").value);
 
             document.getElementById("login-container").style.display = "none";
