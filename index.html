@@ -573,6 +573,7 @@
             /* Transition for smooth horizontal movement */
             animation: wobble 4s ease infinite alternate;
             /* Wobble animation */
+            object-fit: contain; /* Maintain aspect ratio */
         }
 
         /* CSS keyframe animation for wobbling effect */
@@ -1429,8 +1430,8 @@
             if (month === 3 && day === 1) { // April is month 3 (0-indexed in JavaScript)
                 var headers = document.querySelectorAll('.tutoroll_header, h1');
                 headers.forEach(function(header) {
-                    if (header.textContent === "Yacht Dice 🛥") {
-                        header.textContent = "Gyacht Skibidice 🚽";
+                    if (header.textContent === "🎲 Yacht Dice 🛥") {
+                        header.textContent = "🚽 Gyacht Skibidice 🚽";
                     }
                 });
             }
@@ -1442,7 +1443,16 @@
 
     <script>
         var boatImage = document.getElementById("boatImage");
+
         let r = Math.random();
+        const winSkin = getUrlParameter("winskin");
+        if (winSkin !== "") {
+            const parsedValue = parseInt(winSkin) / 100;
+            if (!isNaN(parsedValue)) {
+                r = parsedValue;
+            }
+        }
+
         if(r < 0.001953125){
             boatImage.src = "Images/boat.png";
         }else if(r < 0.021953125){
@@ -1453,6 +1463,8 @@
             boatImage.src = "Images/boaty_back.png";
         }else if (r < 0.09){
             boatImage.src = "Images/boaty.png";
+        }else if (r < 0.12){
+            boatImage.src = "Images/chrisboat.png";
         } else {
             boatImage.src = "Images/yachty.png";
         }
