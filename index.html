@@ -1018,7 +1018,7 @@
                 <br>
                 <label for="big_waves_mode_checkbox" id="big_waves_mode_checkbox_label">
                     <input type="checkbox" id="big_waves_mode_checkbox" name="big_waves_mode_checkbox">
-                    [alpha] New "Big waves" mode; lose an item every 100 points.
+                    Solo-only "Big waves" mode; lose an item every 100 points.
                 </label>
                 <br><br>
             </div>
@@ -2017,7 +2017,7 @@
         }else{
             wins = 0;
         }
-        diceFaces = diceFaces.slice(0, 2 * wins + 2);
+        diceFaces = diceFaces.slice(0, 4 * wins + 2);
         console.log("Styles unlocked:",diceFaces)
 
         // Toggle dropdown options visibility on click
@@ -2099,6 +2099,7 @@
 
         // Function to handle skin selection
         function selectSkin(skinIndex) {
+            console.log("Set dicestyle to ",skinIndex)
             diceStyle = skinIndex
             localStorage.setItem('settings_dicestyle', skinIndex);
             refreshAllDice()
@@ -2780,9 +2781,12 @@
                 // Retrieve the integer from local storage
                 const storedIntegerString = localStorage.getItem('settings_dicestyle');
                 diceStyle = parseInt(storedIntegerString, 10); // Parse the string back to an integer
+                console.log("Set dicestyle", diceStyle)
             }
         } else if(localStorage.getItem('settings_randomstyleonstartup') === 'true'){
-            diceStyle = Math.min(Math.floor(Math.random() * 22), diceStyle.length)
+            diceStyle = Math.min(Math.floor(Math.random() * 22), diceFaces.length)
+            console.log("Set dicestyle", diceStyle)
+            console.log("Set dicestyle", diceStyle)
         } else {
             localStorage.setItem('settings_randomstyleonstartup', checkbox_randstyle.checked);
         }
@@ -2851,7 +2855,7 @@
                 v = diceStyle
                 dice.setAttribute('style-value', v)
             }
-
+            console.log(diceFaces, diceFaces.length, v, diceStyle, rolledValue);
             let randomFace = diceFaces[Math.min(v, diceFaces.length-1)][rolledValue];
 
 
@@ -5927,6 +5931,37 @@
             console.log("GO")
             pressed_login();
         }
+
+
+        // // Konami code meme because of Palex
+        // // Define the Konami Code sequence
+        // const konamiCode = [
+        // 'ArrowUp', 'ArrowUp',
+        // 'ArrowDown', 'ArrowDown',
+        // 'ArrowLeft', 'ArrowRight',
+        // 'ArrowLeft', 'ArrowRight',
+        // 'KeyB', 'KeyA'
+        // ];
+        
+        // let konamiDid = false;
+        // let konamiInputSequence = [];
+
+        // // Listen for keydown events
+        // document.addEventListener('keydown', (event) => {
+        // konamiInputSequence.push(event.code);
+
+        // // Trim the sequence to the length of the Konami Code
+        // if (konamiInputSequence.length > konamiCode.length) {
+        //     konamiInputSequence.shift();
+        // }
+
+        // // Check if the current sequence matches the Konami Code
+        // if (JSON.stringify(konamiInputSequence) === JSON.stringify(konamiCode) && !konamiDid && connectedstatus) {
+        //     konamiDid = true;
+        //     konamiInputSequence = [];
+        //     currentRolls -= 1;
+        // }
+        // });
     </script>
 
 </body>
