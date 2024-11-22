@@ -1190,6 +1190,7 @@
                             <button id>Select dice style</button>
                             <div class="dropdown-options" id="dropdownOptions"></div>
                         </div>
+                        <div>Goal games -> more skins (20+)!</div>
                         <br>
                         <input type="checkbox" id="requireExactScore">
                         <label for="requireExactScore">Gamemode: need exact score (>10)</label>
@@ -1207,7 +1208,7 @@
                             </audio>
                             <div id="customControls"
                                 style="border: 2px solid gray; padding: 5px; width: 150px; margin: 5px; ">
-                                <label>Music:</label><br>
+                                <label>Music (links to soundcloud):</label><br>
                                 <button id="playpause"
                                     style="padding: 0; border: none; cursor: pointer; border-radius: 5px; margin: 0; font-size: 30px; background: none;"
                                     onclick="playPause()">▶️</button>
@@ -1413,7 +1414,7 @@
                     <br>
                     <button id="saveBtn" class="NS_category-button">Save (see chat)</button>
                     <br>
-                    Max score in logic Easy/Medium/Hard/Extreme: <span id="maxlogicalldif">?</span>
+                    Logic: Easy/Medium/Hard/Extreme/Max: <span id="maxlogicalldif">?</span>
                 </div>
             </div>
         </div>
@@ -1728,7 +1729,7 @@
 
         //change dice skin
         // Dice faces data
-        const diceFaces =
+        let diceFaces =
             [
                 [
                     "Skins/GraphSVG/0O.svg",
@@ -1740,6 +1741,33 @@
                     "Skins/GraphSVG/6.svg"
                 ],
                 [
+                    "Skins/Red/0.png",
+                    "Skins/Red/1.png",
+                    "Skins/Red/2.png",
+                    "Skins/Red/3.png",
+                    "Skins/Red/4.png",
+                    "Skins/Red/5.png",
+                    "Skins/Red/6.png",
+                ],
+                [
+                    "Skins/Fruity/0.webp",
+                    "Skins/Fruity/1.webp",
+                    "Skins/Fruity/2.webp",
+                    "Skins/Fruity/3.webp",
+                    "Skins/Fruity/4.webp",
+                    "Skins/Fruity/5.webp",
+                    "Skins/Fruity/6.webp"
+                ],
+                [
+                    "Skins/Hearts/0.svg",
+                    "Skins/Hearts/1.svg",
+                    "Skins/Hearts/2.svg",
+                    "Skins/Hearts/3.svg",
+                    "Skins/Hearts/4.svg",
+                    "Skins/Hearts/5.svg",
+                    "Skins/Hearts/6.svg"
+                ],
+                [
                     "Skins/GraphSVG/0OD.svg",
                     "Skins/GraphSVG/1OD.svg",
                     "Skins/GraphSVG/2OD.svg",
@@ -1747,15 +1775,6 @@
                     "Skins/GraphSVG/4OD.svg",
                     "Skins/GraphSVG/5OD.svg",
                     "Skins/GraphSVG/6D.svg"
-                ],
-                [
-                    "Skins/GraphSVG/0.svg",
-                    "Skins/GraphSVG/1.svg",
-                    "Skins/GraphSVG/2.svg",
-                    "Skins/GraphSVG/3.svg",
-                    "Skins/GraphSVG/4.svg",
-                    "Skins/GraphSVG/5.svg",
-                    "Skins/GraphSVG/6.svg"
                 ],
                 [
                     "Skins/Crystal/0.png",
@@ -1767,13 +1786,13 @@
                     "Skins/Crystal/6.png",
                 ],
                 [
-                    "Skins/Red/0.png",
-                    "Skins/Red/1.png",
-                    "Skins/Red/2.png",
-                    "Skins/Red/3.png",
-                    "Skins/Red/4.png",
-                    "Skins/Red/5.png",
-                    "Skins/Red/6.png",
+                    "Skins/GraphSVG/0.svg",
+                    "Skins/GraphSVG/1.svg",
+                    "Skins/GraphSVG/2.svg",
+                    "Skins/GraphSVG/3.svg",
+                    "Skins/GraphSVG/4.svg",
+                    "Skins/GraphSVG/5.svg",
+                    "Skins/GraphSVG/6.svg"
                 ],
                 [
                     "Skins/Blue/0.png",
@@ -1783,15 +1802,6 @@
                     "Skins/Blue/4.png",
                     "Skins/Blue/5.png",
                     "Skins/Blue/6.png",
-                ],
-                [
-                    "Skins/Fruity/0.webp",
-                    "Skins/Fruity/1.webp",
-                    "Skins/Fruity/2.webp",
-                    "Skins/Fruity/3.webp",
-                    "Skins/Fruity/4.webp",
-                    "Skins/Fruity/5.webp",
-                    "Skins/Fruity/6.webp"
                 ],
                 [
                     "Skins/Ladybug/0.webp",
@@ -1855,15 +1865,6 @@
                     "Skins/APlogo2/4.svg",
                     "Skins/APlogo2/5.svg",
                     "Skins/APlogo2/6.svg"
-                ],
-                [
-                    "Skins/Hearts/0.svg",
-                    "Skins/Hearts/1.svg",
-                    "Skins/Hearts/2.svg",
-                    "Skins/Hearts/3.svg",
-                    "Skins/Hearts/4.svg",
-                    "Skins/Hearts/5.svg",
-                    "Skins/Hearts/6.svg"
                 ],
                 [
                     "Skins/Digital/digital0.svg",
@@ -2010,6 +2011,14 @@
                     "Skins/Graph/6.png"
                 ]
             ];
+        let wins = localStorage.getItem("amount_of_wins");
+        if(wins !== null){
+            wins = parseInt(wins);
+        }else{
+            wins = 0;
+        }
+        diceFaces = diceFaces.slice(0, 2 * wins + 2);
+        console.log("Styles unlocked:",diceFaces)
 
         // Toggle dropdown options visibility on click
         const customDropdown = document.getElementById("skinSelect");
@@ -2040,7 +2049,7 @@
 
 
                         // Loop through the faces array to add specific images (2, 4, and 6)
-                        for (let i = 1; i <= 6; i += 1) { // Iterate over indices 1, 3, and 5 (corresponding to 2, 4, and 6)
+                        for (let i = 4; i <= 6; i += 2) { // Iterate over indices 1, 3, and 5 (corresponding to 2, 4, and 6)
                             const imageUrl = faces[i]; // Get the image URL at the current index
 
                             const img = document.createElement("img");
@@ -2065,8 +2074,8 @@
 
 
                     // Loop through the faces array to add specific images (2, 4, and 6)
-                    for (let i = 1; i <= 6; i += 1) { // Iterate over indices 1, 3, and 5 (corresponding to 2, 4, and 6)
-                        const imageUrl = diceFaces[i][i]; // Get the image URL at the current index
+                    for (let i = 0; i <= 1; i += 1) { // Iterate over indices 1, 3, and 5 (corresponding to 2, 4, and 6)
+                        const imageUrl = diceFaces[Math.min(i, diceFaces.length - 1)][4 + 2 * i]; // Get the image URL at the current index
 
                         const img = document.createElement("img");
                         img.src = imageUrl;
@@ -2709,6 +2718,12 @@
                 document.getElementById("diceValues").style.textAlign = "center";
             }
 
+            if (message == 'unlockskins'){
+                localStorage.setItem("amount_of_wins", 100000000);
+                addToLog("Unlocked all skins, please refresh.")
+                return;
+            }
+
             client.messages.say(message);
 
 
@@ -2767,7 +2782,7 @@
                 diceStyle = parseInt(storedIntegerString, 10); // Parse the string back to an integer
             }
         } else if(localStorage.getItem('settings_randomstyleonstartup') === 'true'){
-            diceStyle = Math.floor(Math.random() * 22)
+            diceStyle = Math.min(Math.floor(Math.random() * 22), diceStyle.length)
         } else {
             localStorage.setItem('settings_randomstyleonstartup', checkbox_randstyle.checked);
         }
@@ -2837,7 +2852,7 @@
                 dice.setAttribute('style-value', v)
             }
 
-            let randomFace = diceFaces[v][rolledValue];
+            let randomFace = diceFaces[Math.min(v, diceFaces.length-1)][rolledValue];
 
 
             if (keep) {
@@ -3836,6 +3851,79 @@
                 console.error("fixedorderlogic is unknown??")
                 return 1/0;
             }
+
+            maxScore(D){
+                switch (this.name) {
+                    case 'Category Ones':
+                        return 1 * D;
+                    case 'Category Twos':
+                        return 2 * D;
+                    case 'Category Threes':
+                        return 3 * D;
+                    case 'Category Fours':
+                        return 4 * D;
+                    case 'Category Fives':
+                        return 5 * D;
+                    case 'Category Sixes':
+                        return 6 * D;
+                    case 'Category Choice':
+                        return 6 * D;
+                    case 'Category Inverse Choice':
+                        return 6 * D;
+                    case 'Category Pair':
+                        return D>=2 ? 10 : 0;
+                    case 'Category Three of a Kind':
+                        return D>=3 ? 20 : 0;
+                    case 'Category Four of a Kind':
+                        return D>=4 ? 30 : 0;
+                    case 'Category Tiny Straight':
+                        return D>=3 ? 20 : 0;
+                    case 'Category Small Straight':
+                        return D>=4 ? 30 : 0;
+                    case 'Category Large Straight':
+                        return D>=5 ? 40 : 0;
+                    case 'Category Full House':
+                        return D>=5 ? 25 : 0;
+                    case 'Category Yacht':
+                        return D>=5 ? 50 : 0;
+
+                    case 'Category Distincts':
+                        return Math.min(D, 6);
+                    case 'Category Two times Ones':
+                        return 2 * D;
+                    case 'Category Half of Sixes':
+                        return 3 * D;
+                    case 'Category Twos and Threes':
+                        return 3 * D;
+                    case 'Category Sum of Odds':
+                        return 5 * D;
+                    case 'Category Sum of Evens':
+                        return 6 * D;
+                    case 'Category Double Threes and Fours':
+                        return 8 * D;
+                    case 'Category Quadruple Ones and Twos':
+                        return 8 * D;
+                    case 'Category Micro Straight':
+                        return D>=2 ? 10 : 0;
+                    case 'Category Three Odds':
+                        return D>=3 ? 20 : 0;
+                    case 'Category 1-2-1 Consecutive':
+                        return D>=4 ? 30 : 0;
+                    case 'Category Three Distinct Dice':
+                        return D>=3 ? 20 : 0;
+                    case 'Category Two Pair':
+                        return D>=4 ? 30 : 0;
+                    case 'Category 2-1-2 Consecutive':
+                        return D>=5 ? 40 : 0;
+                    case 'Category Five Distinct Dice':
+                        return D>=5 ? 25 : 0;
+                    case 'Category 4&5 Full House':
+                        return D>=5 ? 50 : 0;
+                    default:
+                        return -1; // Invalid category
+                }
+                return -1;
+            }
         }
 
         let fixedorderlogic = "Yes"
@@ -3959,6 +4047,17 @@
         
 
         function diceSimulationStringsForJS2(categories, nbDice, nbRolls, fixscmu, stescmu, diff) {
+            if(diff == 99){
+                categories.sort((a, b) => a.maxScore(nbDice) - b.maxScore(nbDice));
+                console.log("categories max", categories);
+
+                let maxsum = 0;
+                for (let j = 0; j < categories.length; j++) {
+                    console.log(maxsum, fixscmu, stescmu, j, categories[j], categories[j].quantity, categories[j].maxScore(nbDice));
+                    maxsum += Math.floor((1 + fixscmu + stescmu * j) * Math.pow(2,categories[j].quantity-1) * categories[j].maxScore(nbDice));
+                }
+                return Math.floor(maxsum) + parseInt(document.getElementById("catbonuspoints").textContent);
+            }
             
             categories.sort((a, b) => a.meanScore(Math.min(8,nbDice), 4) - b.meanScore(Math.min(8,nbDice), 4));
             
@@ -4940,7 +5039,7 @@
                 // This code will execute after 1 second
                 document.getElementById("maxlogic").innerText = scoreinlogic;
                 
-                document.getElementById("maxlogicalldif").innerText = getMaxScoreInLogic(1) + "/" + getMaxScoreInLogic(2) + "/" + getMaxScoreInLogic(3) + "/" + getMaxScoreInLogic(4)
+                document.getElementById("maxlogicalldif").innerText = getMaxScoreInLogic(1) + "/" + getMaxScoreInLogic(2) + "/" + getMaxScoreInLogic(3) + "/" + getMaxScoreInLogic(4) + "/" + getMaxScoreInLogic(99)
             }, 1000); // 1000 milliseconds = 1 second
         }
 
@@ -5032,6 +5131,15 @@
                 return;
             }
             hasgoaled = true;
+            
+            let wins = localStorage.getItem("amount_of_wins");
+            if(wins !== null){
+                wins = parseInt(wins) + 1;
+            }else{
+                wins = 1;
+            }
+            localStorage.setItem("amount_of_wins", wins);
+
             if (offline) {
                 addToLog("You beat the game, congrats!")
             }else{
