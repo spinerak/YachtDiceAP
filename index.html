@@ -2855,7 +2855,7 @@
                 v = diceStyle
                 dice.setAttribute('style-value', v)
             }
-            console.log(diceFaces, diceFaces.length, v, diceStyle, rolledValue);
+            
             let randomFace = diceFaces[Math.min(v, diceFaces.length-1)][rolledValue];
 
 
@@ -4353,24 +4353,24 @@
 
             async function checkYDDD(){
                 if(getUrlParameter("db") == "y"){
-                    saveYDDInformation = true;
+                    saveYDDInformation = 1;
                     console.log("Saving info for Yacht Dice Dashboard", saveYDDInformation);
-                    if(saveYDDInformation == 1){
+                    
+                    setTimeout(() => {
                         console.log("set N", nextgoal);
                         client.storage.prepare("YADI_N"+packetSlotName, 0).replace(nextgoal).commit() // Activate Archipelago storage.
                         calculateMaxInLogic();
-                        client.storage.prepare("YADI_C"+packetSlotName, 0).add(1).commit() // Activate Archipelago storage.
-                        client.storage.prepare("YADI_C", 0).add(1).commit() // Activate Archipelago storage.
 
                         for(sent in itemsSentKeepYDD){
                             console.log("ITEM SENT AND REGISTER LATER", sent);
                             client.storage.prepare("YADI_I"+sent[0], []).add([sent[1]]).commit() // Activate Archipelago storage.
-                            client.storage.prepare("YADI_C"+sent[0], 0).add(1).commit() // Activate Archipelago storage.
-                            client.storage.prepare("YADI_C", 0).add(1).commit() // Activate Archipelago storage.
                         }
+                        client.storage.prepare("YADI_I"+packetSlotName, []).replace(progressionItemsReceivedList).commit() // Activate Archipelago storage.
                         
-                    }
-                    client.storage.prepare("YADI_I"+packetSlotName, []).replace(progressionItemsReceivedList).commit() // Activate Archipelago storage.
+                        // Add your code here
+                    }, 1000); // 2000 milliseconds = 2 seconds
+
+                    
                 }
             }
 
@@ -4547,8 +4547,6 @@
                 if(sender.slot == client.players.self.slot){
                     console.log("ITEM SENT AND REGISTER", text, item, nodes);
                     client.storage.prepare("YADI_I"+receiver.slot, []).add([item.id]).commit() // Activate Archipelago storage.
-                    client.storage.prepare("YADI_C"+receiver.slot, 0).add(1).commit() // Activate Archipelago storage.
-                    client.storage.prepare("YADI_C", 0).add(1).commit() // Activate Archipelago storage.
                 }
             }
             if(saveYDDInformation == -1){
@@ -4973,6 +4971,8 @@
                         }
                     }
 
+                    const prevnextgoal = nextgoal;
+
                     const min_number = 16871244500 
                     const max_number = 16871244500 + 1000
                     
@@ -4998,12 +4998,10 @@
                         document.getElementById("nextgoalitem").innerText = "";
                     }
 
-                    if(saveYDDInformation == 1){
+                    if(prevnextgoal != nextgoal && saveYDDInformation == 1){
                         changeYDDInfo = true;
                         console.log("set N", nextgoal);
                         client.storage.prepare("YADI_N"+packetSlotName, 0).replace(nextgoal).commit() // Activate Archipelago storage.
-                        client.storage.prepare("YADI_C"+packetSlotName, 0).add(1).commit() // Activate Archipelago storage.
-                        client.storage.prepare("YADI_C", 0).add(1).commit() // Activate Archipelago storage.
                     }
                 }
 
@@ -5055,7 +5053,7 @@
             if(!offline){
                 const filteredLocations = missingLocations.filter(loc => loc >= min_number && loc <= max_number);
                 // console.log("Missing locations:",missingLocations)
-                
+                const prevnextgoal = nextgoal;
                 if ((filteredLocations.length > 0 || !hasgoaled) && nextgoal != "-") {
                     filteredLocations.push(17871244500);
                     nextgoal = Math.max(nextgoal, filteredLocations[0] - 16871244500);
@@ -5072,12 +5070,10 @@
                     console.log("Setting nextgoal to - because filtered locations is empty (or nextgoal was already -)")
                     document.getElementById("nextgoalitem").innerText = "";
                 }
-                if(saveYDDInformation == 1){
+                if(prevnextgoal != nextgoal && saveYDDInformation == 1){
                     changeYDDInfo = true;
                     console.log("set N", nextgoal);
                     client.storage.prepare("YADI_N"+packetSlotName, 0).replace(nextgoal).commit() // Activate Archipelago storage.
-                    client.storage.prepare("YADI_C"+packetSlotName, 0).add(1).commit() // Activate Archipelago storage.
-                    client.storage.prepare("YADI_C", 0).add(1).commit() // Activate Archipelago storage.
                 }
             }
 
@@ -5933,35 +5929,55 @@
         }
 
 
-        // // Konami code meme because of Palex
-        // // Define the Konami Code sequence
-        // const konamiCode = [
-        // 'ArrowUp', 'ArrowUp',
-        // 'ArrowDown', 'ArrowDown',
-        // 'ArrowLeft', 'ArrowRight',
-        // 'ArrowLeft', 'ArrowRight',
-        // 'KeyB', 'KeyA'
-        // ];
-        
-        // let konamiDid = false;
-        // let konamiInputSequence = [];
+        try {
+            // Konami code meme because of Palex
+            // Define the Konami Code sequence
+            const konamiCode = [
+                'ArrowUp', 'ArrowUp',
+                'ArrowDown', 'ArrowDown',
+                'ArrowLeft', 'ArrowRight',
+                'ArrowLeft', 'ArrowRight',
+                'KeyB', 'KeyA'
+            ];
+            
+            let konamiDid = false;
+            let konamiInputSequence = [];
 
-        // // Listen for keydown events
-        // document.addEventListener('keydown', (event) => {
-        // konamiInputSequence.push(event.code);
+            // Listen for keydown events
+            document.addEventListener('keydown', (event) => {
+                try {
+                    konamiInputSequence.push(event.code);
 
-        // // Trim the sequence to the length of the Konami Code
-        // if (konamiInputSequence.length > konamiCode.length) {
-        //     konamiInputSequence.shift();
-        // }
+                    // Trim the sequence to the length of the Konami Code
+                    if (konamiInputSequence.length > konamiCode.length) {
+                        konamiInputSequence.shift();
+                    }
 
-        // // Check if the current sequence matches the Konami Code
-        // if (JSON.stringify(konamiInputSequence) === JSON.stringify(konamiCode) && !konamiDid && connectedstatus) {
-        //     konamiDid = true;
-        //     konamiInputSequence = [];
-        //     currentRolls -= 1;
-        // }
-        // });
+                    // Check if the current sequence matches the Konami Code
+                    if (
+                        JSON.stringify(konamiInputSequence) === JSON.stringify(konamiCode) &&
+                        !konamiDid &&
+                        (connectedstatus || offline)
+                    ) {
+                        konamiDid = true;
+                        konamiInputSequence = [];
+                        currentRolls -= 1;
+                        updateRollButton();
+
+                        if (connectedstatus) {
+                            client.messages.say("Cheat activated!");
+                        } else {
+                            console.log("Cheat activated!");
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error processing Konami Code input:", error);
+                }
+            });
+        } catch (error) {
+            console.error("Error initializing Konami Code detection:", error);
+        }
+
     </script>
 
 </body>

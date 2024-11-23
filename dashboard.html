@@ -9,9 +9,9 @@
             background-color: #1e1e1e;
             color: #eaeaea;
             font-family: Arial, sans-serif;
+            width: 90%;
         }
         table {
-            width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
             background-color: #2b2b2b;
@@ -33,7 +33,7 @@
             background-color: #3b3b3b;
         }
         a {
-            color: #4dabf7;
+            color: #bbb;
             text-decoration: none;
         }
         a:hover {
@@ -42,7 +42,7 @@
         .button {
             margin-top: 20px;
             padding: 10px 20px;
-            background-color: #4dabf7;
+            background-color: #bbb;
             color: #1e1e1e;
             border: none;
             border-radius: 4px;
@@ -51,39 +51,56 @@
             position: relative;
             overflow: hidden;
         }
-        /* Filler element for animation */
-        .fill {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 0%;
-            background-color: rgba(255, 255, 255, 0.3);
-            transition: width 10s linear;
-            z-index: 1;
-        }
         .button:hover {
-            background-color: #6db9ff;
+            background-color: #bbb;
         }
+
+        /* Button styling */
+        .table-button {
+            width: 100%; /* Fill the entire cell */
+            height: 100%; /* Adjust height dynamically */
+            padding: 10px; /* Add spacing */
+            background-color: #1e1e1e; /* Dark background for the button */
+            color: #fff; /* Bright text color for contrast */
+            border: 1px solid #fff; /* Optional border to match text color */
+            border-radius: 4px; /* Slight rounding for aesthetics */
+            font-size: 16px; /* Easy-to-read text */
+            cursor: pointer; /* Pointer cursor for interactivity */
+            text-align: center; /* Center text */
+            box-sizing: border-box; /* Include padding and border in width/height */
+            transition: all 0.3s ease; /* Smooth hover effect */
+        }
+
+        /* Hover effect */
+        .table-button:hover {
+            background-color: #fff; /* Brighter background on hover */
+            color: #121212; /* Darker text for contrast */
+        }/* Disabled button styling */
+
+        .table-button:disabled {
+            background-color: #444444; /* Darker gray to indicate it's disabled */
+            color: #888888; /* Lighter gray for text */
+            border-color: #555555; /* Subtle border for distinction */
+            cursor: not-allowed; /* Change cursor to indicate non-interactivity */
+            opacity: 0.6; /* Slightly transparent for a disabled effect */
+        }
+
     </style>
 </head>
 <body>
 
 <h2>Yacht Dice Archipelago Dashboard</h2>
 
-
+<div style="margin-bottom: 10px;">
 <button class="button" id="startButton">Go Archipelago</button>
-
-<button class="button" disabled id="updateButton">
-    <div class="fill" id="fill"></div>
-    <span class="button-text">Update</span>
-</button>
-
 <button class="button" hidden id="multiworldLink">Link to MW</button>
+</div>
 
+<div>
 <!-- Checkboxes for filtering -->
-<label style="margin-left: 10px;">
-    <input type="checkbox" id="filter1" >
+<div>
+<label>
+    <input type="checkbox" id="filter1" checked>
     Only non-goaled 
 </label>
 
@@ -91,6 +108,12 @@
     <input type="checkbox" id="filter2">
     Only in logic
 </label>
+
+<label style="margin-left: 10px;">
+    <input type="checkbox" id="filter3">
+    Only disconnected
+</label>
+</div>
 
 <table id="myTable">
     <thead>
@@ -103,7 +126,7 @@
             <th id="col5">Δ</th>
             <th id="col6">Goal S</th>
             <th id="col7">Last S</th>
-            <th id="col8">Goal?</th>
+            <th id="col8">Status</th>
         </tr>
     </thead>
     <tbody>
@@ -120,7 +143,7 @@
     let sortDirection = {};
 
     function sortTable(columnIndex, swapDirection = true) {
-        console.log("sorthing...")
+        console.log("Sorting...")
         const table = document.getElementById("myTable");
         const rows = Array.from(table.rows).slice(1); // Exclude the header row
         if(swapDirection){
@@ -154,21 +177,24 @@
 
     function applyFilters() {
         console.log("Applying Filters");
-        const filterColumn8 = document.getElementById("filter1").checked; // Non-goaled games filter
-        const filterColumn5 = document.getElementById("filter2").checked; // Available checks filter
+        const filter_goaled = document.getElementById("filter1").checked; // Non-goaled games filter
+        const filter_in_logic = document.getElementById("filter2").checked; // Available checks filter
+        const filter_only_disconnected = document.getElementById("filter3").checked; // Available checks filter
 
         // Get all rows from tbody
         const table = document.getElementById("myTable");
         const rows = Array.from(table.rows).slice(1); // Exclude the header row
 
         for (const row of rows) {
-            const col8Value = row.cells[8].innerText.trim() === "false"; // Boolean check for column 8
-            const col5Value = parseFloat(row.cells[5].innerText.trim()) || 0; // Ensure column 5 is a number
+            const game_not_goaled = row.cells[8].innerText.trim() !== clientStatuses[30]; // Boolean check for column 8
+            const logic_surplus = parseFloat(row.cells[5].innerText.trim()) || 0; // Ensure column 5 is a number
+            const is_disconnected = row.cells[8].innerText.trim() === clientStatuses[0]; // Boolean check for column 8
 
             // Apply filter criteria
             const showRow = 
-                (!filterColumn8 || col8Value) &&  // Show if not filtering or value is "false"
-                (!filterColumn5 || col5Value > 0); // Show if not filtering or value is > 0
+                (!filter_goaled || game_not_goaled) &&  // Show if not filtering or value is "false"
+                (!filter_in_logic || logic_surplus > 0) && // Show if not filtering or value is > 0
+                (!filter_only_disconnected || is_disconnected); 
 
             row.style.display = showRow ? "" : "none";
         }
@@ -182,7 +208,7 @@
 
         newRow.insertCell(0).innerText = slot;
         newRow.insertCell(1).innerText = name;
-        newRow.insertCell(2).innerHTML = `<a href="${link}" target="_blank">Link</a>`;
+        newRow.insertCell(2).innerHTML = `<button class="table-button" onclick="window.open('${link}', '_blank')">Play</button>`;
         newRow.insertCell(3).innerText = scoreInLogic === null ? "?" : scoreInLogic;
         newRow.insertCell(4).innerText = nextcheck === null ? "?" : nextcheck;
         newRow.insertCell(5).innerText = diff === null ? "?" : diff;
@@ -191,19 +217,58 @@
         newRow.insertCell(8).innerText = goaled === null ? false : goaled;
     }
 
-    // Function to update a specific cell based on the slot number
-    function updateCell(slot, columnIndex, newValue) {
+    function disableButtonWithProgress(slotnumber) {
         const table = document.getElementById("myTable");
+
+        // Locate the row based on slotnumber
         for (let i = 0; i < table.rows.length; i++) {
-            if (table.rows[i].cells[0].innerText == slot) {
-                table.rows[i].cells[columnIndex].innerText = newValue == null ? "?" : newValue;
-                break; // Exit loop once the matching row is found and updated
+            if (table.rows[i].cells[0].innerText == slotnumber) {
+                const buttonCell = table.rows[i].cells[2]; // Assuming the button is in column 2
+                const button = buttonCell.querySelector("button");
+                
+                if (button) {
+                    button.disabled = true; 
+
+                    const progressInterval = setInterval(() => {
+                        clearInterval(progressInterval); // Stop interval when done
+                        button.disabled = false; // Re-enable the button
+                    }, 3000);
+                }
+                break; // Exit the loop once the row is found
             }
         }
     }
+
+
+
+    // Function to update a specific cell based on the slot number
+    function updateCell(slotnumber, columnIndex, newValue) {
+        const table = document.getElementById("myTable");
+        for(let i = 0; i<table.rows.length; i++){
+            if(table.rows[i].cells[0].innerText == slotnumber){
+                table.rows[i].cells[columnIndex].innerText = newValue == null ? "?" : newValue;
+                console.log("Changed cell", i, columnIndex, newValue)
+                if(columnIndex == 3 || columnIndex == 4){
+                    table.rows[i].cells[5].innerText = parseInt(table.rows[i].cells[3].innerText) - parseInt(table.rows[i].cells[4].innerText)
+                }
+            }
+        }
+    }
+
+    document.getElementById('filter1').addEventListener('click', () => {
+        applyFilters();
+        sortTable(lastSort, false);
+    });
     
-    document.getElementById('filter1').addEventListener('click', () => applyFilters());
-    document.getElementById('filter2').addEventListener('click', () => applyFilters());
+    document.getElementById('filter2').addEventListener('click', () => {
+        applyFilters();
+        sortTable(lastSort, false);
+    });
+
+    document.getElementById('filter3').addEventListener('click', () => {
+        applyFilters();
+        sortTable(lastSort, false);
+    });
 
 
     document.getElementById('col0').addEventListener('click', () => sortTable(0));
@@ -226,45 +291,11 @@
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     };
 
-    async function getCurrentTimeInt() {
-        try {
-            const response = await fetch('https://timeapi.io/api/time/current/zone?timeZone=Europe%2FAmsterdam');
-            const data = await response.json();
-
-            // Construct a Date object using the returned year, month, day, hour, minute, and seconds
-            const dateTime = new Date(
-                data.year,
-                data.month - 1, // JavaScript months are 0-based
-                data.day,
-                data.hour,
-                data.minute,
-                data.seconds,
-                data.milliSeconds
-            );
-
-            // Get the Unix timestamp in milliseconds
-            const currentDateTimeInt = dateTime.getTime();
-            
-            console.log(currentDateTimeInt);
-            return currentDateTimeInt;
-        } catch (error) {
-            console.error('Error fetching the current time:', error);
-            return 0;
-        }
-    }
-
-
-
-
-
-
-
-
 
     import { Client } from "https://unpkg.com/archipelago.js/dist/index.js";
 
     document.getElementById('startButton').addEventListener('click', goArchipelago);    
-    document.getElementById('updateButton').addEventListener('click', () => {updateTable(); startAnimation();});   
+     
 
     let mw = getUrlParameter("mw");
     if(mw != ""){
@@ -280,10 +311,16 @@
     var hostname;
     var port;
     var name;
-    var YADI_C = 0;
-    var YADI_Cx = [];
     var connected = false;
     var slot_data = {};
+
+    var clientStatuses = {
+        5: "2 Conn.",
+        0: "1 Disc.",
+        30: "4 Goaled",
+        20: "3 Playing",
+        10: "0 Ready",
+    }
 
     // Create a new instance of the Client class.
     const client = new Client();
@@ -306,12 +343,15 @@
             return;
         }
 
-        client.login(`${hostname}:${port}`, name, "Yacht Dice");
+        client.login(`${hostname}:${port}`, name)
+            .catch((error) => {
+                console.log("Could not connect to server, check port and name etc, error:", error)
+                document.getElementById('startButton').innerText = "Could not connect, check room / port / name etc, see console (F12)"
+                document.getElementById('startButton').style.backgroundColor = "red";
+            });
 
         async function connectedListener(){
             console.log("Connected!")
-            const currentDateTime = Date.now(); // Returns the number of milliseconds since January 1, 1970, UTC
-            console.log(currentDateTime);
 
             connected = true;
             document.getElementById('startButton').innerText = 'Connected! Loading and gathering...';
@@ -330,24 +370,22 @@
 
             let numberofplayers = client.players.teams[0].length;
 
-            let askKeys = []
+            let askKeys1 = []
+            let askKeys2 = []
             for (let p of client.players.teams[0]) {
                 if(p.game == "Yacht Dice"){
                     let i = p.slot;
-                    askKeys.push("YADI_G"+i);
-                    askKeys.push("YADI_M"+i);
-                    askKeys.push("YADI_I"+i);
-                    askKeys.push("YADI_N"+i);
-                    askKeys.push("YADI_C"+i);
-                    askKeys.push("_read_client_status_0_"+i)
+                    askKeys1.push("YADI_G"+i);
+                    askKeys1.push("YADI_M"+i);
+                    askKeys2.push("YADI_I"+i);
+                    askKeys2.push("YADI_N"+i);
+                    askKeys2.push("_read_client_status_0_"+i)
                 }
             }
-            askKeys.push("YADI_C");
-            
-            let results = (await client.storage.fetch(askKeys, true))
+            console.log(askKeys1, askKeys2, askKeys1+askKeys2)
+            let results = (await client.storage.fetch(askKeys1.concat(askKeys2), true))
             console.log("Values:",results);
 
-            YADI_C = results['YADI_C']
 
 
 
@@ -358,10 +396,8 @@
                 if(p.game == "Yacht Dice"){
                     let slot_number = p.slot;
 
-                    YADI_Cx[slot_number] = results['YADI_C'+slot_number];
 
                     let items = results['YADI_I'+slot_number]
-                    let littleDown = 0;
                     if(items == null){
                         items = []
                     }
@@ -370,21 +406,20 @@
                         items.push(16871244002);
                         items.push(16871244109);
                         items.push(16871244110);
-                        littleDown = 0;
                     }
 
-                    let logic = calculateLogic(items, slot_data[slot_number]) - littleDown;
+                    let logic = calculateLogic(items, slot_data[slot_number]);
 
                     addRow(
                         slot_number,
                         p.name, 
                         `/?db=y&p=AP&go=y&hostname=${hostname}&port=${port}&name=${p.name}`, 
                         logic, 
-                        results['YADI_N'+slot_number], 
-                        results['YADI_N'+slot_number] == "-" ? -1000 : logic - results['YADI_N'+slot_number],
+                        results['YADI_N'+slot_number] == null ? 1 : results['YADI_N'+slot_number] , 
+                        results['YADI_N'+slot_number] == null ? logic - 1 : logic - results['YADI_N'+slot_number],
                         slot_data[slot_number]['goal_score'],
                         slot_data[slot_number]['last_check_score'],
-                        results['_read_client_status_0_'+slot_number] == 30
+                        clientStatuses[results['_read_client_status_0_'+slot_number]]
                     );
                     
                 }else{
@@ -396,86 +431,56 @@
                     }
                 }
             }
-            startAnimation();
+            
             sortTable(5, false);
             applyFilters();
             
             document.getElementById('startButton').style.display = 'none';
+
+
+            console.log("Put notify on these keys", askKeys2)
+            const data = await client.storage.notify(askKeys2, (key, value, oldValue) => {
+                console.log(`Key '${key}' has been updated from ${oldValue} to ${value}!`);
+
+                let playerId = null;
+                if (key.startsWith("_read_client_status_0_")) {
+                    playerId = key.substring("_read_client_status_0_".length);
+                    if (playerId !== null){
+                        updateCell(playerId, 8, clientStatuses[value])
+                    }
+                    if(value != 0){
+                        disableButtonWithProgress(playerId);
+                    }
+                }
+
+                if (value !== oldValue) {
+                    // Check what the key starts with
+                    if (key.startsWith("YADI_I")) {
+                        playerId = key.substring("YADI_I".length);
+                        if (playerId !== null) {
+                            let logic = calculateLogic(value, slot_data[playerId]);
+                            updateCell(playerId, 3, logic)
+                        }
+                        
+
+                    } else if (key.startsWith("YADI_N")) {
+                        playerId = key.substring("YADI_N".length);
+                        if (playerId !== null) {
+                            updateCell(playerId, 4, value)
+                        }
+                    }
+
+                }
+                sortTable(lastSort, false);
+                applyFilters();
+            });
+
         }
         function disconnectedListener(){
             connected = false;
         }
     }
 
-    async function updateTable(){
-        if(!connected){
-            console.log("Not connected")
-            return;
-        }
-
-        let yadi_c = await client.storage.fetch(["YADI_C"], true);
-        yadi_c = yadi_c["YADI_C"];
-        if(yadi_c == YADI_C){
-            return;
-        }
-        
-        YADI_C = yadi_c;
-
-        let numberofplayers = client.players.teams[0].length;
-        let askKeys = []
-        for (let p of client.players.teams[0]) {
-            let i = p.slot;
-            askKeys.push("YADI_C"+i);
-        }
-        let results = (await client.storage.fetch(askKeys, true));
-
-        let askPlayers = [];
-        askKeys = [];
-        for (let p of client.players.teams[0]) {
-            if(p.game == "Yacht Dice"){
-                let i = p.slot;
-                if(results["YADI_C"+i] != YADI_Cx[i]){
-                    askPlayers.push(i);
-                    YADI_Cx[i] = results["YADI_C"+i];
-                    askKeys.push("YADI_I"+i);
-                    askKeys.push("YADI_N"+i);
-                    askKeys.push("_read_client_status_0_"+i)
-                }
-            }
-        }
-        console.log("Going to update players", askPlayers);
-        results = (await client.storage.fetch(askKeys, true));
-        console.log("Update with:",results);
-        for(let i=0; i<askPlayers.length; i++){
-            let p = askPlayers[i];
-            updateCell(p, 4, results["YADI_N"+p]);
-            // updateCell(p, 7, results["YADI_I"+p]);
-            updateCell(p, 8, results["_read_client_status_0_"+p] == 30);
-
-            let items = results['YADI_I'+p]
-            let littleDown = 0;
-            if(items == null){
-                items = []
-            }
-            if(results['YADI_N'+p] == null){
-                items.push(16871244000)
-                items.push(16871244002)
-                items.push(16871244109)
-                items.push(16871244110)
-                littleDown = 0;
-            }
-
-            let logic = calculateLogic(items, slot_data[p]) - littleDown;
-            
-            updateCell(p, 3, logic);
-            updateCell(p, 5, results['YADI_N'+p] == "-" ? -1000 : logic - results["YADI_N"+p]);
-                
-        }
-        if(lastSort >= 0){
-            sortTable(lastSort, false);
-        }
-        applyFilters();
-    }
 
 
     function calculateLogic(items, slotdata){
@@ -763,31 +768,7 @@
 
     //animation button
 
-    const fill = document.getElementById("fill");
     let animationTimeout;
-
-    function startAnimation() {
-        // Clear any existing animation timeout
-        clearTimeout(animationTimeout);
-
-        // Reset the fill to 0% and start the animation
-        fill.style.transition = "none";  // Disable transition for immediate reset
-        fill.style.width = "0%";
-
-        // Force a reflow to apply the width reset
-        void fill.offsetWidth;
-
-        // Re-enable transition and start the fill animation
-        fill.style.transition = "width 10s linear";
-        fill.style.width = "100%";
-
-        // Set a timeout to trigger button click after 10 seconds
-        animationTimeout = setTimeout(() => {
-            updateTable();
-            startAnimation();
-        }, 10000);
-    }
-  
     
 </script>
 
