@@ -54,6 +54,32 @@
         .button:hover {
             background-color: #bbb;
         }
+        
+        #startButton {
+            background-color: #eee; /* Bright yellow */
+            color: #111; /* Text color */
+            animation: pulsate 1.5s ease-in-out infinite; /* Pulsating animation */
+            margin-right: 10px;
+            margin-left: 10px
+        }
+
+        @keyframes pulsate {
+        0% {
+            transform: scale(1);
+            background-color: #aaa;
+            color: #111; /* Text color */
+        }
+        50% {
+            transform: scale(1.1);
+            background-color: #555; /* A slightly darker yellow for the pulsate effect */
+            color: #999; /* Text color */
+        }
+        100% {
+            transform: scale(1);
+            background-color: #aaa;
+            color: #111; /* Text color */
+        }
+        }
 
         /* Button styling */
         .table-button {
@@ -92,7 +118,7 @@
 <h2>Yacht Dice Archipelago Dashboard</h2>
 
 <div style="margin-bottom: 10px;">
-<button class="button" id="startButton">Go Archipelago</button>
+<button class="button" id="startButton";">Go Archipelago</button>
 <button class="button" hidden id="multiworldLink">Link to MW</button>
 </div>
 
@@ -200,6 +226,23 @@
         }
     }
 
+    let lastOpenedWindow = null;
+
+    // Function to open in the last opened window or create a new one
+    function openInLastWindow(link) {
+        if (lastOpenedWindow && !lastOpenedWindow.closed) {
+            // Open a new tab in the last opened window (to the right of existing tabs)
+            let newTab = lastOpenedWindow.open(link, '_blank'); // Open a new tab
+            newTab.focus(); // Focus on the new tab to make it active
+            // Update lastOpenedWindow to point to the newly opened tab
+            lastOpenedWindow = newTab;
+        } else {
+            // Otherwise, open a new window and store the reference
+            lastOpenedWindow = window.open(link, '_blank');
+            lastOpenedWindow.focus(); // Focus on the newly opened window
+        }
+    }
+
 
     // Function to add a new row
     function addRow(slot, name, link, scoreInLogic, nextcheck, diff, goal, lastcheck, goaled) {
@@ -208,7 +251,18 @@
 
         newRow.insertCell(0).innerText = slot;
         newRow.insertCell(1).innerText = name;
-        newRow.insertCell(2).innerHTML = `<button class="table-button" onclick="window.open('${link}', '_blank')">Play</button>`;
+        // Insert the button into the new row without an inline onclick
+        let button = document.createElement("button");
+        button.className = "table-button";
+        button.textContent = "Play";
+        
+        // Add the event listener for the button click
+        button.addEventListener("click", function() {
+            openInLastWindow(link);
+        });
+
+        // Insert the button into the cell
+        newRow.insertCell(2).appendChild(button);
         newRow.insertCell(3).innerText = scoreInLogic === null ? "?" : scoreInLogic;
         newRow.insertCell(4).innerText = nextcheck === null ? "?" : nextcheck;
         newRow.insertCell(5).innerText = diff === null ? "?" : diff;
@@ -246,14 +300,42 @@
         const table = document.getElementById("myTable");
         for(let i = 0; i<table.rows.length; i++){
             if(table.rows[i].cells[0].innerText == slotnumber){
-                table.rows[i].cells[columnIndex].innerText = newValue == null ? "?" : newValue;
+                const cell = table.rows[i].cells[columnIndex];
+                cell.innerText = newValue == null ? "?" : newValue;
+                
+                changeCellBackgroundColor(cell, 1);
+
                 console.log("Changed cell", i, columnIndex, newValue)
                 if(columnIndex == 3 || columnIndex == 4){
                     table.rows[i].cells[5].innerText = parseInt(table.rows[i].cells[3].innerText) - parseInt(table.rows[i].cells[4].innerText)
+                    changeCellBackgroundColor(table.rows[i].cells[5], 1);
+                }
+
+                if(columnIndex == 8 && newValue != "Disconn."){
+                    changeCellBackgroundColor(table.rows[i].cells[2], 60);
                 }
             }
         }
     }
+
+    function changeCellBackgroundColor(cell, time) {
+        // Reset any ongoing transition or background color change
+        cell.style.transition = "none";  // Disable any transition that might be in progress
+
+        // Immediately set the background color to the new color
+        cell.style.backgroundColor = "#aa5500";  // Replace with the desired color
+
+        // Apply the transition for the background color change
+        cell.style.transition = `background-color ${time}s`;
+
+        // After the specified time, reset the background color to the original color
+        setTimeout(() => {
+            // Always revert to the original color after the transition
+            cell.style.backgroundColor = "#3b3b3b";
+        }, 1000);  // Multiply by 1000 to convert seconds to milliseconds
+    }
+
+
 
     document.getElementById('filter1').addEventListener('click', () => {
         applyFilters();
@@ -315,11 +397,11 @@
     var slot_data = {};
 
     var clientStatuses = {
-        5: "2 Conn.",
-        0: "1 Disc.",
-        30: "4 Goaled",
-        20: "3 Playing",
-        10: "0 Ready",
+        5: "Connected",
+        0: "Disconn.",
+        30: "Goaled",
+        20: "Playing",
+        10: "Ready",
     }
 
     // Create a new instance of the Client class.
