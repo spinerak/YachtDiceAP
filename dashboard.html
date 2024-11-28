@@ -822,15 +822,17 @@
 
             let mults = [];
 
-            let max_tries = Math.max(0, Math.floor(categories.length / (diffDivide * 2)))
+            let max_tries = Math.floor(j / diffDivide);
 
-            for (let ii = 0; ii < max_tries + 1; ii++) {
+            // Construct the mults array using the equivalent Python logic
+            for (let ii = Math.max(0, j - max_tries); ii <= j; ii++) {
                 mults.push((1 + fixscmu + stescmu * ii) * cat_mult);
             }
-            
 
+            // Calculate the maximum distribution using the updated mults
             const maxDistResult = maxDist(dist, mults);
 
+            // Update the total distribution
             totalDist = addDistributions(totalDist, maxDistResult);
         }
 
