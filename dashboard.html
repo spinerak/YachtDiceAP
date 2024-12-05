@@ -10,19 +10,21 @@
             color: #eaeaea;
             font-family: Arial, sans-serif;
             width: 90%;
+            margin: 0;
         }
         table {
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 10px;
             background-color: #2b2b2b;
         }
         th, td {
-            padding: 12px;
+            padding: 5px;
             border: 1px solid #444;
             text-align: left;
             color: #eaeaea;
         }
         th {
+            padding: 12px;
             cursor: pointer;
             background-color: #222;
         }
@@ -86,6 +88,7 @@
             width: 100%; /* Fill the entire cell */
             height: 100%; /* Adjust height dynamically */
             padding: 10px; /* Add spacing */
+            margin: 0px;
             background-color: #1e1e1e; /* Dark background for the button */
             color: #fff; /* Bright text color for contrast */
             border: 1px solid #fff; /* Optional border to match text color */
@@ -124,6 +127,18 @@
             position: relative;
         }
 
+        .progress-text {
+            position: absolute; /* Position relative to .progress-container */
+            top: 50%; /* Vertical center */
+            left: 50%; /* Horizontal center */
+            transform: translate(-50%, -50%); /* Adjust for exact center */
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            pointer-events: none; /* Allow clicks through text */
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+
         .progress-section {
             margin-top: 3px;
             width: 80%;
@@ -154,6 +169,7 @@
             font-size: 16px;
             font-weight: bold;
             color: white;
+            white-space: nowrap;
         }
 
         #progressBar2{
@@ -161,7 +177,7 @@
             box-shadow: 0 0 10px rgba(50, 30, 200, 0.6);
         }
 
-        .progress-bar.wiggle {
+        /* .progress-bar.wiggle {
             animation: wiggle 0.2s ease-in-out;
         }
 
@@ -171,7 +187,7 @@
             50% { transform: rotate(3deg); }
             75% { transform: rotate(-3deg); }
             100% { transform: rotate(0deg); }
-        }
+        } */
 
         .confetti {
             position: absolute;
@@ -200,12 +216,19 @@
 <h2>Yacht Dice Archipelago Dashboard</h2>
 
 <div style="margin-bottom: 10px;">
-<button class="button" id="startButton";">Go Archipelago</button>
+<button class="button" id="startButton";>Go Archipelago</button>
 <button class="button" hidden id="multiworldLink">Link to MW</button>
+
+<label id="loadonly100label" >
+    <input type="checkbox" id="loadonly100" checked>
+    Load 100 uncleared worlds
+</label>
+
 <div class="progress-section">
     <div class="progress-label">Total score:</div>
     <div class="progress-container">
         <div class="progress-bar" id="progressBar1"></div>
+        <div class="progress-text" id="progressText1"></div>
     </div>
 </div>
 
@@ -213,6 +236,7 @@
     <div class="progress-label">Goals:</div>
     <div class="progress-container">
         <div class="progress-bar" id="progressBar2"></div>
+        <div class="progress-text" id="progressText2"></div>
     </div>
 </div>
 
@@ -233,6 +257,7 @@
     <input type="checkbox" id="filter3">
     Only disconnected
 </label>
+
 </div>
 
 <table id="myTable">
@@ -242,11 +267,12 @@
             <th id="col1">Name</th>
             <th id="col2">Link</th>
             <th id="col3">Logic S</th>
-            <th id="col4">Next S</th>
+            <th id="col4">Next Ch</th>
             <th id="col5">Δ</th>
             <th id="col6">Goal S</th>
-            <th id="col7">Last S</th>
+            <th id="col7">Last Ch</th>
             <th id="col8">Status</th>
+            <th id="col9">Difficulty</th>
         </tr>
     </thead>
     <tbody>
@@ -256,6 +282,34 @@
 
 
 <script type="module"> 
+
+
+    // Function to hide the column
+    function hideColumn(columnId) {
+        // Get the column header by its ID
+        const header = document.getElementById(columnId);
+        header.style.display = 'none';
+
+        if (header) {
+            // Get the index of the column
+            const columnIndex = [...header.parentElement.children].indexOf(header);
+
+            // Hide the header
+            header.style.display = 'none';
+
+            // Get all rows in the table
+            const rows = header.closest('table').rows;
+
+            // Loop through each row and hide the corresponding cell
+            for (const row of rows) {
+                if (row.cells[columnIndex]) {
+                    row.cells[columnIndex].style.display = 'none';
+                }
+            }
+        }
+    }
+
+
 
 
 
@@ -284,7 +338,7 @@
         rows.forEach(row => table.appendChild(row));
         lastSort = columnIndex;
 
-        for(let i=0; i<=8; i++){
+        for(let i=0; i<=9; i++){
             document.getElementById('col'+i).style.backgroundColor = "#222";
         }
         if(isAscending){
@@ -292,6 +346,7 @@
         }else{
             document.getElementById('col'+lastSort).style.backgroundColor = "#225";
         }
+        console.log("Done sorting...")
     }
 
 
@@ -318,6 +373,7 @@
 
             row.style.display = showRow ? "" : "none";
         }
+        console.log("Done Filters");
     }
 
     let lastOpenedWindow = null;
@@ -339,7 +395,7 @@
 
 
     // Function to add a new row
-    function addRow(slot, name, link, scoreInLogic, nextcheck, diff, goal, lastcheck, goaled) {
+    function addRow(slot, name, link, scoreInLogic, nextcheck, diff, goal, lastcheck, goaled, diffi) {
         const table = document.getElementById("myTable").getElementsByTagName("tbody")[0];
         const newRow = table.insertRow();
 
@@ -363,6 +419,7 @@
         newRow.insertCell(6).innerText = goal === null ? "?" : goal;
         newRow.insertCell(7).innerText = lastcheck === null ? "?" : lastcheck;
         newRow.insertCell(8).innerText = goaled === null ? false : goaled;
+        newRow.insertCell(9).innerText = diffi;
     }
 
     function disableButtonWithProgress(slotnumber) {
@@ -397,20 +454,23 @@
                 const cell = table.rows[i].cells[columnIndex];
                 if(cell.innerText != newValue){
                     changeCellBackgroundColor(cell, 1, i);
-                }
-                cell.innerText = newValue == null ? "?" : newValue;
-                
+                    cell.innerText = newValue == null ? "?" : newValue;
+                    
 
-                console.log("Changed cell", i, columnIndex, newValue)
-                if(columnIndex == 3 || columnIndex == 4){
-                    const newValue = parseInt(table.rows[i].cells[3].innerText) - parseInt(table.rows[i].cells[4].innerText)
-                    if(newValue != table.rows[i].cells[5].innerText){
-                        table.rows[i].cells[5].innerText = newValue;
-                        changeCellBackgroundColor(table.rows[i].cells[5], 1, i);
+                    console.log("Changed cell", i, columnIndex, newValue)
+                    if(columnIndex == 3 || columnIndex == 4){
+                        const newValue = parseInt(table.rows[i].cells[3].innerText) - parseInt(table.rows[i].cells[4].innerText)
+                        if(newValue != table.rows[i].cells[5].innerText){
+                            table.rows[i].cells[5].innerText = newValue;
+                            changeCellBackgroundColor(table.rows[i].cells[5], 1, i);
+                        }
                     }
+                    return true;
                 }
+                return false;
             }
         }
+        return false;
     }
 
     function changeCellBackgroundColor(cell, time, ind) {
@@ -461,6 +521,7 @@
     document.getElementById('col6').addEventListener('click', () => sortTable(6));
     document.getElementById('col7').addEventListener('click', () => sortTable(7));
     document.getElementById('col8').addEventListener('click', () => sortTable(8));
+    document.getElementById('col9').addEventListener('click', () => sortTable(9));
 
 
     ///////////////////////////////////progress bars
@@ -480,20 +541,22 @@
     function updateProgressBar(barIndex) {
         const bar = progressBars[barIndex];
         const percentage = (bar.progress / bar.max) * 100;
-        bar.element.style.width = `${percentage}%`;
-        bar.element.textContent = `${bar.progress} / ${bar.max}`;
-        bar.element.classList.add('wiggle');
+        bar.bar.style.width = `${percentage}%`; // Update bar width
+        bar.text.textContent = `${bar.progress} / ${bar.max} (${percentage.toFixed(2)}%)`; // Update progress text
+        // bar.element.classList.add('wiggle');
 
         // Generate confetti
         for (let i = 0; i < 2 + barIndex * 10; i++) {
             createConfetti(
-                bar.element.parentElement,
-                Math.random() * bar.element.parentElement.offsetWidth,
-                bar.element.offsetTop - 20 + Math.random() * 20
+                bar.bar.parentElement, // Parent of the progress bar (progress container)
+                Math.random() * bar.bar.parentElement.offsetWidth, // Random horizontal position within the container
+                bar.bar.parentElement.offsetTop - 80 + Math.random() * 20 // Ensure confetti appears above the container
             );
         }
 
-        setTimeout(() => bar.element.classList.remove('wiggle'), 200);
+
+
+        // setTimeout(() => bar.element.classList.remove('wiggle'), 200);
     }
 
     function incrementProgress(barNumber, amount) {
@@ -526,8 +589,8 @@
     }
 
     const progressBars = [
-        { element: document.getElementById('progressBar1'), progress: 0, max: 0 },
-        { element: document.getElementById('progressBar2'), progress: 0, max: 0 }
+        { bar: document.getElementById('progressBar1'), text: document.getElementById('progressText1'), progress: 0, max: 100 },
+        { bar: document.getElementById('progressBar2'), text: document.getElementById('progressText2'), progress: 0, max: 100 }
     ];
 
 
@@ -567,10 +630,19 @@
 
     var clientStatuses = {
         5: "Connected",
-        0: "Disconn.",
+        0: "Disconnected",
         30: "Goaled",
         20: "Playing",
         10: "Ready",
+    }
+
+    var difficulties = {
+        1: "Easy",
+        2: "Medium",
+        3: "Hard",
+        4: "Extreme", 
+        5: "Insane",
+        6: "Outrage"
     }
 
     // Create a new instance of the Client class.
@@ -626,17 +698,16 @@
             for (let p of client.players.teams[0]) {
                 if(p.game == "Yacht Dice"){
                     let i = p.slot;
-                    askKeys1.push("YADI_G"+i);
-                    askKeys1.push("YADI_M"+i);
-                    askKeys2.push("YADI_I"+i);
+                    askKeys1.push("YADI_I"+i);
+                    askKeys1.push("YADI_N"+i);
+                    askKeys1.push("_read_client_status_0_"+i)
                     askKeys2.push("YADI_N"+i);
-                    askKeys2.push("_read_client_status_0_"+i)
+                    askKeys2.push("_read_client_status_0_"+i);
                 }
             }
-            console.log(askKeys1, askKeys2, askKeys1+askKeys2)
-            let results = (await client.storage.fetch(askKeys1.concat(askKeys2), true))
+            
+            let results = (await client.storage.fetch(askKeys1, true))
             console.log("Values:",results);
-
 
 
 
@@ -645,24 +716,35 @@
 
             let amount_goal_score = 0;
             let total_goal_score = 0;
+
+            // Assuming client.players.teams[0] is your list
+            let team = client.players.teams[0];
+
+            // Shuffle the list randomly
+            let shuffled = team.sort(() => 0.5 - Math.random());
+
+            let amountslots = 10000;
+            if(document.getElementById("loadonly100").checked){
+                amountslots = 100;
+            }
+            let countslots = 0;
             
-            for (let p of client.players.teams[0]) {
+            document.getElementById('loadonly100label').style.display = 'none';
+
+            // Assuming client.players.teams[0] is an array
+            let teamss = client.players.teams[0];
+
+            // Shuffle the team array
+            let shuffledTeam = teamss.slice(); // Create a shallow copy
+            for (let i = shuffledTeam.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1)); // Random index from 0 to i
+                [shuffledTeam[i], shuffledTeam[j]] = [shuffledTeam[j], shuffledTeam[i]]; // Swap elements
+            }
+
+            // Use randomValues as needed
+            for (let p of shuffledTeam) {
                 if(p.game == "Yacht Dice"){
                     let slot_number = p.slot;
-
-
-                    let items = results['YADI_I'+slot_number]
-                    if(items == null){
-                        items = []
-                    }
-                    if(results['YADI_I'+slot_number] == null){
-
-                        client.storage.prepare("YADI_I"+slot_number, []).replace(slot_data[slot_number]["precollected"]).commit()
-
-                        items = slot_data[slot_number]["precollected"]
-                    }
-
-                    let logic = calculateLogic(items, slot_data[slot_number]);
 
                     total_goals += 1;
                     total_goal_score += slot_data[slot_number]['goal_score'];
@@ -673,20 +755,36 @@
                     }else{
                         amount_goal_score += (results['YADI_N'+slot_number] == null ? 1 : results['YADI_N'+slot_number]) - 1;
                     }
-                    
 
-                    addRow(
-                        slot_number,
-                        p.name, 
-                        `/?db=y&p=AP&go=y&hostname=${hostname}&port=${port}&name=${p.name}`, 
-                        logic, 
-                        results['YADI_N'+slot_number] == null ? 1 : results['YADI_N'+slot_number] , 
-                        results['YADI_N'+slot_number] == null ? logic - 1 : logic - results['YADI_N'+slot_number],
-                        slot_data[slot_number]['goal_score'],
-                        slot_data[slot_number]['last_check_score'],
-                        clientStatuses[results['_read_client_status_0_'+slot_number]]
-                    );
-                    
+                    if(countslots < amountslots && results['_read_client_status_0_'+slot_number] != 30){
+                        countslots += 1;
+                        askKeys2.push("YADI_I"+slot_number);
+
+                        let items = results['YADI_I'+slot_number]
+                        if(items == null){
+                            items = []
+                        }
+                        if(results['YADI_I'+slot_number] == null){
+                            client.storage.prepare("YADI_I"+slot_number, []).replace(slot_data[slot_number]["precollected"]).commit()
+                            items = slot_data[slot_number]["precollected"]
+                        }
+
+                        let logic = calculateLogic(items, slot_data[slot_number]);
+
+                        addRow(
+                            slot_number,
+                            p.name, 
+                            `/?db=y&p=AP&go=y&hostname=${hostname}&port=${port}&name=${p.name}`, 
+                            logic, 
+                            results['YADI_N'+slot_number] == null ? 1 : results['YADI_N'+slot_number] , 
+                            results['YADI_N'+slot_number] == null ? logic - 1 : logic - results['YADI_N'+slot_number],
+                            slot_data[slot_number]['goal_score'],
+                            slot_data[slot_number]['last_check_score'],
+                            clientStatuses[results['_read_client_status_0_'+slot_number]],
+                            slot_data[slot_number]['game_difficulty']+":"+difficulties[slot_data[slot_number]['game_difficulty']]
+
+                        );
+                    }
                 }else{
                     if(p.game != "Archipelago"){
                         document.getElementById('col3').style.color = "red";
@@ -698,8 +796,8 @@
             }
 
             console.log(total_goals, total_goal_score, amount_goals, amount_goal_score)
-            setMaximum(1, total_goal_score / 10);
-            setMaximum(2, total_goals / 10);
+            setMaximum(1, total_goal_score);
+            setMaximum(2, total_goals);
             setProgress(1, amount_goal_score);
             setProgress(2, amount_goals);
             
@@ -711,13 +809,15 @@
 
             console.log("Put notify on these keys", askKeys2)
             const data = await client.storage.notify(askKeys2, (key, value, oldValue) => {
+                let changedSomething = false;
+
                 console.log(`Key '${key}' has been updated from ${oldValue} to ${value}!`);
 
                 let playerId = null;
                 if (key.startsWith("_read_client_status_0_")) {
                     playerId = key.substring("_read_client_status_0_".length);
                     if (playerId !== null){
-                        updateCell(playerId, 8, clientStatuses[value])
+                        changedSomething = updateCell(playerId, 8, clientStatuses[value])
                     }
                     if(value != 0){
                         disableButtonWithProgress(playerId);
@@ -733,27 +833,28 @@
                         playerId = key.substring("YADI_I".length);
                         if (playerId !== null) {
                             let logic = calculateLogic(value, slot_data[playerId]);
-                            updateCell(playerId, 3, logic)
+                            changedSomething = updateCell(playerId, 3, logic)
                         }
                         
 
                     } else if (key.startsWith("YADI_N")) {
                         playerId = key.substring("YADI_N".length);
                         if (playerId !== null) {
-                            updateCell(playerId, 4, value)
+                            changedSomething = updateCell(playerId, 4, value)
                         }
-                        if(value != oldValue){
-                            if(value == "-"){
-                                incrementProgress(1, slot_data[playerId]['goal_score'] - (oldValue - 1));
-                            }else{
-                                incrementProgress(1, (value-1) - (Math.max(1,oldValue)-1));
-                            }
+                        if(value == "-"){
+                            incrementProgress(1, slot_data[playerId]['goal_score'] - (oldValue - 1));
+                        }else{
+                            incrementProgress(1, (value-1) - (Math.max(1,oldValue)-1));
                         }
+                        
                     }
 
                 }
-                sortTable(lastSort, false);
-                applyFilters();
+                if(changedSomething){
+                    scheduleSort();
+                    scheduleApplyFilters();
+                }
             });
 
         }
@@ -761,6 +862,52 @@
             connected = false;
         }
     }
+
+    let filterTimer;
+    let filterTimerFixed;
+
+    function scheduleApplyFilters() {
+        // Clear the existing timer, if any
+        clearTimeout(filterTimer);
+
+        // Set a new timer
+        filterTimer = setTimeout(() => {
+            applyFilters();
+        }, 1000);
+
+        // If the fixed timer hasn’t been set, schedule it
+        if (!filterTimerFixed) {
+            filterTimerFixed = setTimeout(() => {
+                applyFilters();
+                filterTimerFixed = null; // Reset the fixed timer after execution
+                filterTimer = null;
+            }, 10000); // Executes exactly 5 seconds after the first call
+        }
+    }
+
+    let sortTimer;
+    let sortTimerFixed;
+
+    function scheduleSort() {
+        // Clear the existing timer, if any
+        clearTimeout(sortTimer);
+
+        // Set a new timer
+        sortTimer = setTimeout(() => {
+            sortTable(lastSort, false);
+        }, 1000);
+        
+        // If the fixed timer hasn’t been set, schedule it
+        if (!sortTimerFixed) {
+            sortTimerFixed = setTimeout(() => {
+                applyFilters();
+                sortTimerFixed = null; // Reset the fixed timer after execution
+                sortTimer = null;
+            }, 10000); // Executes exactly 5 seconds after the first call
+        }
+    }
+
+    
 
     class Category{    
         constructor(name, quantity) {
@@ -783,6 +930,13 @@
     }
 
     function calculateLogic(items, slotdata){
+        if(items == null){
+            
+            // Call the function to hide the column with ID 'col4'
+            hideColumn('col3');
+            hideColumn('col5');
+            return "?";
+        }
 
         const data = {
             16871244000: "Dice",

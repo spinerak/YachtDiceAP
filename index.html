@@ -2724,8 +2724,9 @@
                 return;
             }
 
-            client.messages.say(message);
-
+            if(connectedstatus){
+                client.messages.say(message);
+            }
 
 
         }
@@ -2865,7 +2866,6 @@
             }
         }
 
-        let lastClickTime = null;
 
         // Function to handle roll action
         function handleRollAction() {
@@ -4399,7 +4399,7 @@
                         dontconnectagain = true;
                     } else {
                         disconnecttimeout = disconnecttimeout + 1;
-                        addToLog("Failed to connect. Did the server shutdown? Try reopening the archipelago site. Check if the port (" + connectionInfo.port + ") is correct. Incorrect port? Going to reconnect in "+disconnecttimeout+" seconds....")
+                        addToLog("Failed to connect. Did the server shutdown? Try reopening the archipelago site. Check if the port (" + connectionInfo.hostport + ") is correct. Incorrect port? Going to reconnect in "+disconnecttimeout+" seconds....")
                         
                         disconnectedtimer = clearTimeoutFull(disconnectedtimer);
                         reconnecttimer = setTimeout(function () {
@@ -4560,6 +4560,30 @@
                             }
                             nodeElement.innerText = node.player.alias;
                             nodeElement.title = "Game: " + node.player.game;
+
+                            if (saveYDDInformation) {
+                                // Add a click event listener to the span
+                                nodeElement.addEventListener('click', function() {
+                                    // Form the URL dynamically
+                                    // Get the full URL of the current page
+                                    const fullUrl = window.location.href;
+
+                                    // Create a new URL object
+                                    const url = new URL(fullUrl);
+
+                                    // Get the base URL without query parameters
+                                    const baseUrl = `${url.protocol}//${url.hostname}${url.port ? ':' + url.port : ''}${url.pathname}`;
+
+                                    const url_full = baseUrl+"?db=y&p=AP&go=y&hostport="+connectionInfo.hostport+"&name="+node.player.name;
+
+                                    window.location.href = url_full;
+                                });
+
+                                // Optionally, change the cursor to pointer to indicate it's clickable
+                                nodeElement.style.cursor = 'pointer';
+                            }
+
+
                             break;
 
                         case "item": {
@@ -4668,11 +4692,11 @@
                 addToLog("Still connected!")
                 showconnectionstatus = false
             }
-            lastClickTime = new Date();
 
             disconnectedtimer = clearTimeoutFull(disconnectedtimer);
             reconnecttimer = clearTimeoutFull(reconnecttimer);
-
+            
+            submitScore();
         }
 
 
@@ -5005,6 +5029,11 @@
 
         function submitScore() {
 
+            if(!offline && !connectedstatus){
+                console.log("You are disconnected, your checks will be sent out if you connect again.")
+                return;
+            }
+
             // if(document.getElementById("disableItemGet").checked){
             //     return;
             // }
@@ -5090,7 +5119,7 @@
                         document.getElementById("nextgoalitem").innerText = "";
                     }
 
-                    if(prevnextgoal != nextgoal && saveYDDInformation == 1){
+                    if(prevnextgoal != nextgoal && saveYDDInformation == 1 && connectedstatus){
                         changeYDDInfo = true;
                         console.log("set N", nextgoal);
                         client.storage.prepare("YADI_N"+packetSlotName, 0).replace(nextgoal).commit() // Activate Archipelago storage.
@@ -5221,6 +5250,10 @@
 
         function sendCheck(locid) {
             if (!offline) {
+                if(!connectedstatus){
+                    console.log("You are disconnected, your checks will be done if you reconnect.")
+                    return;
+                }
                 // Assuming client is already defined elsewhere
                 // Replace `client.locations.check` with the actual function you have for sending checks
                 client.check(locid);
@@ -5232,10 +5265,20 @@
         }
 
         function sendWin() {
+            console.log("HERE")
             if(hasgoaled){
+                console.log("Has already goaled...")
+                return;
+            }
+            console.log("HERE")
+            if(!offline && !connectedstatus){
+                console.log("HERE")
+                addToLog("You seemd to have goaled, but you are disconnected......");
+                addToLog("If you reconnect, goal will be sent out.");
                 return;
             }
             hasgoaled = true;
+            console.log("HERE")
             
             let wins = localStorage.getItem("amount_of_wins");
             if(wins !== null){
@@ -5243,13 +5286,19 @@
             }else{
                 wins = 1;
             }
+            console.log("HERE")
             localStorage.setItem("amount_of_wins", wins);
 
+            console.log("HERE")
             if (offline) {
+                console.log("HERE")
                 addToLog("You beat the game, congrats!")
             }else{
+                console.log("HERE")
+                console.log("Calling client.goal()")
                 client.goal();
             }
+            console.log("HERE")
             addToLog("WIN! Congratulations!!")
             console.log("WIN! Congratulations!!")
             stopTimer()
