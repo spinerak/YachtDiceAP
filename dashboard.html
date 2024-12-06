@@ -284,35 +284,6 @@
 <script type="module"> 
 
 
-    // Function to hide the column
-    function hideColumn(columnId) {
-        // Get the column header by its ID
-        const header = document.getElementById(columnId);
-        header.style.display = 'none';
-
-        if (header) {
-            // Get the index of the column
-            const columnIndex = [...header.parentElement.children].indexOf(header);
-
-            // Hide the header
-            header.style.display = 'none';
-
-            // Get all rows in the table
-            const rows = header.closest('table').rows;
-
-            // Loop through each row and hide the corresponding cell
-            for (const row of rows) {
-                if (row.cells[columnIndex]) {
-                    row.cells[columnIndex].style.display = 'none';
-                }
-            }
-        }
-    }
-
-
-
-
-
     let lastSort = -1;
     let sortDirection = {};
 
@@ -761,15 +732,22 @@
                         askKeys2.push("YADI_I"+slot_number);
 
                         let items = results['YADI_I'+slot_number]
-                        if(items == null){
-                            items = []
-                        }
-                        if(results['YADI_I'+slot_number] == null){
+
+                        if(results['YADI_I'+slot_number] == null && slot_data[slot_number]["precollected"]){
+                            console.log("Items in precollected:", results['YADI_I'+slot_number])
                             client.storage.prepare("YADI_I"+slot_number, []).replace(slot_data[slot_number]["precollected"]).commit()
                             items = slot_data[slot_number]["precollected"]
                         }
 
-                        let logic = calculateLogic(items, slot_data[slot_number]);
+                        if(items == null){
+                            console.log("Items is null", items)
+                            client.storage.prepare("YADI_I"+slot_number, []).replace([16871244000, 16871244002, 16871244109, 16871244110]).commit()
+                            items = [16871244000, 16871244002, 16871244109, 16871244110];
+                        }
+
+
+                        let logic = calculateLogic(items, slot_number, slot_data[slot_number]);
+                        console.log(slot_number, items)
 
                         addRow(
                             slot_number,
@@ -832,7 +810,7 @@
                     if (key.startsWith("YADI_I")) {
                         playerId = key.substring("YADI_I".length);
                         if (playerId !== null) {
-                            let logic = calculateLogic(value, slot_data[playerId]);
+                            let logic = calculateLogic(value, playerId, slot_data[playerId]);
                             changedSomething = updateCell(playerId, 3, logic)
                         }
                         
@@ -929,14 +907,8 @@
         }
     }
 
-    function calculateLogic(items, slotdata){
-        if(items == null){
-            
-            // Call the function to hide the column with ID 'col4'
-            hideColumn('col3');
-            hideColumn('col5');
-            return "?";
-        }
+    function calculateLogic(items, slotnumber, slotdata){
+
 
         const data = {
             16871244000: "Dice",
