@@ -820,10 +820,12 @@
                         if (playerId !== null) {
                             changedSomething = updateCell(playerId, 4, value)
                         }
-                        if(value == "-"){
-                            incrementProgress(1, slot_data[playerId]['goal_score'] - (oldValue - 1));
-                        }else{
-                            incrementProgress(1, (value-1) - (Math.max(1,oldValue)-1));
+                        if(oldValue != "-"){
+                            if(value == "-"){
+                                incrementProgress(1, slot_data[playerId]['goal_score'] - (oldValue - 1));
+                            }else{
+                                incrementProgress(1, (value-1) - (Math.max(1,oldValue)-1));
+                            }
                         }
                         
                     }

@@ -3109,7 +3109,6 @@
                         "Digit5": "5",
                         "Digit6": "6"
                     };
-                    console.log(event.shiftKey, shiftMapping)
 
                     if (event.shiftKey && shiftMapping[event.code]) {
                         // Lock all dice with the same number corresponding to the symbol
@@ -4449,6 +4448,14 @@
                 packetSlotName = packet.slot
 
                 checkWin();
+                
+                console.log("_read_client_status_"+packetTeamName+"_"+packetSlotName)
+                client.storage.notify(["_read_client_status_"+packetTeamName+"_"+packetSlotName], (key, value, oldValue) => {
+                    console.log("New client status -> ", value)
+                    if(value == 30){
+                        sendWin();
+                    }
+                });
                 checkYDDD();
                 
 
@@ -5292,20 +5299,16 @@
         }
 
         function sendWin() {
-            console.log("HERE")
             if(hasgoaled){
                 console.log("Has already goaled...")
                 return;
             }
-            console.log("HERE")
             if(!offline && !connectedstatus){
-                console.log("HERE")
                 addToLog("You seemd to have goaled, but you are disconnected......");
                 addToLog("If you reconnect, goal will be sent out.");
                 return;
             }
             hasgoaled = true;
-            console.log("HERE")
             
             let wins = localStorage.getItem("amount_of_wins");
             if(wins !== null){
@@ -5313,19 +5316,14 @@
             }else{
                 wins = 1;
             }
-            console.log("HERE")
             localStorage.setItem("amount_of_wins", wins);
 
-            console.log("HERE")
             if (offline) {
-                console.log("HERE")
                 addToLog("You beat the game, congrats!")
             }else{
-                console.log("HERE")
                 console.log("Calling client.goal()")
                 client.goal();
             }
-            console.log("HERE")
             addToLog("WIN! Congratulations!!")
             console.log("WIN! Congratulations!!")
             stopTimer()
