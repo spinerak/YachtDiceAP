@@ -1205,10 +1205,12 @@
                             <button id>Select dice style</button>
                             <div class="dropdown-options" id="dropdownOptions"></div>
                         </div>
-                        <div>Goal games -> more skins (20+)!</div>
+                        <!-- <div>Goal games -> more skins (20+)!</div> -->
                         <br>
                         <input type="checkbox" id="requireExactScore">
                         <label for="requireExactScore">Gamemode: need exact score (>10)</label>
+                        <input type="checkbox" id="requireExactScoreOnlyNext">
+                        <label for="requireExactScoreOnlyNext">Additionally, only can get next check</label>
 
 
                         <br><br>
@@ -1481,6 +1483,8 @@
             boatImage.src = "Images/boaty.png";
         }else if (r < 0.12){
             boatImage.src = "Images/chrisboat.png";
+        } else if (r< 0.13){
+            boatImage.src = "Images/yachtychristmas.png";
         } else {
             boatImage.src = "Images/yachty.png";
         }
@@ -3387,7 +3391,20 @@
         // Listener function for category buttons
         function updateButtonValue(buttonId, score, catquan, needForNextGoal, needForFinalGoal, needForLastGoal, needForNextWave) {
             score = Math.floor(score * (1 + fixedScoreMult + turnNumber * stepScoreMult).toFixed(2) * Math.pow(2,catquan-1));
-            var requireExactScoreOK =  !document.getElementById("requireExactScore").checked || score == needForNextGoal
+            console.log(missingLocations)
+            var requireExactScoreOK = true
+            if(offline){
+                requireExactScoreOK =  
+                !document.getElementById("requireExactScore").checked ||
+                (document.getElementById("requireExactScore").checked && !document.getElementById("requireExactScoreOnlyNext").checked && Object.keys(missingLocations).includes(score)) ||
+                (document.getElementById("requireExactScoreOnlyNext").checked || score == needForNextGoal)
+            }else{
+                requireExactScoreOK =  
+                !document.getElementById("requireExactScore").checked ||
+                (document.getElementById("requireExactScore").checked && !document.getElementById("requireExactScoreOnlyNext").checked && missingLocations.includes(score + 16871244500)) ||
+                (document.getElementById("requireExactScoreOnlyNext").checked || score == needForNextGoal)
+            }
+
             var button = document.getElementById(buttonId);
             if (!button.disabled) { 
                 button.textContent = score
@@ -4821,7 +4838,7 @@
                     dontconnectagain = true;
                     return;
                 }
-                if (apworldversion === "2.2.1"){
+                if (apworldversion === "2.2.1" || apworldversion === "2.2.2"){
                     document.getElementById("mainContent").style.display = "none";
                     document.getElementById("error-message-container").style.display = "flex";
 
@@ -5083,7 +5100,7 @@
                 let element = document.getElementById('total-label');
 
                 // Change the text content
-                element.textContent = 'Total (you need EXACTLY next check)';
+                element.textContent = 'Total (you need checks EXACTLY)';
 
                 // Change the background color to yellow
                 element.style.backgroundColor = 'red';
@@ -5092,7 +5109,7 @@
                 element.style.backgroundColor = '';
             }
 
-            if(document.getElementById("requireExactScore").checked && inputValue > 10 && nextgoal != inputValue){
+            if(document.getElementById("requireExactScoreOnlyNext").checked && inputValue > 10 && nextgoal != inputValue){
                 console.log("You're using exact score logic, too bad you didn't get the correct score...")
                 return;
             }
@@ -5102,6 +5119,9 @@
 
                 if (!offline) {
                     for (let i = nextgoal; i <= parseInt(document.getElementById("total").innerText); i++) {
+                        if(document.getElementById("requireExactScore").checked && i != parseInt(document.getElementById("total").innerText)){
+                            continue;
+                        }
                         if(big_waves && i % 100 == 0 && !gotHandicaps.includes(i)){
                             if(i % 200 == 0){
                                 numRollsF -= amRollsF

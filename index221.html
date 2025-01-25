@@ -920,7 +920,7 @@
 
             <br><br>
             <div class="tutocenter">
-                <button id="letsrollsolo" class="roll-button" style="display:none">Solo play</button> 
+                <button id="letsrollsolo" class="roll-button">Solo play</button> 
                 <button id="letsroll" class="roll-button" style="background-color: #3667B1; color: #ffffff">Archipelago
 
 
@@ -1015,13 +1015,18 @@
                     <option value="Medium" selected>Medium</option>
                     <option value="Hard">Hard</option>
                     <option value="Extreme">Extreme</option>
+                    <option value="Insane">Insane</option>
+                    <option value="Outrageous">Outrageous</option>
+                    <option value="Impossible">Impossible</option>
                 </select> 
                 <br>
-                <label for="big_waves_mode_checkbox" id="big_waves_mode_checkbox_label">
-                    <input type="checkbox" id="big_waves_mode_checkbox" name="big_waves_mode_checkbox">
-                    Solo-only "Big waves" mode; lose an item every 100 points.
-                </label>
-                <br><br>
+                <label for="offlineoptions_double">Category copies:</label>
+                <select id="offlineoptions_double">
+                    <option value="Double">Double multiplier</option>
+                    <option value="Linear">+1 multiplier</option>
+                </select> 
+                <br>
+                <br>
             </div>
             <button id="playofflineafteroptions"">Let's roll!</button>
             <br>
@@ -1102,12 +1107,10 @@
 
             <script>
                 const rollButton = document.getElementById('Roll-button');
-
                 // Event listener for button click
                 rollButton.addEventListener('click', function() {
                     rollButton.classList.remove('pulsating');
                 });
-
                 // Start pulsating initially
                 rollButton.classList.add('pulsating');
             </script>
@@ -1467,6 +1470,8 @@
             boatImage.src = "Images/boaty.png";
         }else if (r < 0.12){
             boatImage.src = "Images/chrisboat.png";
+        } else if (r< 0.13){
+            boatImage.src = "Images/yachtychristmas.png";
         } else {
             boatImage.src = "Images/yachty.png";
         }
@@ -1816,7 +1821,7 @@
                 score: (dice) => {
                     const count = Array(7).fill(0);
                     dice.forEach(die => count[die]++);
-                    return [1, 2, 3].some(i => count[i] >= 1 && count[i + 1] >= 1 && count[i + 2] >= 1 && count[i + 3] >= 1) ? 20 : 0;
+                    return [1, 2, 3].some(i => count[i] >= 1 && count[i + 1] >= 1 && count[i + 2] >= 1 && count[i + 3] >= 1) ? 30 : 0;
                 },
                 maxScore: (D) => (D >= 4 ? 30 : 0),
                 subCategories: ["", 1]
@@ -1829,7 +1834,7 @@
                 score: (dice) => {
                     const count = Array(7).fill(0);
                     dice.forEach(die => count[die]++);
-                    return [1, 2].some(i => count[i] >= 1 && count[i + 1] >= 1 && count[i + 2] >= 1 && count[i + 3] >= 1 && count[i + 4] >= 1) ? 20 : 0;
+                    return [1, 2].some(i => count[i] >= 1 && count[i + 1] >= 1 && count[i + 2] >= 1 && count[i + 3] >= 1 && count[i + 4] >= 1) ? 40 : 0;
                 },
                 maxScore: (D) => (D >= 5 ? 40 : 0),
                 subCategories: ["", 1]
@@ -1846,7 +1851,7 @@
                     }, {});
                     const threes = Object.values(counts).filter((c) => c >= 3);
                     const twos = Object.values(counts).filter((c) => c >= 2);
-                    return threes.length > 0 && twos.length > 0 ? 32 : 0;
+                    return threes.length > 0 && twos.length > 1 ? 32 : 0;
                 },
                 maxScore: (D) => (D >= 5 ? 32 : 0),
                 subCategories: ["", 1]
@@ -2042,7 +2047,221 @@
                 },        
                 maxScore: (D) => (D >= 5 ? 50 : 0),
                 subCategories: ["", 1]
-            }
+            },
+            "Category Pair ∑": {
+                id: 33,
+                order: 9.1,
+                shortName: "Pair (1∑)",
+                description: "If two dice are the same -> score is the sum",
+                score: (dice) => {
+                    const counts = dice.reduce((acc, d) => {
+                        acc[d] = (acc[d] || 0) + 1;
+                        return acc;
+                    }, {});
+                    const highestPair = Math.max(...Object.keys(counts).filter(key => counts[key] >= 2).map(Number));
+                    return highestPair > 0 ? highestPair * 2 : 0;
+                },
+                maxScore: (D) => (D >= 2 ? 12 : 0),
+                subCategories: ["Category Pair", 1]
+            },
+            "Category Three of a Kind ∑": {
+                id: 34,
+                order: 10.1,
+                shortName: "Three of a Kind (1.5∑)",
+                description: "If three dice are the same -> score is 1.5 × sum",
+                score: (dice) => {
+                    const counts = dice.reduce((acc, d) => {
+                        acc[d] = (acc[d] || 0) + 1;
+                        return acc;
+                    }, {});
+                    const highestThree = Math.max(...Object.keys(counts).filter(key => counts[key] >= 3).map(Number));
+                    return highestThree > 0 ? highestThree * 3 * 1.5 : 0;
+                },
+                maxScore: (D) => (D >= 3 ? 27 : 0),
+                subCategories: ["Category Three of a Kind", 1]
+            },
+            "Category Four of a Kind ∑": {
+                id: 35,
+                order: 11.1,
+                shortName: "Four of a Kind (2∑)",
+                description: "If four dice are the same -> score is 2 × sum",
+                score: (dice) => {
+                    const counts = dice.reduce((acc, d) => {
+                        acc[d] = (acc[d] || 0) + 1;
+                        return acc;
+                    }, {});
+                    const highestFour = Math.max(...Object.keys(counts).filter(key => counts[key] >= 4).map(Number));
+                    return highestFour > 0 ? highestFour * 4 * 2 : 0;
+                },
+                maxScore: (D) => (D >= 4 ? 48 : 0),
+                subCategories: ["Category Four of a Kind", 1]
+            },
+            "Category Tiny Straight ∑": {
+                id: 36,
+                order: 12.1,
+                shortName: "Tiny Str. (2∑)",
+                description: "If three-in-a-row (eg 231) -> score is 2 × sum",
+                score: (dice) => {
+                    const count = Array(7).fill(0);
+                    dice.forEach(die => count[die]++);
+                    for (let i = 4; i >= 1; i--) {
+                        if (count[i] >= 1 && count[i + 1] >= 1 && count[i + 2] >= 1) {
+                            return (i + (i + 1) + (i + 2)) * 2;
+                        }
+                    }
+                    return 0;
+                },
+                maxScore: (D) => (D >= 3 ? 30 : 0),
+                subCategories: ["Category Tiny Straight", 1]
+            },
+            "Category Small Straight ∑": {
+                id: 37,
+                order: 13.1,
+                shortName: "Small Str. (2∑)",
+                description: "If four-in-a-row (eg 4231) -> score is 2 × sum",
+                score: (dice) => {
+                    const count = Array(7).fill(0);
+                    dice.forEach(die => count[die]++);
+                    for (let i = 3; i >= 1; i--) {
+                        if (count[i] >= 1 && count[i + 1] >= 1 && count[i + 2] >= 1 && count[i + 3] >= 1) {
+                            return (i + (i + 1) + (i + 2) + (i + 3)) * 2;
+                        }
+                    }
+                    return 0;
+                },
+                maxScore: (D) => (D >= 4 ? 36 : 0),
+                subCategories: ["Category Small Straight", 1]
+            },
+            "Category Large Straight ∑": {
+                id: 38,
+                order: 14.1,
+                shortName: "Large Str. (2.5∑)",
+                description: "If five-in-a-row (eg 12345) -> score is 2.5 × sum",
+                score: (dice) => {
+                    const count = Array(7).fill(0);
+                    dice.forEach(die => count[die]++);
+                    for (let i = 2; i >= 1; i--) {
+                        if (count[i] >= 1 && count[i + 1] >= 1 && count[i + 2] >= 1 && count[i + 3] >= 1 && count[i + 4] >= 1) {
+                            return (i + (i + 1) + (i + 2) + (i + 3) + (i + 4)) * 2.5;
+                        }
+                    }
+                    return 0;
+                },
+                maxScore: (D) => (D >= 5 ? 50 : 0),
+                subCategories: ["Category Large Straight", 1]
+            },
+            "Category Full House ∑": {
+                id: 39,
+                order: 15.1,
+                shortName: "Full House (1.5∑)",
+                description: "If a value appears three times and a different value appears twice (eg 61661) -> score is 1.5 × sum",
+                score: (dice) => {
+                    const counts = dice.reduce((acc, d) => {
+                        acc[d] = (acc[d] || 0) + 1;
+                        return acc;
+                    }, {});
+                    const threes = Object.keys(counts).filter((key) => counts[key] >= 3).map(Number);
+                    const twos = Object.keys(counts).filter((key) => counts[key] >= 2).map(Number);
+                    if (threes.length > 0 && twos.length > 1) {
+                        const highestThree = Math.max(...threes);
+                        const highestTwo = Math.max(...twos.filter(t => t !== highestThree));
+                        return (highestThree * 3 + highestTwo * 2) * 1.5;
+                    }
+                    return 0;
+                },
+                maxScore: (D) => (D >= 5 ? 42 : 0),
+                subCategories: ["Category Full House", 1]
+            },
+            "Category Yacht ∑": {
+                id: 40,
+                order: 16.1,
+                shortName: "Yacht (2.5∑)",
+                description: "If five dice are the same -> score is 2.5 × sum",
+                score: (dice) => {
+                    const counts = dice.reduce((acc, d) => {
+                        acc[d] = (acc[d] || 0) + 1;
+                        return acc;
+                    }, {});
+                    const highestFive = Math.max(...Object.keys(counts).filter(key => counts[key] >= 5).map(Number));
+                    return highestFive > 0 ? highestFive * 5 * 2.5 : 0;
+                },
+                maxScore: (D) => (D >= 5 ? 75 : 0),
+                subCategories: ["Category Yacht", 1]
+            },
+            "Category Micro Straight ∑": {
+                id: 41,
+                order: 9.6,
+                shortName: "Micro Straight (1.5∑)",
+                description: "If two-in-a-row (eg 54) -> score is 1.5 × sum",
+                score: (dice) => {
+                    const count = Array(7).fill(0);
+                    dice.forEach(die => count[die]++);
+                    for (let i = 5; i >= 1; i--) {
+                        if (count[i] >= 1 && count[i + 1] >= 1) {
+                            return (i + (i + 1)) * 1.5;
+                        }
+                    }
+                    return 0;
+                },
+                maxScore: (D) => (D >= 2 ? 16.5 : 0),
+                subCategories: ["Category Micro Straight", 1]
+            },
+            "Category 1-2-1 Consecutive ∑": {
+                id: 42,
+                order: 11.6,
+                shortName: "1-2-1 Consecutive (2∑)",
+                description: "If three dice are consecutive, the middle appearing twice (any order) (eg 1223, 2132, 5344) -> score is 2 × sum",
+                score: (dice) => {
+                    const count = Array(7).fill(0);
+                    dice.forEach(die => count[die]++);
+                    for (let i = 4; i >= 1; i--) {
+                        if (count[i] >= 1 && count[i + 1] >= 2 && count[i + 2] >= 1) {
+                            return (i + (i + 1) * 2 + (i + 2)) * 2;
+                        }
+                    }
+                    return 0;
+                },
+                maxScore: (D) => (D >= 4 ? 40 : 0),
+                subCategories: ["Category 1-2-1 Consecutive", 1]
+            },
+            "Category Two Pair ∑": {
+                id: 43,
+                order: 13.6,
+                shortName: "Two Pair (1.5∑)",
+                description: "If two values appear twice -> score is 1.5 × sum",
+                score: (dice) => {
+                    const counts = dice.reduce((acc, d) => {
+                        acc[d] = (acc[d] || 0) + 1;
+                        return acc;
+                    }, {});
+                    const pairs = Object.keys(counts).filter(key => counts[key] >= 2).map(Number).sort((a, b) => b - a);
+                    if (pairs.length >= 2) {
+                        return (pairs[0] * 2 + pairs[1] * 2) * 1.5;
+                    }
+                    return 0;
+                },
+                maxScore: (D) => (D >= 4 ? 33 : 0),
+                subCategories: ["Category Two Pair", 1]
+            },
+            "Category 2-1-2 Consecutive ∑": {
+                id: 44,
+                order: 14.6,
+                shortName: "2-1-2 Consecutive (2.5∑)",
+                description: "If three dice are consecutive, the outside ones appearing twice (any order) (eg 11233, 31321, 53453) -> score is 2.5 × sum",
+                score: (dice) => {
+                    const count = Array(7).fill(0);
+                    dice.forEach(die => count[die]++);
+                    for (let i = 4; i >= 1; i--) {
+                        if (count[i] >= 2 && count[i + 1] >= 1 && count[i + 2] >= 2) {
+                            return (i * 2 + (i + 1) + (i + 2) * 2) * 2.5;
+                        }
+                    }
+                    return 0;
+                },
+                maxScore: (D) => (D >= 5 ? 62.5 : 0),
+                subCategories: ["Category 2-1-2 Consecutive", 1]
+            },
+
         };
 
         for(let i= 3; i <= 16; i++){
@@ -2645,13 +2864,15 @@
         // Function to make the button visible
         function makeVisible(cat, ind) { // cat is the name of the category
             
+            
             // Get category data from the consolidated object
             const categoryData = consolidatedCategories[cat];
             
             // If the category exists, proceed to update the UI
             if (categoryData) {
-                const catID = allowed_categories.indexOf(cat) + 1;
-                console.log(ind)
+                let catID = allowed_categories.indexOf(cat) + 1;
+
+                // console.log(ind)
                 const text = categoryData.shortName;
                 const title = categoryData.description;
 
@@ -2772,6 +2993,15 @@
                         submitScore();
                         updateButtonValues();
                         break;
+                    case "Key":
+                        number_of_keys += 1;
+                        const rollButton = document.getElementById('Roll-button');
+                        
+                        if(number_of_keys == number_of_keys_required){
+                            rollButton.disabled = false;
+                        }
+                        updateRollButton();
+                        
                 }
                 if (category.substring(0, 7) === "Victory") {
                     if(offline){
@@ -2800,6 +3030,9 @@
         var amRollsF = 6;
         var currentRolls = 0; // Current number of Rolls
         var difficulty = 1; // Difficulty (1 easy, 4 extreme)
+        var receive_death_link;
+        var send_death_link;
+        var number_of_keys_required = 0;
         
         var doubleCatDoubled = true;
         var allowed_categories = [];
@@ -2819,6 +3052,7 @@
         var fixedScoreMult = 0
         var stepScoreMult = 0
         var turnNumber = 0
+        var number_of_keys = 0;
 
 
 
@@ -3247,9 +3481,17 @@
 
         // Function to update the text of the Roll button
         function updateRollButton() {
-            let remainingRolls = Math.floor(numRollsF / amRollsF) - currentRolls;
-            let RollButton = document.getElementById("Roll-button");
-            RollButton.innerText = `Roll (${remainingRolls} remaining)`;
+            if(number_of_keys_required > number_of_keys){
+                const rollButton = document.getElementById('Roll-button');
+                rollButton.disabled = true;
+                rollButton.innerText = "You have "+number_of_keys+"/"+number_of_keys_required+" keys";
+                console.log("X")
+            }else{
+                let remainingRolls = Math.floor(numRollsF / amRollsF) - currentRolls;
+                let RollButton = document.getElementById("Roll-button");
+                RollButton.innerText = `Roll (${remainingRolls} remaining)`;
+            }
+            
         }
 
 
@@ -3530,8 +3772,14 @@
             button.disabled = true;
             // Calculate total sum of all disabled buttons
 
+            if(button.textContent == 0 && send_death_link){
+                client.deathLink.sendDeathLink(packetSlotName, "Put a 0 at a category. Very much avoidable by simply resetting!");
+                addToLog("Sent death link to everyone for putting a 0 at a category. Very much avoidable by simply resetting!")
+                resetAll();
+            }
+
             if(allowed_categories[category - 1] == "Category Yacht"){
-                if(document.getElementById('category16').textContent > 0){
+                if(button.textContent > 0){
                     addAchievement(1);
                 }
             }
@@ -3562,26 +3810,26 @@
             var requireExactScoreOK =  !document.getElementById("requireExactScore").checked || score == needForNextGoal
 
             var button = document.getElementById("category"+buttonId);
+            
             if (!button.disabled) { 
                 button.textContent = score
                 if(!requireExactScoreOK){ // you need the exact score but you didn't get it
                     button.style.backgroundColor = "";
                 }else{
-                    if(score >= needForNextWave && needForNextGoal > needForNextWave && needForFinalGoal > needForNextWave && needForLastGoal > needForNextWave){
-                        button.style.backgroundColor = "#000000";
+
+                    if (score >= needForLastGoal) {
+                        button.style.backgroundColor = "#FF2700";
+                    } else if (score >= needForFinalGoal && needForNextGoal <= needForFinalGoal) {
+                        button.style.backgroundColor = "#FFD700";
+                    } else if (score >= needForNextGoal) {
+                        button.style.backgroundColor = "#4CAF50";
                     } else {
-                        if (score >= needForLastGoal) {
-                            button.style.backgroundColor = "#FF2700";
-                        } else if (score >= needForFinalGoal && needForNextGoal <= needForFinalGoal) {
-                            button.style.backgroundColor = "#FFD700";
-                        } else if (score >= needForNextGoal) {
-                            button.style.backgroundColor = "#4CAF50";
-                        } else {
-                            button.style.backgroundColor = "";
-                        }
+                        button.style.backgroundColor = "";
                     }
+                    
                 }
-            } else {
+            } 
+            if (button.disabled || score == 0){
                 button.style.backgroundColor = "";
             }
         }
@@ -3607,23 +3855,12 @@
             var finalscore_minus_total = finalgoal - total
             var lastscore_minus_total = lastgoal - total
             var nextwave_minus_total = 10000000000
-            if (big_waves) {
-                let next_wave = 10000000000;
-                if (gotHandicaps.length === 0) {
-                    next_wave = 100;
-                } else {
-                    next_wave = gotHandicaps[gotHandicaps.length - 1] + 100;
-                }
-                nextwave_minus_total = next_wave - total
-            }
-
-
 
             // Update button values based on scores
             for (let i = 0; i < allowed_categories.length; i++) {
                 const cat = allowed_categories[i];
-                console.log(consolidatedCategories)
-                console.log(cat, consolidatedCategories[cat])
+                // console.log(consolidatedCategories)
+                // console.log(cat, consolidatedCategories[cat])
                 let categoryId = consolidatedCategories[cat].id;
 
                 updateButtonValue(i + 1, consolidatedCategories[cat].score(diceArray), gotCategories[i], 
@@ -3707,6 +3944,7 @@
         const borderValues = [0, [0.22, 0.41], [0.41, 0.51], [0.51, 0.64], [0.64, 0.76], [0.76, 0.88], [0.88, 0.93], [0.93, 0.97]];
 
         function diceSimulationStringsForJS2(categories, nbDice, nbRolls, fixscmu, stescmu, doubleCatDoubled, diff, recurse = true) {
+            
             if(diff == 999){
                 categories.sort((a, b) => consolidatedCategories[a.name].maxScore(nbDice) - consolidatedCategories[b.name].maxScore(nbDice));
 
@@ -3721,20 +3959,19 @@
                 return Math.floor(maxsum) + parseInt(document.getElementById("catbonuspoints").textContent);
             }
 
-            console.log("Starting logic calcs", categories, nbDice, nbRolls, fixscmu, stescmu, diff, recurse)
+            // console.log("Starting logic calcs", categories, nbDice, nbRolls, fixscmu, stescmu, diff, recurse)
 
             // Sort categories based on their mean score with 4 rolls if step multiplier > 0
             if (stescmu > 0) {
                 categories.sort((a, b) => a.meanScore(nbDice, 4) - b.meanScore(nbDice, 4));
             }
-            // Loop to display the meanScore for each element in categories
-            for (let category of categories) {
-                console.log(`Category: ${category.name}, Mean Score: ${category.meanScore(nbDice, 4)}`);
-            }
+
+            // // Loop to display the meanScore for each element in categories
+            // for (let category of categories) {
+            //     console.log(`Category: ${category.name}, Mean Score: ${category.meanScore(nbDice, 4)}`);
+            // }
 
             let totalScore = 0;
-
-            console.log(diff)
             
             const bv1 = borderValues[diff][0];
             const bv2 = borderValues[diff][1];
@@ -3754,14 +3991,13 @@
                 const findPercentile = (distribution, percentile) => {
                     const perc = percentile * 100000;
                     let cumulativeProb = 0;
-                    console.log(distribution)
-                    console.log(distribution.dice)
+                    
                     for (const [key, value] of Object.entries(distribution.dist)) {
                        
                         cumulativeProb += value;
-                        console.log("key", key, "value", value, "cumulativeProb", cumulativeProb, "perc", perc, "distmult", dist.mult)
+                        // console.log("key", key, "value", value, "cumulativeProb", cumulativeProb, "perc", perc, "distmult", dist.mult)
                         if (cumulativeProb >= perc) {
-                            console.log("Returning ", Number(key) * dist.mult)
+                            // console.log("Returning ", Number(key) * dist.mult)
                             return Number(key) * dist.mult;  // Multiplier is applied to the result here
                         }
                     }
@@ -3776,24 +4012,24 @@
                 const v1 = findPercentile(dist, bv1);
                 const v2 = findPercentile(dist, bv2);
 
-                console.log("Adding to total score: ", category, dist, v1, v2, mult, Math.floor((v1 + v2) * mult / 2 + 0.0000000001))
+                // console.log("Adding to total score: ", category, dist, v1, v2, mult, Math.floor((v1 + v2) * mult / 2 + 0.0000000001))
 
                 totalScore += Math.floor((v1 + v2) * mult / 2 + 0.0000000001);
             }
 
-            if (recurse && totalScore < 5) {
+            if (recurse && totalScore < 5 && diff < 6) {
                 return Math.min(
                     diceSimulationStringsForJS2(categories, nbDice, nbRolls, fixscmu, stescmu, doubleCatDoubled, 6, false),
                     5
                 );
             }
-            if (recurse && totalScore < 10) {
+            if (recurse && totalScore < 10 && diff < 5) {
                 return Math.min(
                     diceSimulationStringsForJS2(categories, nbDice, nbRolls, fixscmu, stescmu, doubleCatDoubled, 5, false),
                     10
                 );
             }
-            if (recurse && totalScore < 15) {
+            if (recurse && totalScore < 15 && diff < 4) {
                 return Math.min(
                     diceSimulationStringsForJS2(categories, nbDice, nbRolls, fixscmu, stescmu, doubleCatDoubled, 4, false),
                     15
@@ -3856,7 +4092,6 @@
                 updateSettings(null);
                 updateRequiresValue(null);
                 updateHighscoreAndGoal();
-                // updateMissingLocations(null);
             }
 
         }
@@ -3864,34 +4099,6 @@
 
 
 
-
-        function updateMissingLocations(packet) {
-            if (!offline) {
-                if (packet.missing_locations) {
-
-                    missingLocations = packet.missing_locations;
-
-                    if(big_waves){
-                        let firstloc = missingLocations[0] - 16871244500
-                        for(let i = 100; i < 1000; i += 100){
-                            if(firstloc > i){
-                                if(!gotHandicaps.includes(i)){
-                                    if(i % 200 == 0){
-                                        numRollsF -= amRollsF
-                                        addToLog("Oh no! A big wave hit the yacht and you lost a roll and reset your scores....")
-                                    }else{
-                                        removeDice()
-                                        addToLog("Oh no! A big wave hit the yacht and you lost a dice and reset your scores....")
-                                    }
-                                    gotHandicaps.push(i)
-                                }
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
 
         
         var lastScoutedLocation = -1
@@ -3899,11 +4106,11 @@
         var packetTeamName = -1
         var packetSlotName = -1
 
-        var saveYDDInformation = -1;
         var changeYDDInfo = true;
 
         async function checkWin(){
             let haswon = ((await client.players.self.fetchStatus()) === 30)
+
             if(haswon){
                 console.log("Win");
                 const img = document.getElementById('boatImage');
@@ -3912,7 +4119,11 @@
                 
                 sendWin()
             }
-            
+        }
+
+        
+        function saveYDDInformation(){
+            return getUrlParameter("db") == "y";
         }
 
         function connectToServer(firsttime = true) {
@@ -3925,7 +4136,7 @@
             console.log(connectionInfo)
             client = new Client();
             client
-                .login(connectionInfo.hostport, connectionInfo.name, connectionInfo.game, {password: connectionInfo.password})
+                .login(connectionInfo.hostport, connectionInfo.name, connectionInfo.game, {password: connectionInfo.password, tags: ["DeathLink"]})
                 .then(() => {
                     addToLog("Connected to the server");
                     // You are now connected and authenticated to the server. You can add more code here if need be.
@@ -3960,44 +4171,17 @@
                 console.log("Connected to server: ", packet);
                 packetTeamName = packet.team
                 packetSlotName = packet.slot
-                checkYDDD();
 
                 checkWin();
                 
-
                 nextgoal = 0;
                 
-                updateMissingLocations(packet);
                 updateSettings(packet);
-                updateRequiresValue(packet);
+                updateRequiresValue();
                 updateHighscoreAndGoal();
                 submitScore();
-
-
             };
 
-            async function checkYDDD(){
-                if(getUrlParameter("db") == "y"){
-                    saveYDDInformation = 1;
-                    console.log("Saving info for Yacht Dice Dashboard", saveYDDInformation);
-                    
-                    setTimeout(() => {
-                        console.log("set N", nextgoal);
-                        client.storage.prepare("YADI_N"+packetSlotName, 0).replace(nextgoal).commit() // Activate Archipelago storage.
-                        calculateMaxInLogic();
-
-                        for(sent in itemsSentKeepYDD){
-                            console.log("ITEM SENT AND REGISTER LATER", sent);
-                            client.storage.prepare("YADI_I"+sent[0], []).add([sent[1]]).commit() // Activate Archipelago storage.
-                        }
-                        client.storage.prepare("YADI_I"+packetSlotName, []).replace(progressionItemsReceivedList).commit() // Activate Archipelago storage.
-                        
-                        // Add your code here
-                    }, 1000); // 2000 milliseconds = 2 seconds
-
-                    
-                }
-            }
 
             const disconnectedListener = (packet) => {
                 console.log("DISCONNECTED!");
@@ -4006,8 +4190,7 @@
             }
             
             const roomupdateListener = (packet) => {
-                updateMissingLocations(packet);
-                updateRequiresValue(packet);
+                updateRequiresValue();
                 console.log("Room update:", packet)
                 //newItems(packet)
             };
@@ -4016,8 +4199,6 @@
 
             const receiveditemsListener = (items, index) => {
                 connectionOK();
-                // updateMissingLocations(packet);
-                // updateRequiresValue(packet);
                 
                 newItems(items, index); //update highscore and goal in here, when new items.
             };
@@ -4166,13 +4347,15 @@
             client.messages.on("message", jsonListener);
             client.messages.on("itemSent", itemSentListener);
             client.room.on("locationsChecked", locationsCheckedListener);
-            // client.messages.on("locationInfo", locationHintListener);// Listener for Get responses.
+
+            client.messages.on("goaled", goaledListener);
+            
+            client.deathLink.on("deathReceived", deathListener)
 
         }
 
-        var itemsSentKeepYDD = [];
         function itemSentListener(text, item, nodes){
-            if(saveYDDInformation == 1){
+            if(saveYDDInformation()){
                 let sender = item.sender;
                 let receiver = item.receiver;
                 if(sender.slot == client.players.self.slot){
@@ -4180,26 +4363,35 @@
                     client.storage.prepare("YADI_I"+receiver.slot, []).add([item.id]).commit() // Activate Archipelago storage.
                 }
             }
-            if(saveYDDInformation == -1){
-                let sender = item.sender;
-                let receiver = item.receiver;
-                if(sender.slot == client.players.self.slot){
-                    itemsSentKeepYDD.push([receiver.slot, item.id])
-                    console.log("DO LATER", [receiver.slot, item.id])
+        }
+
+        function locationsCheckedListener(locations){
+            updateRequiresValue();
+            updateHighscoreAndGoal();
+            
+        }
+
+        function goaledListener(text, player, nodes){
+            if(player.slot == client.players.self.slot){
+                if(!hasgoaled){
+                    console.log("Win");
+                    const img = document.getElementById('boatImage');
+                    img.style.maxWidth = '20%';  // Correct property name in camelCase
+                    img.style.maxHeight = '20%'; // Correct property name in camelCase
+                    
+                    sendWin()
                 }
             }
         }
 
-        function locationsCheckedListener(locations){
-            
-            for (let item of locations) {
-                if (missingLocations.includes(item)) {
-                    missingLocations.splice(missingLocations.indexOf(item), 1);
-                }
-            } 
-            updateHighscoreAndGoal();
-            
+        function deathListener(input){
+            if(receive_death_link){
+                console.log("YES DEATH");
+                resetAll();
+            }
         }
+
+        
 
         let showconnectionstatus = false;
         let connectedstatus = false;
@@ -4297,7 +4489,11 @@
                 finalgoal = packet.slot_data.goal_score;
                 lastgoal = packet.slot_data.last_check_score;
                 difficulty = packet.slot_data.game_difficulty;
-                big_waves = packet.slot_data.big_waves_game_mode == 1;
+
+                receive_death_link = packet.slot_data.receive_death_link == 2;
+                send_death_link = packet.slot_data.send_death_link == 2;
+
+                number_of_keys_required = packet.slot_data.number_of_keys;
                 
                 apworldversion = packet.slot_data.ap_world_version;
 
@@ -4401,13 +4597,13 @@
                 if (whichstory == -1) {
                     whichstory = Math.floor(Math.random() * story.length) + 1
                 }
-                let newest_version = "2.2.1"
+                let newest_version = "2.2.2"
                 if (!packet.slot_data.ap_world_version) {
                     addToLog("Warning, apworld version is not provided in the packet, so it's generated with a very old version, not even 0.3. Please update your apworld. Website version: " + newest_version, true);
                     addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                 } else {
                     console.log("AP WORLD VERSION", apworldversion)
-                    if (apworldversion == newest_version) {
+                    if (apworldversion == newest_version || apworldversion == "2.2.1") {
                         //recent
                     } else {
                         addToLog("Apworld " + newest_version+" is out! But you can play your version here as well :)", true);
@@ -4451,6 +4647,11 @@
                 clearTimeout(askWhatNextItemIsTimer);  // Clear the timer if the function is called again within 0.5 seconds
             }
 
+            if (firstMissingLocId == 16871244500 + finalgoal){
+                document.getElementById("nextgoalitem").innerText = "(Victory!)";
+                return;
+            }
+
             document.getElementById("nextgoalitem").innerText =  "(...)"
                 
 
@@ -4469,74 +4670,48 @@
 
                     let item = await client.scout([latestAsk]);
                     item = item[0]
-                    
-                    document.getElementById("nextgoalitem").innerText =  "(" + item.toString() + " from " + item.receiver.game + " for " + item.receiver.alias + ")"
+                    if(item){
+                        document.getElementById("nextgoalitem").innerText =  "(" + item.toString() + " from " + item.receiver.game + " for " + item.receiver.alias + ")"
+                    }else{
+                        document.getElementById("nextgoalitem").innerText =  "(THIS ITEM DOES NOT EXIST????)"
+                    }
                 }
             }, 500);  // 500 milliseconds = 0.5 seconds
         }
 
 
 
-        function updateRequiresValue(packet) {
-
+        function updateRequiresValue() {
             if (!offline) {
-                if (!packet.missing_locations) {
-                    // do nothing
-                } else if (packet.missing_locations.length === 0) {
-                    if(!hasgoaled){
-                        nextgoal = finalgoal
-                        document.getElementById("nextgoalitem").innerText = "(Victory!!)";
-                    }else{
-                        nextgoal = "-"
-                        console.log("Set nextgoal to -, because in updateRequiresValue, packet.missing_locations is empty")
-                        document.getElementById("nextgoalitem").innerText = "";
-                    }
-                    updateHighscoreAndGoal()
-                } else {
-                    const min_number = 16871244500
-                    const max_number = 16871244500 + 1000
-                    
-                    const filteredLocations = packet.missing_locations.filter(loc => loc >= min_number && loc <= max_number);
-
-                    let firstMissingLocId;
-                    if ((filteredLocations.length > 0 || !hasgoaled) && nextgoal != "-") {
-                        filteredLocations.push(17871244500);
-                        firstMissingLocId = filteredLocations[0];
-                        nextgoal = Math.max(nextgoal, firstMissingLocId - 16871244500)
-                        if(nextgoal > finalgoal && !hasgoaled){
-                            nextgoal = finalgoal
-                            document.getElementById("nextgoalitem").innerText = "(Victory!!)";
-                            stopAskWhatNextItemIs();
-                        }else{
-                            console.log("run ask", filteredLocations[0])
-                            askWhatNextItemIs(filteredLocations[0])
-                        }
-                    } else {
-                        nextgoal = "-"
-                        console.log("Set nextgoal to -, because filteredLocations is empty, or nextgoal was already -. Should not happen without big waves?")
-                        document.getElementById("nextgoalitem").innerText = "";
-                    }
-                    
-                    console.log("Set nextgoal", nextgoal)
-                    updateHighscoreAndGoal()
-                    
-                }
-
-
-                if (!packet.checked_locations) {
-                    // do nothing
-                } else if (packet.checked_locations.length === 0) {
-                    // do nothing
-                } else {
-                    for (let item of packet.checked_locations) {
-                        if (missingLocations.includes(item.location)) {
-                            missingLocations.splice(missingLocations.indexOf(item.location), 1);
-                        }
-                    }
-
-                    updateHighscoreAndGoal()
+                missingLocations = client.room.missingLocations;
+                if(!hasgoaled){
+                    missingLocations.push(finalgoal + 16871244500);
+                    missingLocations.sort((a, b) => a - b);
                 }
             }
+
+            let prevnextgoal = nextgoal;
+
+            if(!missingLocations[0]){
+                console.log(missingLocations)
+                nextgoal = "-"
+                document.getElementById("nextgoal").innerText = "-";
+                document.getElementById("nextgoalitem").innerText = "";
+            }else{
+                nextgoal = missingLocations[0] - 16871244500;
+                document.getElementById("nextgoal").innerText = nextgoal;
+                
+                askWhatNextItemIs(missingLocations[0])
+                
+            }
+
+            if(prevnextgoal != nextgoal && saveYDDInformation()){
+                changeYDDInfo = true;
+                console.log("set N", nextgoal);
+                client.storage.prepare("YADI_N"+packetSlotName, 0).replace(nextgoal).commit() // Activate Archipelago storage.
+            }
+
+            
 
             if (offline) {
                 nextgoal = Math.min(...Object.keys(missingLocations).map(Number))
@@ -4559,8 +4734,6 @@
             calculateTotalAndUpdate();
             var inputValue = parseInt(document.getElementById("total").innerText);
 
-            console.log("Checking (not submitting yet) score up to", inputValue, document.getElementById("total").innerText,  nextgoal)
-            
             let element = document.getElementById('total-label');
             if(document.getElementById("requireExactScore").checked){
                 // Get the element by its ID
@@ -4581,68 +4754,36 @@
                 return;
             }
 
+            updateRequiresValue();
+            console.log("Checking (not submitting yet) score up to", inputValue, document.getElementById("total").innerText,  nextgoal, missingLocations)
+            
+
+
+
             if (nextgoal != '-' && !isNaN(inputValue)) {
                 var updated_first = false
 
                 if (!offline) {
                     for (let i = nextgoal; i <= parseInt(document.getElementById("total").innerText); i++) {
-                        if(big_waves && i % 100 == 0 && !gotHandicaps.includes(i)){
-                            if(i % 200 == 0){
-                                numRollsF -= amRollsF
-                                addToLog("Oh no! A big wave hit the yacht and you lost a roll and reset your scores....")
-                            }else{
-                                removeDice()
-                                console.log("REMOVE ",i,gotHandicaps)
-                                addToLog("Oh no! A big wave hit the yacht and you lost a dice and reset your scores....")
-                            }
-                            resetAll();
-                            console.log("Reset on ", i)
-                        }
+
                         if (missingLocations.includes(i + 16871244500)) {
-                            console.log("Submitting score",i)
-                            sendCheck(i + 16871244500);
-                            missingLocations.splice(missingLocations.indexOf(i + 16871244500), 1);
+                            if(i == finalgoal){
+                                console.log("Win! Sending win because "+finalgoal+" is achieved!")
+                                sendWin();
+                            }else{
+                                console.log("Submitting score",i)
+                                sendCheck(i + 16871244500);
+                                missingLocations.splice(missingLocations.indexOf(i + 16871244500), 1);
+                            }
+
+                            
+                        }else{
+                            // console.log("not included", i, i + 16871244500)
                         }
                         
-                        if(big_waves && i % 100 == 0 && !gotHandicaps.includes(i)){
-                            gotHandicaps.push(i)
-                            console.log("Break on ", i, gotHandicaps)
-                            break;
-                        }
                     }
 
-                    const prevnextgoal = nextgoal;
-
-                    const min_number = 16871244500 
-                    const max_number = 16871244500 + 1000
-                    
-                    const filteredLocations = missingLocations.filter(loc => loc >= min_number && loc <= max_number);
-                    
-                    if ((filteredLocations.length > 0 || !hasgoaled) && nextgoal != "-") {
-                        filteredLocations.push(17871244500);
-                        nextgoal = Math.max(nextgoal, filteredLocations[0] - 16871244500);
-                        if(nextgoal > finalgoal && !hasgoaled){
-                            nextgoal = finalgoal
-                            document.getElementById("nextgoal").innerText = nextgoal;
-                            document.getElementById("nextgoalitem").innerText = "(Victory!!)";
-                            stopAskWhatNextItemIs();
-                        }else{
-                            document.getElementById("nextgoal").innerText = nextgoal;
-                            askWhatNextItemIs(filteredLocations[0])
-                            
-                        }
-                    } else {
-                        nextgoal = "-"
-                        console.log("Setting nextgoal to - because filtered locations is empty (or nextgoal was already -)")
-                        document.getElementById("nextgoal").innerText = nextgoal;
-                        document.getElementById("nextgoalitem").innerText = "";
-                    }
-
-                    if(prevnextgoal != nextgoal && saveYDDInformation == 1){
-                        changeYDDInfo = true;
-                        console.log("set N", nextgoal);
-                        client.storage.prepare("YADI_N"+packetSlotName, 0).replace(nextgoal).commit() // Activate Archipelago storage.
-                    }
+                    updateRequiresValue();
                 }
 
                 if (offline) {
@@ -4654,16 +4795,10 @@
                     document.getElementById("nextgoalitem").innerText = "(" + missingLocations[nextgoal] +")";
                 }
 
-                if (inputValue >= finalgoal) {
-                    console.log("Win! Sending win because "+finalgoal+" is achieved!")
-                    sendWin()
-                    addAchievement(2);
-                }
+                
             }
-            
-            // updateHighscoreAndGoal();
-            
-
+                        
+            updateRequiresValue()
         }
 
         let timeoutMaxInLogic; // Variable to hold the timeout ID
@@ -4695,67 +4830,18 @@
 
 
         function updateHighscoreAndGoal() {
-            const min_number = 16871244500 
-            const max_number = 16871244500 + 1000
-            
-            if(!offline){
-                const filteredLocations = missingLocations.filter(loc => loc >= min_number && loc <= max_number);
-                
-                const prevnextgoal = nextgoal;
-                if ((filteredLocations.length > 0 || !hasgoaled) && nextgoal != "-") {
-                    filteredLocations.push(17871244500);
-                    nextgoal = Math.max(nextgoal, filteredLocations[0] - 16871244500);
-                    if(nextgoal > finalgoal && !hasgoaled){
-                        nextgoal = finalgoal
-                        document.getElementById("nextgoalitem").innerText = "(Victory!!)";
-                        stopAskWhatNextItemIs();
-                    }else{
-                        
-                        askWhatNextItemIs(filteredLocations[0])
-                    }
-                } else {
-                    nextgoal = "-"
-                    console.log("Setting nextgoal to - because filtered locations is empty (or nextgoal was already -)")
-                    document.getElementById("nextgoalitem").innerText = "";
-                }
-                if(prevnextgoal != nextgoal && saveYDDInformation == 1){
-                    changeYDDInfo = true;
-                    console.log("set N", nextgoal);
-                    client.storage.prepare("YADI_N"+packetSlotName, 0).replace(nextgoal).commit() // Activate Archipelago storage.
-                }
-            }
-
-            console.log("Set nextgoal", nextgoal)
-            document.getElementById("nextgoal").innerText = nextgoal;
             calculateMaxInLogic();
         }
 
-        let big_waves = false
         let gotHandicaps = []
 
         function sendCheckOffline(){
             if (offline) {
                 for (let i = 1; i <= parseInt(document.getElementById("total").innerText); i++) {
-                    if(big_waves && i % 100 == 0 && !gotHandicaps.includes(i)){
-                        if(i % 200 == 0){
-                            numRollsF -= amRollsF
-                            addToLog("Oh no! A big wave hit the yacht and you lost a roll and reset your scores....")
-                        }else{
-                            removeDice()
-                            addToLog("Oh no! A big wave hit the yacht and you lost a dice and reset your scores....")
-                        }
-                        resetAll();
-                        console.log("Reset on ", i)
-                    }
                     if (missingLocations.hasOwnProperty(i)) {
                         const value = missingLocations[i]; // Get the value associated with the key
                         delete missingLocations[i]; // Remove the key from missingLocations
                         openCategoryOrGetItem(value, i); // Call the function openCategories with the value
-                    }
-                    if(big_waves && i % 100 == 0 && !gotHandicaps.includes(i)){
-                        gotHandicaps.push(i)
-                        console.log("Break on ", i)
-                        break;
                     }
                 }
                 updateHighscoreAndGoal();
@@ -4763,6 +4849,10 @@
         }
 
         function sendCheck(locid) {
+            if(number_of_keys < number_of_keys_required){
+                addToLog("You need more keys to send checks. You have "+number_of_keys+" keys, but you need "+number_of_keys_required+" keys to send checks.")
+                return;
+            }
             if (!offline) {
                 // Assuming client is already defined elsewhere
                 // Replace `client.locations.check` with the actual function you have for sending checks
@@ -4771,7 +4861,6 @@
             if (offline) {
                 addToLog("Can't use this function offline! Please report thanks!", true)
             }
-
         }
 
         function sendWin() {
@@ -4779,6 +4868,8 @@
                 return;
             }
             hasgoaled = true;
+            
+            addAchievement(2);
             
             let wins = localStorage.getItem("amount_of_wins");
             if(wins !== null){
@@ -4814,6 +4905,7 @@
                     boatSound.play(); // Play the audio
                 }, 2000); // Wait for 2 seconds (after water image appears and vibration starts)
             }
+            updateRequiresValue();
             updateHighscoreAndGoal()
         }
 
@@ -5009,10 +5101,14 @@
 
 
             let offline_difficulty = -1;
+            let offline_category_double = true;
+            let offline_available_catgories = [];
+            
             
             if (getUrlParameter('offlineseed') != '') {
                 let offlineseedStr = getUrlParameter('offlineseed')
                 offline_difficulty = parseInt(offlineseedStr.charAt(0), 10);
+                offline_category_double = parseInt(offlineseedStr.charAt(1), 10) == 0;
             } else {
                 // Get selected values from dropdown menus
                 const difficultyDropdown = document.getElementById('offlineoptions_difficulty');
@@ -5035,12 +5131,29 @@
                     case 'Extreme':
                         offline_difficulty = 4;
                         break;
+                    case 'Insane':
+                        offline_difficulty = 5;
+                        break;
+                    case 'Outrageous':
+                        offline_difficulty = 6;
+                        break;
+                    case 'Impossible':
+                        offline_difficulty = 7;
+                        break;
                     default:
                         offline_difficulty = -1; // Handle other cases (optional)
                 }   
+
+                const categoryDouble = document.getElementById('offlineoptions_double');
+                if(categoryDouble.value == "Double"){
+                    offline_category_double = true;
+                } else {
+                    offline_category_double = false;
+                }
             }
 
             difficulty = offline_difficulty;
+            doubleCatDoubled = offline_category_double;
 
 
 
@@ -5075,7 +5188,7 @@
                     seed = parseInt(inps);
                 }
             } else {
-                seed = offline_difficulty + "" + (1000000 + Math.floor(Math.random() * 9000000))
+                seed = offline_difficulty + "" + (offline_category_double ? "0" : "1") + "" + (1000000 + Math.floor(Math.random() * 9000000))
                 seednr = seed
             }
 
@@ -5091,16 +5204,15 @@
                 prng()
             }
 
-            let offline_available_catgories = []
 
-            prng() < 0.9 ? offline_available_catgories.push("Category Choice") : offline_available_catgories.push("Category Double Threes and Fours");
-            prng() < 0.9 ? offline_available_catgories.push("Category Inverse Choice") : offline_available_catgories.push("Category Quadruple Ones and Twos");
             prng() < 0.7 ? offline_available_catgories.push("Category Ones") : offline_available_catgories.push("Category Distincts");
             prng() < 0.7 ? offline_available_catgories.push("Category Twos") : offline_available_catgories.push("Category Two times Ones");
             prng() < 0.7 ? offline_available_catgories.push("Category Threes") : offline_available_catgories.push("Category Half of Sixes");
             prng() < 0.7 ? offline_available_catgories.push("Category Fours") : offline_available_catgories.push("Category Twos and Threes");
             prng() < 0.7 ? offline_available_catgories.push("Category Fives") : offline_available_catgories.push("Category Sum of Odds");
             prng() < 0.7 ? offline_available_catgories.push("Category Sixes") : offline_available_catgories.push("Category Sum of Evens");
+            prng() < 0.9 ? offline_available_catgories.push("Category Choice") : offline_available_catgories.push("Category Double Threes and Fours");
+            prng() < 0.9 ? offline_available_catgories.push("Category Inverse Choice") : offline_available_catgories.push("Category Quadruple Ones and Twos");
             prng() < 0.7 ? offline_available_catgories.push("Category Pair") : offline_available_catgories.push("Category Micro Straight");
             prng() < 0.7 ? offline_available_catgories.push("Category Three of a Kind") : offline_available_catgories.push("Category Three Odds");
             prng() < 0.7 ? offline_available_catgories.push("Category Four of a Kind") : offline_available_catgories.push("Category 1-2-1 Consecutive");
@@ -5110,7 +5222,10 @@
             prng() < 0.7 ? offline_available_catgories.push("Category Full House") : offline_available_catgories.push("Category Five Distinct Dice");
             prng() < 0.7 ? offline_available_catgories.push("Category Yacht") : offline_available_catgories.push("Category 4&5 Full House");
 
-            openCategories(["Dice", "Roll", offline_available_catgories[0], offline_available_catgories[1]])
+            allowed_categories = JSON.parse(JSON.stringify(offline_available_catgories));
+            
+            console.log(allowed_categories);
+            openCategories(["Dice", "Roll", offline_available_catgories[6], offline_available_catgories[7]])
             
             // Initialize an empty array for the item pool
             let itempool = [];
@@ -5126,20 +5241,15 @@
 
             let dice_debuff = 0
             let rolls_debuff = 0
-
-            big_waves = document.getElementById('big_waves_mode_checkbox').checked;
-            if (big_waves) {
-                dice_debuff = 5
-                rolls_debuff = 4
-            }
-
             
             // Calculate and add items based on conditions
             itempool = itempool.concat(Array(4 + dice_debuff).fill("Dice"));
             itempool = itempool.concat(Array(2 + rolls_debuff).fill("Roll"));
 
-            for(let i = 2; i < 16; i++){
-                itempool.push(offline_available_catgories[i])
+            for(let i = 0; i < 16; i++){
+                if(i < 6 || i > 7){
+                    itempool.push(offline_available_catgories[i])
+                }
             }
             
             let cats_for_logic = []
@@ -5191,7 +5301,7 @@
                 for (const [name, amount] of Object.entries(catCounts)) {
                     cats_for_logic.push(new Category(name, amount));
                 }
-            } while(diceSimulationStringsForJS2(cats_for_logic, dice, rolls, mult, 0, offline_difficulty) + points < 1000);
+            } while(diceSimulationStringsForJS2(cats_for_logic, dice, rolls, mult, 0, offline_category_double, offline_difficulty) + points < 1000);
 
 
 
@@ -5248,7 +5358,7 @@
 
 
 
-            let offline_categories_names = [offline_available_catgories[0], offline_available_catgories[1]]
+            let offline_categories_names = [offline_available_catgories[6], offline_available_catgories[7]]
 
 
             let offline_number_dice = 1
@@ -5301,44 +5411,14 @@
                 }
 
 
-                let maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice, offline_number_rolls, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
-                if(big_waves){
-                    if(maxinLogic > 100) {
-                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 1, offline_number_rolls, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
-                    }
-                    if(maxinLogic > 200) {
-                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 1, offline_number_rolls - 1, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
-                    }
-                    if(maxinLogic > 300) {
-                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 2, offline_number_rolls - 1, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
-                    }
-                    if(maxinLogic > 400) {
-                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 2, offline_number_rolls - 2, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
-                    }
-                    if(maxinLogic > 500) {
-                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 3, offline_number_rolls - 2, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
-                    }
-                    if(maxinLogic > 600) {
-                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 3, offline_number_rolls - 3, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
-                    }
-                    if(maxinLogic > 700) {
-                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 4, offline_number_rolls - 3, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
-                    }
-                    if(maxinLogic > 800) {
-                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 4, offline_number_rolls - 4, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
-                    }
-                    if(maxinLogic > 900) {
-                        maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice - 5, offline_number_rolls - 4, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
-                    }
-                }
-
+                let maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice, offline_number_rolls, offline_fixed_multiplier, 0, offline_category_double, offline_difficulty) + offline_points_in_logic_gen
 
                 const validKeys = Object.keys(result).filter(key => Number(key) <= maxinLogic && result[key] === "");
 
                 if (validKeys.length === 0) {
-                    console.log(result)
+                    console.log(result, maxinLogic);
+                    addToLog("This seed doesn't seem to generate correctly :( Please report it in the discord channel)");
                     console.error("Error: No valid key found matching the criteria.");
-                    addToLog("This seed doesn't seem to generate correctly :( Please report it in the discord channel)")
                     return; // Exit function if no valid key is found
                 }
 
@@ -5413,7 +5493,7 @@
             }
 
            
-            let maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice, offline_number_rolls, offline_fixed_multiplier, 0, offline_difficulty) + offline_points_in_logic_gen
+            let maxinLogic = diceSimulationStringsForJS2(offline_categories, offline_number_dice, offline_number_rolls, offline_fixed_multiplier, 0, offline_category_double, offline_difficulty) + offline_points_in_logic_gen
                 
             if(maxinLogic < 1000){
                 console.error("ERROR NOT 1000 POINTS IN ITEMPOOL, just", maxinLogic)
@@ -5456,7 +5536,7 @@
                 resetAll();
             }
 
-            updateRequiresValue(null)
+            updateRequiresValue();
             updateHighscoreAndGoal();
             updateParButtons();
 
