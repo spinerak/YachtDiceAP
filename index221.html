@@ -1194,10 +1194,11 @@
                             <button id>Select dice style</button>
                             <div class="dropdown-options" id="dropdownOptions"></div>
                         </div>
-                        <div>Goal games -> more skins (20+)!</div>
                         <br>
                         <input type="checkbox" id="requireExactScore">
                         <label for="requireExactScore">Gamemode: need exact score (>10)</label>
+                        <input type="checkbox" id="requireExactScoreOnlyNext">
+                        <label for="requireExactScoreOnlyNext">Additionally, only can get next check</label>
 
 
                         <br><br>
@@ -3807,7 +3808,21 @@
                 catMult = catquan;
             }
             score = Math.floor(score * (1 + fixedScoreMult + turnNumber * stepScoreMult).toFixed(2) * catMult);
-            var requireExactScoreOK =  !document.getElementById("requireExactScore").checked || score == needForNextGoal
+
+            var requireExactScoreOK = true
+            if(offline){
+                requireExactScoreOK =  
+                !document.getElementById("requireExactScore").checked ||
+                (document.getElementById("requireExactScore").checked && !document.getElementById("requireExactScoreOnlyNext").checked && Object.keys(missingLocations).includes(score)) ||
+                (document.getElementById("requireExactScoreOnlyNext").checked || score == needForNextGoal)
+            }else{
+                requireExactScoreOK =  
+                !document.getElementById("requireExactScore").checked ||
+                (document.getElementById("requireExactScore").checked && !document.getElementById("requireExactScoreOnlyNext").checked && missingLocations.includes(score + 16871244500)) ||
+                (document.getElementById("requireExactScoreOnlyNext").checked || score == needForNextGoal)
+            }
+
+
 
             var button = document.getElementById("category"+buttonId);
             
@@ -3963,7 +3978,7 @@
 
             // Sort categories based on their mean score with 4 rolls if step multiplier > 0
             if (stescmu > 0) {
-                categories.sort((a, b) => a.meanScore(nbDice, 4) - b.meanScore(nbDice, 4));
+                categories.sort((a, b) => a.meanScore(Math.min(8, nbDice), 4) - b.meanScore(Math.min(8, nbDice), 4));
             }
 
             // // Loop to display the meanScore for each element in categories
@@ -4384,9 +4399,10 @@
             }
         }
 
-        function deathListener(input){
+        function deathListener(source, time, cause){
             if(receive_death_link){
-                console.log("YES DEATH");
+                console.log("YES DEATH", source, time, cause);
+                addToLog(client.players.findPlayer(source).alias + " died because they " + cause);
                 resetAll();
             }
         }
@@ -4490,8 +4506,8 @@
                 lastgoal = packet.slot_data.last_check_score;
                 difficulty = packet.slot_data.game_difficulty;
 
-                receive_death_link = packet.slot_data.receive_death_link == 1;
-                send_death_link = packet.slot_data.send_death_link == 1;
+                receive_death_link = packet.slot_data.receive_death_link == 3 || packet.slot_data.receive_death_link_toggle == 1;
+                send_death_link = packet.slot_data.send_death_link == 3 || packet.slot_data.send_death_link_toggle == 1;
 
                 number_of_keys_required = packet.slot_data.number_of_keys;
                 
@@ -4597,13 +4613,13 @@
                 if (whichstory == -1) {
                     whichstory = Math.floor(Math.random() * story.length) + 1
                 }
-                let newest_version = "2.2.2"
+                let newest_version = "2.2.3"
                 if (!packet.slot_data.ap_world_version) {
                     addToLog("Warning, apworld version is not provided in the packet, so it's generated with a very old version, not even 0.3. Please update your apworld. Website version: " + newest_version, true);
                     addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                 } else {
                     console.log("AP WORLD VERSION", apworldversion)
-                    if (apworldversion == newest_version || apworldversion == "2.2.1") {
+                    if (apworldversion == newest_version || apworldversion == "2.2.1" || apworldversion == "2.2.2") {
                         //recent
                     } else {
                         addToLog("Apworld " + newest_version+" is out! But you can play your version here as well :)", true);
@@ -4739,8 +4755,11 @@
                 // Get the element by its ID
                 let element = document.getElementById('total-label');
 
-                // Change the text content
-                element.textContent = 'Total (you need EXACTLY next check)';
+                if(document.getElementById("requireExactScoreOnlyNext").checked){
+                    element.textContent = 'Total (you need EXACTLY next check)';
+                }else{
+                    element.textContent = 'Total (you need checks EXACTLY)';
+                }
 
                 // Change the background color to yellow
                 element.style.backgroundColor = 'red';
@@ -4749,7 +4768,7 @@
                 element.style.backgroundColor = '';
             }
 
-            if(document.getElementById("requireExactScore").checked && inputValue > 10 && nextgoal != inputValue){
+            if(document.getElementById("requireExactScoreOnlyNext").checked && inputValue > 10 && nextgoal != inputValue){
                 console.log("You're using exact score logic, too bad you didn't get the correct score...")
                 return;
             }
@@ -4765,7 +4784,9 @@
 
                 if (!offline) {
                     for (let i = nextgoal; i <= parseInt(document.getElementById("total").innerText); i++) {
-
+                        if(document.getElementById("requireExactScore").checked && i != parseInt(document.getElementById("total").innerText)){
+                            continue;
+                        }
                         if (missingLocations.includes(i + 16871244500)) {
                             if(i == finalgoal){
                                 console.log("Win! Sending win because "+finalgoal+" is achieved!")
