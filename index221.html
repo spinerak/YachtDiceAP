@@ -3959,6 +3959,8 @@
         const borderValues = [0, [0.22, 0.41], [0.41, 0.51], [0.51, 0.64], [0.64, 0.76], [0.76, 0.88], [0.88, 0.93], [0.93, 0.97]];
 
         function diceSimulationStringsForJS2(categories, nbDice, nbRolls, fixscmu, stescmu, doubleCatDoubled, diff, recurse = true) {
+            fixscmu = Math.round(fixscmu * 100000) / 100000;
+            stescmu = Math.round(stescmu * 100000) / 100000;
             
             if(diff == 999){
                 categories.sort((a, b) => consolidatedCategories[a.name].maxScore(nbDice) - consolidatedCategories[b.name].maxScore(nbDice));

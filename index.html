@@ -2879,9 +2879,9 @@
 
 
             if (keep) {
-                dice.innerHTML = `<img src="${randomFace}" alt="Dice" style="width: ${diceSize}px; height: ${diceSize}px; filter: brightness(50%);">`;
+                dice.innerHTML = `<img src="${randomFace}" alt="${rolledValue}, held" style="width: ${diceSize}px; height: ${diceSize}px; filter: brightness(50%);">`;
             } else {
-                dice.innerHTML = `<img src="${randomFace}" alt="Dice" style="width: ${diceSize}px; height: ${diceSize}px;">`;
+                dice.innerHTML = `<img src="${randomFace}" alt="${rolledValue}, unheld" style="width: ${diceSize}px; height: ${diceSize}px;">`;
             }
         }
 
@@ -3391,7 +3391,7 @@
         // Listener function for category buttons
         function updateButtonValue(buttonId, score, catquan, needForNextGoal, needForFinalGoal, needForLastGoal, needForNextWave) {
             score = Math.floor(score * (1 + fixedScoreMult + turnNumber * stepScoreMult).toFixed(2) * Math.pow(2,catquan-1));
-            console.log(missingLocations)
+            // console.log(missingLocations)
             var requireExactScoreOK = true
             if(offline){
                 requireExactScoreOK =  
@@ -4107,13 +4107,15 @@
 
 
         function diceSimulationStringsForJS2(categories, nbDice, nbRolls, fixscmu, stescmu, diff) {
+            fixscmu = Math.round(fixscmu * 100000) / 100000;
+            stescmu = Math.round(stescmu * 100000) / 100000;
             if(diff == 99){
                 categories.sort((a, b) => a.maxScore(nbDice) - b.maxScore(nbDice));
                 console.log("categories max", categories);
 
                 let maxsum = 0;
                 for (let j = 0; j < categories.length; j++) {
-                    console.log(maxsum, fixscmu, stescmu, j, categories[j], categories[j].quantity, categories[j].maxScore(nbDice));
+                    // console.log(maxsum, fixscmu, stescmu, j, categories[j], categories[j].quantity, categories[j].maxScore(nbDice));
                     maxsum += Math.floor((1 + fixscmu + stescmu * j) * Math.pow(2,categories[j].quantity-1) * categories[j].maxScore(nbDice));
                 }
                 return Math.floor(maxsum) + parseInt(document.getElementById("catbonuspoints").textContent);
