@@ -2049,7 +2049,7 @@
                 maxScore: (D) => (D >= 5 ? 50 : 0),
                 subCategories: ["", 1]
             },
-            "Category Pair ∑": {
+            "Category Pair SUM": {
                 id: 33,
                 order: 9.1,
                 shortName: "Pair (1∑)",
@@ -2065,7 +2065,7 @@
                 maxScore: (D) => (D >= 2 ? 12 : 0),
                 subCategories: ["Category Pair", 1]
             },
-            "Category Three of a Kind ∑": {
+            "Category Three of a Kind SUM": {
                 id: 34,
                 order: 10.1,
                 shortName: "Three of a Kind (1.5∑)",
@@ -2081,7 +2081,7 @@
                 maxScore: (D) => (D >= 3 ? 27 : 0),
                 subCategories: ["Category Three of a Kind", 1]
             },
-            "Category Four of a Kind ∑": {
+            "Category Four of a Kind SUM": {
                 id: 35,
                 order: 11.1,
                 shortName: "Four of a Kind (2∑)",
@@ -2097,7 +2097,7 @@
                 maxScore: (D) => (D >= 4 ? 48 : 0),
                 subCategories: ["Category Four of a Kind", 1]
             },
-            "Category Tiny Straight ∑": {
+            "Category Tiny Straight SUM": {
                 id: 36,
                 order: 12.1,
                 shortName: "Tiny Str. (2∑)",
@@ -2115,7 +2115,7 @@
                 maxScore: (D) => (D >= 3 ? 30 : 0),
                 subCategories: ["Category Tiny Straight", 1]
             },
-            "Category Small Straight ∑": {
+            "Category Small Straight SUM": {
                 id: 37,
                 order: 13.1,
                 shortName: "Small Str. (2∑)",
@@ -2133,7 +2133,7 @@
                 maxScore: (D) => (D >= 4 ? 36 : 0),
                 subCategories: ["Category Small Straight", 1]
             },
-            "Category Large Straight ∑": {
+            "Category Large Straight SUM": {
                 id: 38,
                 order: 14.1,
                 shortName: "Large Str. (2.5∑)",
@@ -2151,7 +2151,7 @@
                 maxScore: (D) => (D >= 5 ? 50 : 0),
                 subCategories: ["Category Large Straight", 1]
             },
-            "Category Full House ∑": {
+            "Category Full House SUM": {
                 id: 39,
                 order: 15.1,
                 shortName: "Full House (1.5∑)",
@@ -2173,7 +2173,7 @@
                 maxScore: (D) => (D >= 5 ? 42 : 0),
                 subCategories: ["Category Full House", 1]
             },
-            "Category Yacht ∑": {
+            "Category Yacht SUM": {
                 id: 40,
                 order: 16.1,
                 shortName: "Yacht (2.5∑)",
@@ -2189,7 +2189,7 @@
                 maxScore: (D) => (D >= 5 ? 75 : 0),
                 subCategories: ["Category Yacht", 1]
             },
-            "Category Micro Straight ∑": {
+            "Category Micro Straight SUM": {
                 id: 41,
                 order: 9.6,
                 shortName: "Micro Straight (1.5∑)",
@@ -2207,7 +2207,7 @@
                 maxScore: (D) => (D >= 2 ? 16.5 : 0),
                 subCategories: ["Category Micro Straight", 1]
             },
-            "Category 1-2-1 Consecutive ∑": {
+            "Category 1-2-1 Consecutive SUM": {
                 id: 42,
                 order: 11.6,
                 shortName: "1-2-1 Consecutive (2∑)",
@@ -2225,7 +2225,7 @@
                 maxScore: (D) => (D >= 4 ? 40 : 0),
                 subCategories: ["Category 1-2-1 Consecutive", 1]
             },
-            "Category Two Pair ∑": {
+            "Category Two Pair SUM": {
                 id: 43,
                 order: 13.6,
                 shortName: "Two Pair (1.5∑)",
@@ -2244,7 +2244,7 @@
                 maxScore: (D) => (D >= 4 ? 33 : 0),
                 subCategories: ["Category Two Pair", 1]
             },
-            "Category 2-1-2 Consecutive ∑": {
+            "Category 2-1-2 Consecutive SUM": {
                 id: 44,
                 order: 14.6,
                 shortName: "2-1-2 Consecutive (2.5∑)",
@@ -2920,8 +2920,8 @@
                 addToLog("Obtained " + category + " for " + score + " score.")
             }
 
-            // Replace any occurrence of ∑ with SUM
-            category = category.replace(/∑/g, "SUM");
+            // Replace any occurrence of SUM with SUM
+            category = category.replace(/SUM/g, "SUM");
 
             // Get the corresponding button element by ID
             var cat = getCategoryID(category)
@@ -3877,8 +3877,8 @@
             // Update button values based on scores
             for (let i = 0; i < allowed_categories.length; i++) {
                 const cat = allowed_categories[i];
-                // console.log(consolidatedCategories)
-                // console.log(cat, consolidatedCategories[cat])
+                console.log(consolidatedCategories)
+                console.log(cat, consolidatedCategories[cat])
                 let categoryId = consolidatedCategories[cat].id;
 
                 updateButtonValue(i + 1, consolidatedCategories[cat].score(diceArray), gotCategories[i], 
@@ -4273,7 +4273,7 @@
 
                 
                 
-
+                console.log("Message received:", text, nodes);
                 for (const node of nodes) {
                     const nodeElement = document.createElement("span");
                     nodeElement.innerText = node.text;
