@@ -2868,6 +2868,8 @@
             
             // Get category data from the consolidated object
             const categoryData = consolidatedCategories[cat];
+
+            console.log(cat, categoryData)
             
             // If the category exists, proceed to update the UI
             if (categoryData) {
@@ -2916,15 +2918,18 @@
         var progressionItemsReceivedList = [];
 
         function openCategoryOrGetItem(category, score = 0) {
+            console.log(category)
             if (offline) {
                 addToLog("Obtained " + category + " for " + score + " score.")
             }
 
             // Replace any occurrence of SUM with SUM
             category = category.replace(/SUM/g, "SUM");
+            category = category.replace("∑", "SUM");
 
             // Get the corresponding button element by ID
             var cat = getCategoryID(category)
+            console.log(category, cat)
             if (cat >= 0) {
                 if(!allowed_categories.length || allowed_categories.includes(category)){
                     makeVisible(category, cat);
@@ -3876,9 +3881,11 @@
 
             // Update button values based on scores
             for (let i = 0; i < allowed_categories.length; i++) {
-                const cat = allowed_categories[i];
-                console.log(consolidatedCategories)
-                console.log(cat, consolidatedCategories[cat])
+                let cat = allowed_categories[i];
+                //replace sigma symbol in cat by SUM:
+                cat = cat.replace('∑', 'SUM');
+                // console.log(consolidatedCategories)
+                // console.log(cat, consolidatedCategories[cat])
                 let categoryId = consolidatedCategories[cat].id;
 
                 updateButtonValue(i + 1, consolidatedCategories[cat].score(diceArray), gotCategories[i], 
@@ -4568,6 +4575,10 @@
 
                 if(packet.slot_data.allowed_categories){
                     allowed_categories = packet.slot_data.allowed_categories;
+                    // replace all ∑ by SUM:
+                    for(let i = 0; i < allowed_categories.length; i++){
+                        allowed_categories[i] = allowed_categories[i].replace("∑", "SUM");
+                    }
                 }
                 
 
