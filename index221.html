@@ -1974,7 +1974,7 @@
                 id: 27,
                 order: 11.5,
                 shortName: "1-2-1 Consecutive (30)",
-                description: "30 points if three dice are consecutive, the middle appearing twice (any order) (eg 1223, 2132, 5344)",
+                description: "30 points if three dice are consecutive, the middle appearing twice (any order) (eg 1223, 2132, 5344), kinda like a tiny straight with a middle pair",
                 score: (dice) => {
                     const count = Array(7).fill(0);
                     dice.forEach(die => count[die]++);
@@ -2015,7 +2015,7 @@
                 id: 30,
                 order: 14.5,
                 shortName: "2-1-2 Consecutive (40)",
-                description: "40 points if three dice are consecutive, the outside ones appearing twice (any order) (eg 11233, 31321, 53453)",
+                description: "40 points if three dice are consecutive, the outside ones appearing twice (any order) (eg 11233, 31321, 53453), kinda like a tiny straight with outside pairs",
                 score: (dice) => {
                     const count = Array(7).fill(0);
                     dice.forEach(die => count[die]++);
