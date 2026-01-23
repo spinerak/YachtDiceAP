@@ -4631,13 +4631,13 @@
                 if (whichstory == -1) {
                     whichstory = Math.floor(Math.random() * story.length) + 1
                 }
-                let newest_version = "2.3.1"
+                let newest_version = "2.3.3"
                 if (!packet.slot_data.ap_world_version) {
                     addToLog("Warning, apworld version is not provided in the packet, so it's generated with a very old version, not even 0.3. Please update your apworld. Website version: " + newest_version, true);
                     addToLog("https://github.com/spinerak/ArchipelagoYachtDice/releases")
                 } else {
                     console.log("AP WORLD VERSION", apworldversion)
-                    if (apworldversion == newest_version || apworldversion == "2.2.1" || apworldversion == "2.2.2" || apworldversion == "2.2.3" || apworldversion == "2.2.4" || apworldversion == "2.3.0") {
+                    if (apworldversion == newest_version) {
                         //recent
                     } else {
                         addToLog("Apworld " + newest_version+" is out! But you can play your version here as well :)", true);
