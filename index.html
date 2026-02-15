@@ -1004,7 +1004,9 @@
 
             <br>
             <div>
-                <label for="hostport" class="login-label">Host and Port</label>
+                <a href="index234.html" style="color: yellow;">This is for the game "Yacht Dice".<br>Click here for "Yacht Dice Bliss".<br></a>
+                <label> </label>
+                <label for="hostport" class="login-label"><br>Host and Port</label>
                 <input type="text" id="hostport" name="hostport" class="login-input" value="archipelago.gg:38281" placeholder="Example: archipelago.gg:38281">
                 <label for="name" class="login-label">Player Name</label>
                 <input type="text" id="name" name="name" class="login-input"
@@ -1093,6 +1095,8 @@
         document.getElementById('hostport').value = hostport || localStorage.getItem("hostport");
 
         document.getElementById('name').value = getUrlParameter('name') || localStorage.getItem("name");
+
+        document.getElementById('password').value = getUrlParameter('password') || localStorage.getItem("password");
 
 
     </script>

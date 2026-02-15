@@ -975,7 +975,7 @@
     <div class="login-container" id="login-container">
         <div class="login-form">
             <!-- Title with Yacht Dice - Login -->
-            <h2 class="login-heading">Yacht Dice - Login</h2>
+            <h2 class="login-heading">Yacht Dice Bliss - Login</h2>
 
 
             <div class="button-and-text">
@@ -990,7 +990,8 @@
 
             <br>
             <div>
-                <label for="hostport" class="login-label">Host and Port</label>
+                <span style="color: yellow;">This is for "Yacht Dice Bliss", the latest non-core version of Yacht Dice. Learn more in the discord channel!</span>
+                <label for="hostport" class="login-label"><br>Host and Port</label>
                 <input type="text" id="hostport" name="hostport" class="login-input" value="archipelago.gg:38281" placeholder="Example: archipelago.gg:38281">
                 <label for="name" class="login-label">Player Name</label>
                 <input type="text" id="name" name="name" class="login-input"
@@ -1006,7 +1007,7 @@
 
     <div id="dropdownContainer" class="offlineoptions-container">
         <div class = "login-solo-options">
-            <h2 class="login-heading">Yacht Dice - solo play</h2>
+            <h2 class="login-heading">Yacht Dice Bliss - solo play</h2>
             <div id="optionsselector">
 
                 <label for="offlineoptions_difficulty">Difficulty:</label>
@@ -4106,7 +4107,7 @@
 
                 connectionInfo = {
                     hostport: localStorage.getItem("hostport") || "archipelago.gg:38281", // Default hostname
-                    game: "Yacht Dice", // Replace with the game name for this player.
+                    game: "Yacht Dice Bliss", // Replace with the game name for this player.
                     name: localStorage.getItem("name") || "Player1", // Default player name
                     password: document.getElementById("password").value,
                     items_handling: 0b111,
