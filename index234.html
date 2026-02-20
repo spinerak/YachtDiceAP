@@ -4419,7 +4419,7 @@
         function deathListener(source, time, cause){
             if(receive_death_link){
                 console.log("YES DEATH", source, time, cause);
-                addToLog(client.players.findPlayer(source).alias + " died because they " + cause);
+                addToLog(cause);
                 resetAll();
             }
         }
