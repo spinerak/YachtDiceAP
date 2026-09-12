@@ -697,7 +697,7 @@
             padding: 10px;
             width: 40vw;
             max-width: 600px;
-            min-width: 290px;
+            min-width: 360px;
             max-height: 90vh;
             background: rgba(100, 100, 100, 0.9);
             position: absolute;
@@ -798,6 +798,13 @@
         }
         .achievement-page ul li.not-achieved img {
             filter: grayscale(100%); /* Apply the grayscale filter */
+        }
+        .achievement-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .achievement-title {
+            font-weight: bold;
         }
         .achievement-display {
             position: fixed;
@@ -2289,16 +2296,21 @@
         //achievements
         let achievements = JSON.parse(localStorage.getItem('achievements')) || [];
         const achievementConditions = [
-            { id: 1, description: 'Score a Yacht', image: 'Achievement_pictures/a1.png' },
-            { id: 2, description: 'Win a Game', image: 'Achievement_pictures/a2.png' },
-            { id: 4, description: 'Reach 1000 points', image: 'Achievement_pictures/a4.png' },
-            { id: 3, description: 'Choose your own background', image: 'Achievement_pictures/a3.png' },
+            { id: 1, title: 'Yacht, See?', description: 'Score a Yacht', image: 'Achievement_pictures/a1.png' },
+            { id: 2, title: 'Winner Winner, Dicey Dinner', description: 'Win a Game', image: 'Achievement_pictures/a2.png' },
+            { id: 4, title: 'WITNESS ME!!', description: 'Reach 1000 points', image: 'Achievement_pictures/a4.png' },
+            { id: 3, title: 'flex-wrap', description: 'Choose your own background', image: 'Achievement_pictures/a3.png' },
             { id: 9999, description: 'More achievements soon maybe :)', image: 'Achievement_pictures/a9999.png' },
         ];
-        function showAchievementDisplay(description, image) {
+        function getAchievementInnerHtml(title, description, image) {
+            const imgAlt = title ? `${title}: ${description}` : description;
+            const titleSpan = title ? `<span class="achievement-title">${title}</span>` : '';
+            return `<img src="${image}" alt="${imgAlt}"><div class="achievement-text">${titleSpan}<span class="achievement-description">${description}</span></div>`;
+        }
+        function showAchievementDisplay(title, description, image) {
             const achievementDisplay = document.createElement('div');
             achievementDisplay.classList.add('achievement-display');
-            achievementDisplay.innerHTML = `<img src="${image}" alt="Achievement"><span>${description}</span>`;
+            achievementDisplay.innerHTML = getAchievementInnerHtml(title, description, image);
             document.body.appendChild(achievementDisplay);
 
             setTimeout(() => {
@@ -2312,7 +2324,7 @@
             if (!achievements.includes(id)) {
                 achievements.push(id);
                 localStorage.setItem('achievements', JSON.stringify(achievements));
-                showAchievementDisplay(achievement.description, achievement.image);
+                showAchievementDisplay(achievement.title, achievement.description, achievement.image);
                 updateAchievementsPage();
                 if(document.getElementById("enableSoundEffects").checked){
                     achievementSound.play(); // Play the audio
@@ -2323,9 +2335,10 @@
             achievementsList.innerHTML = '';
             let gotone = false
             achievementConditions.forEach(condition => {
+                const { id, title, description, image } = condition;
                 const li = document.createElement('li');
-                li.innerHTML = `<img src="${condition.image}" alt="${condition.description}">${condition.description}`;
-                if (!achievements.includes(condition.id)) {
+                li.innerHTML = getAchievementInnerHtml(title, description, image);
+                if (!achievements.includes(id)) {
                     li.classList.add('not-achieved');
                 }else{
                     gotone = true
